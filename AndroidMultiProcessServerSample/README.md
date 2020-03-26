@@ -1,0 +1,2 @@
+# AndroidMultiProcessSample
+Android多进程通信实践，基于AIDL实现人脸识别功能调用
