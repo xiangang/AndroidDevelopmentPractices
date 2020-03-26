@@ -1,0 +1,9 @@
+<resources>
+    <!--app名称-->
+    <string name="app_name">ArcFaceClientDemo</string>
+    <string name="arc_register_face">人脸注册</string>
+    <string name="arc_recognize_face">人脸识别</string>
+    <string name="aidl">AIDL 测试</string>
+
+
+</resources>

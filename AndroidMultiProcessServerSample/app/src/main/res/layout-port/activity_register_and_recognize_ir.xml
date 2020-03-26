@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.IrRegisterAndRecognizeActivity">
+
+    <LinearLayout
+        android:id="@+id/dual_camera_ll_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextureView
+                android:id="@+id/dual_camera_texture_preview_rgb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.arcsoft.arcfacedemo.widget.FaceRectView
+                android:id="@+id/dual_camera_face_rect_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextureView
+                android:id="@+id/dual_camera_texture_previewIr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.arcsoft.arcfacedemo.widget.FaceRectView
+                android:id="@+id/dual_camera_face_rect_viewIr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/dual_camera_switch_liveness_detect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="20dp"
+        android:text="@string/liveness_detect" />
+
+    <LinearLayout
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="register"
+            android:text="@string/register" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="drawIrRectHorizontalMirror"
+            android:text="@string/draw_ir_rect_mirror_horizontal" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="drawIrRectVerticalMirror"
+            android:text="@string/draw_ir_rect_mirror_vertical" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/dual_camera_recycler_view_person"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

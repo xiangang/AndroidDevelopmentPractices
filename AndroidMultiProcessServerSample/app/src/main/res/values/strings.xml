@@ -1,0 +1,89 @@
+<resources>
+    <!--app name-->
+    <string name="app_name">ArcFaceServerDemo</string>
+
+    <!--settings、choose function page-->
+    <string name="page_preview">face attributes detect(video)</string>
+    <string name="page_ir_preview">ir liveness detect(video)</string>
+    <string name="page_face_recognize">face compare 1:n(video vs database,rgb liveness detect)</string>
+    <string name="page_ir_face_recognize">face compare 1:n(video vs database,ir liveness detect)</string>
+    <string name="page_single_image">face attributes detect(image)</string>
+    <string name="page_multi_image">face compare 1:n(image vs image)</string>
+    <string name="page_face_manage">face manage</string>
+    <string name="get_device_finger_failed">get device finger failed, code is: %d</string>
+    <string name="choose_detect_degree">choose video-mode detect degree</string>
+    <string name="copy_device_fingerprint">copy device fingerprint</string>
+    <string name="device_fingerprint_copied">device fingerprint：：\n%s\n copied</string>
+    <string name="active_engine">active engine</string>
+    <string name="active_success">active success</string>
+    <string name="already_activated">already activated</string>
+    <string name="active_failed">active failed,code is %d</string>
+    <string name="library_not_found">library not found, please check if you put .so files into the project directory app\\src\\main\\jniLibs</string>
+    <string name="ft_op_0">only detect 0 degree in video mode</string>
+    <string name="ft_op_90">only detect 90 degree in video mode</string>
+    <string name="ft_op_180">only detect 180 degree in video mode</string>
+    <string name="ft_op_270">only detect 270 degree in video mode</string>
+    <string name="ft_op_all">detect all degrees in video mode</string>
+
+    <!--face attributes detect(image) page-->
+    <string name="start_process">process</string>
+    <string name="choose_local_image">choose local image</string>
+    <string name="processing">processing</string>
+
+    <!--face compare 1:n(image vs image) page-->
+    <string name="choose_main_image">choose main image</string>
+    <string name="add_item_image">add item image</string>
+    <string name="notice_choose_main_img">please choose main image first</string>
+    <string name="compare_failed">compare failed!code is %d</string>
+
+    <!--global get picture failed notification-->
+    <string name="get_picture_failed">failed to get picture!</string>
+
+    <!--global permission denied notification-->
+    <string name="permission_denied">permission denied!</string>
+
+    <!--global init failed notification-->
+    <string name="init_failed">init failed,code is %d</string>
+    <string name="engine_not_initialized">engine not initialized! code is %d</string>
+
+    <!--single/dual camera register&recognize page-->
+    <string name="register">register</string>
+    <string name="switch_camera">switch camera</string>
+    <string name="switch_camera_failed">switch camera failed</string>
+    <string name="notice_change_detect_degree">camera switched, if no face detected, please change face detect degree in homepage</string>
+    <string name="recognize_failed_notice">DENIED:%s</string>
+    <string name="recognize_success_notice">PASS:%s</string>
+    <string name="low_confidence_level">face low confidence level</string>
+    <string name="specific_engine_init_failed">%s init failed, code is:%d</string>
+    <string name="liveness_detect">liveness detect</string>
+    <string name="camera_rgb">RGB CAMERA</string>
+    <string name="camera_ir">IR CAMERA</string>
+    <string name="camera_rgb_preview_size">RGB CAMERA\n%dx%d</string>
+    <string name="camera_ir_preview_size">IR CAMERA\n%dx%d</string>
+    <string name="camera_error_notice">\npossible reason:open two cameras at the same time is not allowed on this device</string>
+    <string name="draw_ir_rect_mirror_horizontal">draw IR face rect mirror horizontal</string>
+    <string name="draw_ir_rect_mirror_vertical">draw IR face rect mirror vertical</string>
+
+    <!--batch process dialog-->
+    <string name="progress_dialog_batch_register">progress: %d / %d</string>
+    <string name="progress_dialog_registering_please_wait">registering,please wait</string>
+
+    <!--batch process-->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="batch_process_notification_register">please put the images that need to register into directory \nsdcard/arcfacedemo/register</string>
+    <string name="batch_process_no_face_need_to_delete">no face need to delete</string>
+    <string name="batch_process_confirm_delete">delete those %d images and face features?</string>
+    <string name="batch_process_batch_register">batch register</string>
+    <string name="batch_process_notification">notification</string>
+    <string name="batch_process_clear_faces">clear faces</string>
+    <string name="batch_process_path_is_not_exists">path \n%s\n is not exists</string>
+    <string name="batch_process_path_is_not_dir">path \n%s\n is not a directory</string>
+    <string name="batch_process_processing_please_wait">process start,please wait</string>
+    <string name="batch_process_finished_info">process finished!\ntotal count =  %d \nsuccess count = %d \nfailed count = %d \nfailed images are in directory \' %s \'</string>
+    <string name="arc_register_face">register face</string>
+    <string name="arc_recognize_face">recognize face</string>
+    <string name="aidl">AIDL Test</string>
+
+
+</resources>
