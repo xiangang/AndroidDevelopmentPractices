@@ -81,8 +81,15 @@ class MainActivity : ComponentActivity() {
                     }
                     gameViewModel.onGameScoreChange(score)
 
-                    //TODO 难度算法：控制敌机数量，飞行速度等
+                    //简单处理
+                    if (score in 100..999) {
+                        gameViewModel.onGameLevelChange(2)
 
+                    }
+                    if (score in 1000..1999) {
+                        gameViewModel.onGameLevelChange(3)
+
+                    }
                 }
             },
             onDying = {

@@ -7,10 +7,10 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +34,7 @@ import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.viewmodel.GameViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
 
 /**
  * 敌军飞机爆炸动画
@@ -159,43 +162,33 @@ fun ComposeShowBombSprite(
 
 }
 
-
-/*@InternalCoroutinesApi
+/**
+ * 这里使用状态提升，状态下沉，控制上升
+ */
+@InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun ComposeShowEnemyPlaneBombSprite(
+fun ComposeShowEnemyPlaneBomb(
     gameScore: Int = 0,
-    enemyPlane: EnemyPlane
+    enemyPlane: EnemyPlane,
+    showBombAnim: Boolean,
+    onBombAnimChange: (Boolean) -> Unit
 ) {
     //准备爆炸动画
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} ------------------------------ segment = ${enemyPlane.segment}")
-
-    var show by remember {
-        mutableStateOf(false)
-    }
-
-    if (enemyPlane.isDead()) {
-        show = true
-    }
+    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() showBombAnim $showBombAnim, enemyPlane ${enemyPlane.id} ------------------------------ segment = ${enemyPlane.segment}")
 
     val segment = enemyPlane.segment
     val anim = remember {
         TargetBasedAnimation(
-            animationSpec = tween(enemyPlane.segment * 30),
+            animationSpec = tween(durationMillis = enemyPlane.segment * (1000 / 60)),//相当一秒播放30帧
             typeConverter = Int.VectorConverter,
             initialValue = 0,
             targetValue = segment - 1
         )
     }
 
-    var animationSegmentIndex by remember {
-        mutableStateOf(0)
-    }
-
+    var animationSegmentIndex by remember { mutableStateOf(0) }
     var playTime by remember { mutableStateOf(0L) }
-
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane.state ${enemyPlane.state} ")
-
     LaunchedEffect(gameScore) {
         val startTime = withFrameNanos { it }
         do {
@@ -204,7 +197,7 @@ fun ComposeShowEnemyPlaneBombSprite(
         } while (!anim.isFinishedFromNanos(playTime))
 
     }
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} --------------> animationSegmentIndex $animationSegmentIndex")
+    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> animationSegmentIndex = $animationSegmentIndex, enemyPlane =  $enemyPlane")
 
     //越界检测
     if (animationSegmentIndex >= enemyPlane.segment) {
@@ -227,9 +220,6 @@ fun ComposeShowEnemyPlaneBombSprite(
         bombWidthWidthPx / displayBitmapWidth,
         bombWidthWidthPx / bitmap.height
     )
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} bitmap.width ${bitmap.width}")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} displayBitmapWidth $displayBitmapWidth")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} animationSegmentIndex * displayBitmapWidth ${animationSegmentIndex * displayBitmapWidth}")
 
     //越界检测
     if ((animationSegmentIndex * displayBitmapWidth) + displayBitmapWidth > bitmap.width) {
@@ -247,37 +237,52 @@ fun ComposeShowEnemyPlaneBombSprite(
         true
     )
     val imageBitmap: ImageBitmap = displayBitmap.asImageBitmap()
-    val imageBitmapWidth = imageBitmap.width
-    val imageBitmapHeight = imageBitmap.height
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} bombWidthWidthPx $bombWidthWidthPx")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} animationValue * displayBitmapWidth) ${animationSegmentIndex * displayBitmapWidth}")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} imageBitmapWidth $imageBitmapWidth")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} imageBitmapHeight $imageBitmapHeight")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} animationSegmentIndex $animationSegmentIndex")
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBombSprite() enemyPlane ${enemyPlane.id} ------------------------------enemyPlane $enemyPlane")
-
-    //播放到最后一帧动画就进入死亡状态
-    if (animationSegmentIndex == enemyPlane.segment - 1) {
-        show = false
-    }
 
     Canvas(
         modifier = Modifier
             .fillMaxSize()
             .size(bombWidth)
     ) {
-
         drawImage(
             imageBitmap,
             topLeft = Offset(
                 enemyPlane.x.toFloat(),
                 enemyPlane.y.toFloat(),
             ),
-            alpha = if (show) 1.0f else 0f,
+            alpha = if (showBombAnim) 1.0f else 0f,
         )
     }
 
-}*/
+
+    //播放到最后一帧动画就进入死亡状态
+    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> before showBombAnim = $showBombAnim, animationSegmentIndex = $animationSegmentIndex ")
+    if (animationSegmentIndex == enemyPlane.segment - 2 && showBombAnim) {
+        onBombAnimChange(false)
+    }
+    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> after showBombAnim = $showBombAnim, animationSegmentIndex = $animationSegmentIndex ")
+
+}
+
+@Composable
+fun TextAndTextField(name: String, onValueChange: (String) -> Unit) {
+
+    Column(modifier = Modifier.padding(16.dp)) {
+
+        Text(
+            text = "Hello，$name",
+            modifier = Modifier.padding(bottom = 6.dp),
+            style = MaterialTheme.typography.h5,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = onValueChange,
+            label = { Text(text = "name") })
+    }
+
+}
 
 /**
  * 测试爆炸动画

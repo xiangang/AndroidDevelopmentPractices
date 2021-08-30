@@ -1,7 +1,6 @@
 package com.nxg.composeplane.viewmodel
 
 import android.app.Application
-import android.graphics.Point
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -26,6 +25,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
 
     }
+
+    //id
+    val id = AtomicLong(0L)
 
     /**
      * 游戏状态StateFlow
@@ -58,6 +60,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * 玩家飞机移动
+     */
     fun onPlayerPlaneMove(x: Int, y: Int) {
         val playerPlane = playerPlaneFlow.value
         viewModelScope.launch {
@@ -70,16 +75,25 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * 玩家飞机重生
+     */
+    private fun onPlayerPlaneReBirth() {
+        val playerPlane = playerPlaneFlow.value
+        playerPlane.reBirth()
+        onPlayerPlaneFlowChange(playerPlane)
+    }
+
+    /**
      * 敌机StateFlow
      */
-    private val _enemyPlaneListFlow = MutableStateFlow(listOf<EnemyPlane>())
+    private val _enemyPlaneListFlow = MutableStateFlow(mutableListOf<EnemyPlane>())
 
     val enemyPlaneListFlow = _enemyPlaneListFlow.asStateFlow()
 
     private fun onEnemyPlaneListFlowChange(list: List<EnemyPlane>) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
-                _enemyPlaneListFlow.emit(list)
+                _enemyPlaneListFlow.emit(list as MutableList<EnemyPlane>)
             }
         }
     }
@@ -124,6 +138,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _gameScore.value = score
     }
 
+    /**
+     * 难度等级
+     */
+    private val _gameLevel = MutableLiveData(0)
+    val gameLevel: LiveData<Int> = _gameLevel
+
+    fun onGameLevelChange(level: Int) {
+        if (_gameLevel.value != level) {
+            _gameLevel.value = level
+            when (level) {
+                1 -> createEnemySprite(3, 2, 1)
+                2 -> createEnemySprite(6, 3, 2)
+                3 -> createEnemySprite(10, 5, 3)
+            }
+        }
+    }
+
     init {
 
         viewModelScope.launch {
@@ -144,6 +175,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
         createPlayerSprite()
 
+        onGameLevelChange(1)
     }
 
     /**
@@ -157,13 +189,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val widthPixels = dm.widthPixels
         val heightPixels = dm.heightPixels
 
-        val playerPlane = playerPlaneFlow.value
-        playerPlane.reBirth()
-        onPlayerPlaneFlowChange(playerPlane)
-
         //初始化玩家飞机出生位置
         val playerPlaneSizePx = DensityUtil.dp2px(resources, PLAYER_PLANE_SPRITE_SIZE)
-        onPlayerPlaneMove(widthPixels / 2 - playerPlaneSizePx!! / 2, (heightPixels * 1.5).toInt())
+        val startX = widthPixels / 2 - playerPlaneSizePx!! / 2
+        val startY = (heightPixels * 1.5).toInt()
+        val playerPlane = playerPlaneFlow.value
+        playerPlane.startX = startX
+        playerPlane.startY = startY
+        playerPlane.reBirth()
+        onPlayerPlaneFlowChange(playerPlane)
 
         //初始化子弹(10连发)
         onBulletListFlowChange(
@@ -180,16 +214,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 Bullet(),
             )
         )
-
-        createEnemySprite(heightPixels)
     }
 
     /**
      * 生成敌机
      */
-    private fun createEnemySprite(heightPixels: Int) {
-
-        val id = AtomicLong(0L)
+    private fun createEnemySprite(
+        smallEnemyPlaneNum: Int,
+        middleEnemyPlaneNum: Int,
+        bigEnemyPlaneNum: Int
+    ) {
+        //获取屏幕宽高
+        val heightPixels = getApplication<Application>().resources.displayMetrics.heightPixels
 
         //初始化敌机
         val smallEnemyPlane = EnemyPlane(
@@ -198,6 +234,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             drawableIds = listOf(R.drawable.sprite_small_enemy_plane),
             bombDrawableId = R.drawable.sprite_small_enemy_plane_seq,
             startY = (-heightPixels..0).random(),
+            speed = 6000,
+            velocity = 10,
             segment = 3,
             power = 1,
             value = 10
@@ -214,6 +252,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             width = MIDDLE_ENEMY_PLANE_SPRITE_SIZE.dp,
             height = MIDDLE_ENEMY_PLANE_SPRITE_SIZE.dp,
             speed = 8000,
+            velocity = 8,
             segment = 4,
             power = 4,
             value = 30
@@ -232,52 +271,54 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             width = BIG_ENEMY_PLANE_SPRITE_SIZE.dp,
             height = BIG_ENEMY_PLANE_SPRITE_SIZE.dp,
             speed = 12000,
+            velocity = 4,
             segment = 6,
             power = 9,
             value = 80
         )
-        val listEnemyPlane = mutableListOf<EnemyPlane>()
+        val listEnemyPlane = enemyPlaneListFlow.value
         //敌机飞行距离给定是高度的两倍，随机生成的时候要控制在这个范围内
         listEnemyPlane.add(smallEnemyPlane)
-        listEnemyPlane.add(
-            smallEnemyPlane.copy(
-                id = id.getAndIncrement(),
-                startY = (-heightPixels..0).random()
+        for (small in 1 until smallEnemyPlaneNum) {
+            listEnemyPlane.add(
+                smallEnemyPlane.copy(
+                    id = id.getAndIncrement(),
+                    startY = (-heightPixels..0).random()
+                )
             )
-        )
-        listEnemyPlane.add(
-            smallEnemyPlane.copy(
-                id = id.getAndIncrement(),
-                startY = (-heightPixels..0).random()
-            )
-        )
-        listEnemyPlane.add(middleEnemyPlane)
-        listEnemyPlane.add(
-            middleEnemyPlane.copy(
-                id = id.getAndIncrement(),
-                startY = (-heightPixels * 1.5.toInt()..-heightPixels).random()
-            )
-        )
-        listEnemyPlane.add(
-            bigEnemyPlane.copy(
-                id = id.getAndIncrement(),
-                startY = (-heightPixels * 2..-heightPixels * 1.5.toInt()).random()
-            )
-        )
-        onEnemyPlaneListFlowChange(listEnemyPlane)
-
-        //初始化和敌机数量一致的爆炸精灵
-        val bombList = mutableListOf<Bomb>()
-        for (enemyPlane in listEnemyPlane) {
-            bombList.add(Bomb(id = enemyPlane.id))
         }
-        onBombListFlowChange(bombList)
 
+        listEnemyPlane.add(middleEnemyPlane)
+        for (middle in 1 until middleEnemyPlaneNum) {
+            listEnemyPlane.add(
+                middleEnemyPlane.copy(
+                    id = id.getAndIncrement(),
+                    startY = (-heightPixels * 1.5.toInt()..-heightPixels).random()
+                )
+            )
+        }
+
+        for (big in 1 until bigEnemyPlaneNum) {
+            listEnemyPlane.add(
+                bigEnemyPlane.copy(
+                    id = id.getAndIncrement(),
+                    startY = (-heightPixels * 2..(-heightPixels * 1.5).toInt()).random()
+                )
+            )
+        }
+        for (enemyPlane in listEnemyPlane) {
+            LogUtil.printLog(message = "createEnemySprite: enemyPlane $enemyPlane")
+        }
+        onEnemyPlaneListFlowChange(listEnemyPlane)
     }
 
     private fun running() {
 
+        //分数归零
         onGameScoreChange(0)
+
+        //玩家飞机重生
+        onPlayerPlaneReBirth()
 
     }
 }

@@ -4,7 +4,6 @@ package com.nxg.composeplane.view
  * 子弹
  */
 import android.annotation.SuppressLint
-import android.app.Application
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
 import com.nxg.composeplane.model.*
 import com.nxg.composeplane.util.LogUtil
-import com.nxg.composeplane.util.SoundPoolUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 /**

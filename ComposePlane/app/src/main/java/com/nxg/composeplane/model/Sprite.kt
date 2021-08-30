@@ -27,11 +27,14 @@ open class Sprite(
     ),//资源图标
     @DrawableRes open val bombDrawableId: Int = R.drawable.sprite_explosion_seq, //敌机爆炸帧动画资源
     open var segment: Int = 14, //爆炸效果由segment个片段组成:玩家飞机是4，小飞机是3，中飞机是4大飞机是6，explosion是14
-    open var x: Int = 0, //x周坐标起点
-    open var y: Int = 0, //y轴坐标起点
+    open var x: Int = 0, //实时x轴坐标
+    open var y: Int = 0, //实时y轴坐标起点
+    open var startX: Int = -100, //出现的起始位置
+    open var startY: Int = -100, //出现的起始位置
     open var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     open var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
-    open var speed: Int = 500, //飞行速度
+    open var speed: Int = 500, //飞行速度（弃用）
+    open var velocity: Int = 1, //飞行速度（每帧移动的像素）
     open var state: SpriteState = SpriteState.LIFE, //飞出屏幕或发生碰撞代表死亡
 ) {
 
@@ -43,7 +46,7 @@ open class Sprite(
         state = SpriteState.LIFE
     }
 
-    fun die() {
+    open fun die() {
         state = SpriteState.DEATH
     }
 
@@ -59,9 +62,7 @@ open class Sprite(
  * 玩家飞机精灵
  */
 const val PLAYER_PLANE_SPRITE_SIZE = 60
-const val PLAYER_PLANE_SPRITE_POINT_X = -500
-const val PLAYER_PLANE_SPRITE_POINT_Y = -500
-const val PLAYER_PLANE_PROTECT = 3
+const val PLAYER_PLANE_PROTECT = 60
 
 @InternalCoroutinesApi
 data class PlayerPlane(
@@ -73,13 +74,14 @@ data class PlayerPlane(
     ), //玩家飞机资源图标
     @DrawableRes val bombDrawableIds: Int = R.drawable.sprite_player_plane_bomb_seq, //玩家飞机爆炸帧动画资源
     override var segment: Int = 4, //爆炸效果由segment个片段组成
-    override var x: Int = PLAYER_PLANE_SPRITE_POINT_X, //玩家飞机在X轴上的位置
-    override var y: Int = PLAYER_PLANE_SPRITE_POINT_Y, //玩家飞机在Y轴上的位置
+    override var x: Int = -100, //玩家飞机在X轴上的位置
+    override var y: Int = -100, //玩家飞机在Y轴上的位置
     override var width: Dp = PLAYER_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = PLAYER_PLANE_SPRITE_SIZE.dp, //高
     override var speed: Int = 200, //飞行速度，沿着Y轴从屏幕底部往屏幕顶部（屏幕高度）飞行一次所花费的时间
-    var protect: Int = 3, //刚出现时的闪烁次数（此时无敌状态）
+    var protect: Int = PLAYER_PLANE_PROTECT, //刚出现时的闪烁次数（此时无敌状态）
     var animateIn: Boolean = true, //飞入动画标志位
+    var life: Int = 1, //生命值
 ) : Sprite() {
 
     /**
@@ -96,6 +98,8 @@ data class PlayerPlane(
     override fun reBirth() {
         animateIn = true
         state = SpriteState.LIFE
+        x = startX
+        y = startY
         protect = PLAYER_PLANE_PROTECT
     }
 }
@@ -135,13 +139,17 @@ data class EnemyPlane(
     override var segment: Int = 3, //爆炸效果由segment个片段组成，小飞机是3，中飞机是4，大飞机是6
     override var x: Int = 0, //敌机当前在X轴上的位置
     override var y: Int = -100, //敌机当前在Y轴上的位置
+    override var startY: Int = -100, //出现的起始位置
     override var width: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //高
-    override var speed: Int = 6000, //飞行速度，从屏幕顶端部沿着Y轴飞行到屏幕底部所花费的时间
+    override var speed: Int = 6000, //飞行速度，从屏幕顶端部沿着Y轴飞行到屏幕底部所花费的时间(弃用)
+    override var velocity: Int = 1, //飞行速度（每帧移动的像素）
+    var bombX: Int = -100, //爆炸动画当前在X轴上的位置
+    var bombY: Int = -100, //爆炸动画当前在Y轴上的位置
     val power: Int = 1, //生命值，敌机的抗打击能力
     var hit: Int = 0, //被击中消耗的生命值
     val value: Int = 10, //打一个敌机的得分
-    var startY: Int = -100 //出现的起始位置
+
 ) : Sprite() {
 
     fun beHit(reduce: Int) {
@@ -152,7 +160,14 @@ data class EnemyPlane(
 
     override fun reBirth() {
         state = SpriteState.LIFE
+        y = startY
         hit = 0
+    }
+
+    override fun die() {
+        state = SpriteState.DEATH
+        bombX = x
+        bombY = y
     }
 
     override fun toString(): String {

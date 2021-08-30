@@ -22,6 +22,7 @@ data class OnGameAction(
     val onPlayerMove: (x: Int, y: Int) -> Unit = { _: Int, _: Int -> },
     val onScore: (score: Int) -> Unit = { _: Int -> },
     val onShooting: (resId: Int) -> Unit = { _: Int -> },
+    val onLevelUp: (score: Int) -> Unit = { _: Int -> },
     val onDying: () -> Unit = {},
     val onOver: () -> Unit = {},
     val onExit: () -> Unit = {},
