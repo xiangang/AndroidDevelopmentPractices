@@ -191,7 +191,7 @@ fun GameStartPlaneInAndOut(
     val animOut = remember {
         TargetBasedAnimation(
             animationSpec = tween(
-                durationMillis = 300,
+                durationMillis = 200,
                 delayMillis = 0,
                 easing = LinearEasing
             ),

@@ -3,7 +3,6 @@ package com.nxg.composeplane.view
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -21,11 +19,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
 import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.OnGameAction
-import com.nxg.composeplane.model.PLAYER_PLANE_SPRITE_SIZE
 import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -45,16 +41,16 @@ fun PlayerPlaneSprite(
     playerPlane: PlayerPlane,
     gameAction: OnGameAction
 ) {
-    if (gameState == GameState.Dying || gameState == GameState.Over) {
+    if (gameState != GameState.Running) {
         return
     }
 
+    //初始化参数
     val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
     val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
+    val playerPlaneHeightPx = with(LocalDensity.current) { playerPlane.height.toPx() }
 
-    val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
-    val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
-
+    //循环动画
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -65,13 +61,11 @@ fun PlayerPlaneSprite(
         )
     )
 
-    LogUtil.printLog(message = "PlayerPlaneSprite() alpha = $alpha")
-    LogUtil.printLog(message = "PlayerPlaneSprite() playerPlane.isNoProtect() = ${playerPlane.isNoProtect()}")
-    //游戏开始后，动画完成减少保护次数，知道为0
+    //游戏开始后，动画完成减少保护次数，直到为0
     if (gameState == GameState.Running && !playerPlane.isNoProtect() && alpha >= 0.5f) {
         playerPlane.reduceProtect()
     }
-    LogUtil.printLog(message = "PlayerPlaneSprite() playerPlane.protect = ${playerPlane.protect} ")
+
     LogUtil.printLog(message = "PlayerPlaneSprite() playerPlane.x = ${playerPlane.x}  playerPlane.y = ${playerPlane.y}")
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -81,11 +75,11 @@ fun PlayerPlaneSprite(
             modifier = Modifier
                 .offset { IntOffset(playerPlane.x, playerPlane.y) }
                 //.background(Color.Blue)
-                .size(playerPlaneSize)
+                .size(playerPlane.width, playerPlane.height)
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
                         change.consumeAllChanges()
-                        //这里有点奇怪，打印的状态没有跟着变化
+                        //这里有点奇怪，打印的状态没有跟着变化，可能是作用域的问题？
                         LogUtil.printLog(message = "PlayerPlaneSprite() detectDragGestures gameState =  $gameState")
                         /*if (gameState != GameState.Running) {
                             return@detectDragGestures
@@ -97,9 +91,9 @@ fun PlayerPlaneSprite(
                             newOffsetX + dragAmount.x <= 0 -> {
                                 newOffsetX = 0
                             }
-                            (newOffsetX + dragAmount.x + playerPlaneSizePx) >= widthPixels -> {
+                            (newOffsetX + dragAmount.x + playerPlaneHeightPx) >= widthPixels -> {
                                 widthPixels.let {
-                                    newOffsetX = it - playerPlaneSizePx.roundToInt()
+                                    newOffsetX = it - playerPlaneHeightPx.roundToInt()
                                 }
                             }
                             else -> {
@@ -120,7 +114,6 @@ fun PlayerPlaneSprite(
                             }
                         }
                         gameAction.onPlayerMove(newOffsetX, newOffsetY)
-                        LogUtil.printLog(message = "PlayerPlaneSprite() after newOffsetX =  $newOffsetX, newOffsetY = $newOffsetY")
                     }
                 }
                 .alpha(
@@ -140,7 +133,7 @@ fun PlayerPlaneSprite(
             modifier = Modifier
                 .offset { IntOffset(playerPlane.x, playerPlane.y) }
                 //.background(Color.Blue)
-                .size(playerPlaneSize)
+                .size(playerPlane.width, playerPlane.height)
                 .alpha(
                     if (gameState == GameState.Running) {
                         //如果处于保护状态这里就不显示了
@@ -173,25 +166,17 @@ fun PlayerPlaneAnimIn(
         return
     }
 
-    val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
+    //初始化必要的参数
     val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
-
-    LogUtil.printLog(message = "PlayerPlaneAnimIn() heightPixels = $heightPixels")
-
-    val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
-    val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
-
-    val startOffsetY = heightPixels * 1.5f
-    val endOffsetY = heightPixels - playerPlaneSizePx * 1.5f
-
-    val realOffsetX by remember { mutableStateOf((widthPixels / 2 - playerPlaneSizePx / 2)) }
-    var realOffsetY by remember { mutableStateOf(startOffsetY) }
+    val playerPlaneHeightPx = with(LocalDensity.current) { playerPlane.height.toPx() }
+    val startOffsetY = playerPlane.startY.toFloat()
+    val endOffsetY = heightPixels - playerPlaneHeightPx * 1.5f
+    val realOffsetX by remember { mutableStateOf(playerPlane.startX.toFloat()) }
+    var realOffsetY by remember { mutableStateOf(playerPlane.startY.toFloat()) }
 
     //从底部飞入动画
     var animInState by remember { mutableStateOf(false) }
-
     var show by remember { mutableStateOf(false) }//默认false不显示动画
-
     var offsetYIn by remember {
         mutableStateOf(startOffsetY)
     }
@@ -208,7 +193,6 @@ fun PlayerPlaneAnimIn(
             targetValue = endOffsetY
         )
     }
-
     LaunchedEffect(animInState) {
         val startTime = withFrameNanos { it }
         do {
@@ -217,7 +201,6 @@ fun PlayerPlaneAnimIn(
         } while (!animIn.isFinishedFromNanos(playTimeIn))
 
     }
-
     LogUtil.printLog(message = "PlayerPlaneAnimIn() before animInState = $animInState")
 
     //运行后修改状态，重新执行一次动画
@@ -233,7 +216,6 @@ fun PlayerPlaneAnimIn(
         realOffsetY = startOffsetY
         animInState = false
     }
-
     LogUtil.printLog(message = "PlayerPlaneAnimIn() after animInState = $animInState")
 
     //如果需要显示
@@ -247,7 +229,6 @@ fun PlayerPlaneAnimIn(
         //此时更新飞机真正的位置
         gameAction.onPlayerMove(realOffsetX.roundToInt(), realOffsetY.roundToInt())
     }
-
     LogUtil.printLog(message = "PlayerPlaneAnimIn() offsetYIn2 = $offsetYIn, realOffsetY = $realOffsetY, show $show ")
 
     //喷气动画
@@ -268,7 +249,7 @@ fun PlayerPlaneAnimIn(
             contentDescription = null,
             modifier = Modifier
                 .offset { IntOffset(realOffsetX.roundToInt(), realOffsetY.roundToInt()) }
-                .size(playerPlaneSize)
+                .size(playerPlane.width, playerPlane.height)
                 //.background(Color.Green)
                 .alpha(
                     if (show) {
@@ -286,7 +267,7 @@ fun PlayerPlaneAnimIn(
             contentDescription = null,
             modifier = Modifier
                 .offset { IntOffset(realOffsetX.roundToInt(), realOffsetY.roundToInt()) }
-                .size(playerPlaneSize)
+                .size(playerPlane.width, playerPlane.height)
                 //.background(Color.Green)
                 .alpha(
                     if (show) {

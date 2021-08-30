@@ -12,6 +12,14 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        //assertEquals(4, 2 + 2)
+
+        for (i in 1..100) {
+            val randoms = (0..1080).random()
+            print(randoms)
+            print("\n")
+        }
+
+
     }
 }

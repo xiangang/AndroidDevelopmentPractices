@@ -107,13 +107,12 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
             gameScore,
             playerPlane,
             bulletList,
-            bombList,
             enemyPlaneList,
             onGameAction
         )
 
         //敌军飞机爆炸动画
-        ComposeEnemyPlaneBombSprite(bombList, gameScore)
+        //ComposeEnemyPlaneBombSprite(bombList, gameScore)
 
         //测试爆炸动画
         //TestComposeShowBombSprite()
