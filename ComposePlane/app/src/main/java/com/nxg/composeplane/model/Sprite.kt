@@ -28,14 +28,15 @@ open class Sprite(
     @DrawableRes open val bombDrawableId: Int = R.drawable.sprite_explosion_seq, //敌机爆炸帧动画资源
     open var segment: Int = 14, //爆炸效果由segment个片段组成:玩家飞机是4，小飞机是3，中飞机是4大飞机是6，explosion是14
     open var x: Int = 0, //实时x轴坐标
-    open var y: Int = 0, //实时y轴坐标起点
+    open var y: Int = 0, //实时y轴坐标
     open var startX: Int = -100, //出现的起始位置
     open var startY: Int = -100, //出现的起始位置
     open var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     open var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
     open var speed: Int = 500, //飞行速度（弃用）
-    open var velocity: Int = 1, //飞行速度（每帧移动的像素）
-    open var state: SpriteState = SpriteState.LIFE, //飞出屏幕或发生碰撞代表死亡
+    open var velocity: Int = 40, //飞行速度（每帧移动的像素）
+    open var state: SpriteState = SpriteState.LIFE, //控制是否显示
+    open var init: Boolean = false, //是否初始化，主要用于精灵金初始化起点x，y坐标等，这里为什么不用state控制？state用于否显示，init用于重新初始化数据，而且必须是精灵离开屏幕后（走完整个移动的周期）才能重新初始化
 ) {
 
     fun isAlive() = state == SpriteState.LIFE
@@ -118,9 +119,13 @@ data class Bullet(
     override var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     override var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
     override var speed: Int = 200, //飞行速度，从玩家飞机头部沿着Y轴往屏幕顶部飞行一次屏幕高度所花费的时间
-    var offsetX: Int = -100, //子弹在X轴上与玩家飞机的偏移量
-    var offsetY: Int = -100, //子弹在Y轴上与玩家飞机的偏移量,
-    var hit: Int = 1, //击打能力，击中一次敌人，敌人减掉的生命值
+    override var x: Int = 0, //实时x轴坐标
+    override var y: Int = 0, //实时y轴坐标
+    override var state: SpriteState = SpriteState.DEATH, //默认死亡
+    override var init: Boolean = false, //默认未初始化
+    /*var offsetX: Int = 500, //子弹飞出时的起点位置（玩家飞机的位置x）
+    var offsetY: Int = 1080, //子弹飞出时的起点位置（玩家飞机的位置y）*/
+    var hit: Int = 1,//击打能力，击中一次敌人，敌人减掉的生命值
 ) : Sprite()
 
 /**
@@ -160,7 +165,6 @@ data class EnemyPlane(
 
     override fun reBirth() {
         state = SpriteState.LIFE
-        y = startY
         hit = 0
     }
 
@@ -190,5 +194,5 @@ data class Bomb(
     override var y: Int = 200, //当前在Y轴上的位置
     override var width: Dp = BIG_ENEMY_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = BIG_ENEMY_PLANE_SPRITE_SIZE.dp, //高
-    override var state: SpriteState = SpriteState.DEATH //爆炸动画默认死亡
+    override var state: SpriteState = SpriteState.DEATH //爆炸动画默认不显示
 ) : Sprite()

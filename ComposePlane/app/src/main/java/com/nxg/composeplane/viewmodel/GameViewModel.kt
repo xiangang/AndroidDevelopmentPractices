@@ -101,14 +101,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 子弹StateFlow
      */
-    private val _bulletListFlow = MutableStateFlow(listOf<Bullet>())
+    private val _bulletListFlow = MutableStateFlow(mutableListOf<Bullet>())
 
     val bulletListFlow = _bulletListFlow.asStateFlow()
 
     private fun onBulletListFlowChange(list: List<Bullet>) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
-                _bulletListFlow.emit(list)
+                _bulletListFlow.emit(list as MutableList<Bullet>)
             }
         }
     }
@@ -198,22 +198,25 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         playerPlane.startY = startY
         playerPlane.reBirth()
         onPlayerPlaneFlowChange(playerPlane)
+    }
 
-        //初始化子弹(10连发)
-        onBulletListFlowChange(
-            listOf(
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-                Bullet(),
-            )
-        )
+    /**
+     * 生成子弹
+     */
+    fun createBulletSprite() {
+        //游戏开始并且飞机在屏幕内才会生成
+        if (gameStateFlow.value == GameState.Running && playerPlaneFlow.value.y < getApplication<Application>().resources.displayMetrics.heightPixels) {
+            val bulletList = bulletListFlow.value as ArrayList
+            val firstBullet = bulletList.firstOrNull { it.isDead() }
+            if (firstBullet == null) {
+                bulletList.add(Bullet(state = SpriteState.LIFE, init = false))
+            } else {
+                val newBullet = firstBullet.copy(state = SpriteState.LIFE, init = false)
+                bulletList.add(newBullet)
+                bulletList.removeAt(0)
+            }
+            onBulletListFlowChange(bulletList)
+        }
     }
 
     /**

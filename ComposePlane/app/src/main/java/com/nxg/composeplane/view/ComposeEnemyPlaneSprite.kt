@@ -39,10 +39,8 @@ fun ShowEnemyPlaneSprite(
     enemyPlaneList: List<EnemyPlane>,
     onGameAction: OnGameAction
 ) {
-    LogUtil.printLog(message = "ShowEnemyPlaneSprite: ------------->")
     for (enemyPlane in enemyPlaneList) {
-        LogUtil.printLog(message = "ShowEnemyPlaneSprite: enemyPlane $enemyPlane")
-        EnemyPlaneBomb(
+        EnemyPlaneSpriteBomb(
             gameState,
             gameScore,
             playerPlane,
@@ -56,7 +54,7 @@ fun ShowEnemyPlaneSprite(
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun EnemyPlaneBomb(
+fun EnemyPlaneSpriteBomb(
     gameState: GameState,
     gameScore: Int,
     playerPlane: PlayerPlane,
@@ -64,20 +62,17 @@ fun EnemyPlaneBomb(
     enemyPlane: EnemyPlane,
     onGameAction: OnGameAction
 ) {
-
-    LogUtil.printLog(message = "EnemyPlaneBomb: ---------------------->")
-
     //爆炸动画控制标志位
     var showBombAnim by remember {
         mutableStateOf(false)
     }
 
-    ComposeShowEnemyPlaneBomb(gameScore, enemyPlane, showBombAnim,
+    EnemyPlaneSpriteBomb(gameScore, enemyPlane, showBombAnim,
         onBombAnimChange = {
             showBombAnim = it
         })
 
-    EnemyPlaneFly(
+    EnemyPlaneSpriteFly(
         gameState,
         gameScore,
         playerPlane,
@@ -95,7 +90,7 @@ fun EnemyPlaneBomb(
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun EnemyPlaneFly(
+fun EnemyPlaneSpriteFly(
     gameState: GameState,
     gameScore: Int,
     playerPlane: PlayerPlane,
@@ -104,13 +99,6 @@ fun EnemyPlaneFly(
     enemyPlane: EnemyPlane,
     onGameAction: OnGameAction
 ) {
-
-    LogUtil.printLog(message = "EnemyPlaneFly: ---------------------->")
-
-    /*if (gameState != GameState.Running) {
-        return
-    }*/
-
     //获取屏幕宽高
     val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
     val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
@@ -133,7 +121,7 @@ fun EnemyPlaneFly(
     val bulletSpriteHeight = BULLET_SPRITE_HEIGHT.dp
     val bulletSpriteHeightPx = with(LocalDensity.current) { bulletSpriteHeight.toPx() }
 
-    //重复动画，1秒60帧
+    //重复动画，1秒60帧，测试发现，如果不使用frame，则动画不会循环进行
     val infiniteTransition = rememberInfiniteTransition()
     val frame by infiniteTransition.animateInt(
         initialValue = 0,
@@ -146,30 +134,32 @@ fun EnemyPlaneFly(
 
     //同步敌机Y轴上的位置
     if (gameState == GameState.Running) {
-        //enemyPlane.y = enemyPlane.startY + enemyPlaneSpriteOffsetY.roundToInt()
         enemyPlane.y += enemyPlaneVelocity
     } else {
         enemyPlane.y = enemyPlane.startY
     }
 
-    //如果敌机当前X轴上的位置小于等于0，则给个随机值(在屏幕范围内)
-    if (enemyPlane.x <= 0) {
+    //如果未初始化，则给个随机值(在屏幕范围内)
+    if (!enemyPlane.init) {
         enemyPlane.x = (0..maxEnemyPlaneSpriteX.roundToInt()).random()
-    }
-
-    //飞出屏幕，重置enemyPlane.x(小于等于0)
-    if (enemyPlane.y >= maxEnemyPlaneSpriteY) {
-        enemyPlane.x = -enemyPlaneWidthPx.roundToInt() //这里偏移一个身位就行了
-        enemyPlane.startY = if (enemyPlane.startY >= 0) {
+        enemyPlane.y = if (enemyPlane.startY >= 0) {
             (-heightPixels..0).random()
         } else {
             enemyPlane.startY + (1..3).random()
         }
-        enemyPlane.reBirth() //飞出屏幕则复活，卷土重来
+        enemyPlane.init = true
+        enemyPlane.reBirth()
     }
-    LogUtil.printLog(message = "EnemyPlaneFly: state = ${enemyPlane.state}, enemyPlane.startY = ${enemyPlane.startY}，enemyPlane.x = ${enemyPlane.x}， enemyPlane.y = ${enemyPlane.y}, frame = $frame ")
 
-    //碰撞检测
+    //飞出屏幕，则死亡
+    if (enemyPlane.y >= maxEnemyPlaneSpriteY) {
+        enemyPlane.init = false//这里不能在die方法里调用，否则碰撞检测爆炸后，敌机的位置马上变化了
+        enemyPlane.die()
+    }
+
+    LogUtil.printLog(message = "EnemyPlaneSpriteFly: state = ${enemyPlane.state}, enemyPlane.startY = ${enemyPlane.startY}，enemyPlane.x = ${enemyPlane.x}， enemyPlane.y = ${enemyPlane.y}, frame = $frame ")
+
+    //碰撞检测逻辑
     if (gameState == GameState.Running) {
         //如果敌机碰撞到了玩家飞机(碰撞检测要求，碰撞双方必须都在屏幕内)
         if (enemyPlane.isAlive() && playerPlane.x > 0 && playerPlane.y > 0 && enemyPlane.x > 0 && enemyPlane.y > 0 && isCollisionWithRect(
@@ -183,11 +173,7 @@ fun EnemyPlaneFly(
                 enemyPlaneWidthPx.roundToInt()
             )
         ) {
-            //玩家飞机爆炸
-            //LogUtil.printLog(message = "EnemyPlaneFly Player Plane Bomb -----------------------> gameState $gameState")
-            //LogUtil.printLog(message = "EnemyPlaneFly Player Plane Bomb playerPlane.x = $playerPlane.x, playerPlane.y = $playerPlane.y, targetSizePx = $playerPlaneSizePx")
-            //LogUtil.printLog(message = "EnemyPlaneFly Player Plane Bomb enemyPlane $enemyPlane")
-            //进入GameState。Dying状态，播放爆炸动画，动画结束后进入GameState.Over，弹出提示框，选择重新开始或退出
+            //玩家飞机爆炸，进入GameState.Dying状态，播放爆炸动画，动画结束后进入GameState.Over，弹出提示框，选择重新开始或退出
             if (gameState == GameState.Running) {
                 if (playerPlane.isNoProtect()) {
                     onGameAction.onDying()
@@ -213,29 +199,12 @@ fun EnemyPlaneFly(
 
                 bullet.die()
                 enemyPlane.beHit(bullet.hit)
-                LogUtil.printLog(message = "EnemyPlaneFly enemy play was hit -----------------------> enemyPlane $enemyPlane")
                 //敌机无能量后就爆炸
                 if (enemyPlane.isNoPower()) {
                     //敌机死亡
                     enemyPlane.die()
+                    //爆炸动画可显示
                     onBombAnimChange(true)
-
-                    //更新对应bomb精灵
-                    /*for (bomb in bombList) {
-                        //使用id一致的Bomb精灵来播放爆炸动画
-                        if (enemyPlane.id == bomb.id) {
-                            bomb.x = enemyPlane.x
-                            bomb.y = enemyPlane.y
-                            bomb.width = enemyPlane.width
-                            bomb.height = enemyPlane.height
-                            bomb.bombDrawableId = enemyPlane.bombDrawableId
-                            bomb.segment = enemyPlane.segment
-                            //爆炸精灵默认死亡，所以这里复活，以便触发状态变化（分数改变时），自动播放爆炸动画
-                            bomb.reBirth()
-                            LogUtil.printLog(message = "EnemyPlaneFly enemy play was bomb!!!! -----------------------> bomb $bomb")
-                            break
-                        }
-                    }*/
                     //爆炸动画是观察分数变化来触发的
                     onGameAction.onScore(gameScore + enemyPlane.value)
                     break
@@ -245,8 +214,6 @@ fun EnemyPlaneFly(
     }
 
     //被击中时更新图片
-    //LogUtil.printLog(message = "EnemyPlaneFly Enemy Plane Was Hit And Bomb -----------------------> (enemyPlane.power / enemyPlane.drawableIds.size) ${(enemyPlane.power / enemyPlane.drawableIds.size)}")
-    //LogUtil.printLog(message = "EnemyPlaneFly Enemy Plane Was Hit And Bomb -----------------------> enemyPlane.hit ${enemyPlane.hit}")
     var realDrawableId = enemyPlane.drawableIds[0]
     //如果被击中，则重新计算显示的图片index，先算生命值按图片数量平均，一张图片对应的powerSegment是多少，再用被击中消耗的生命值除以powerSegment，得到倍数
     if (enemyPlane.hit > 0) {
@@ -263,7 +230,6 @@ fun EnemyPlaneFly(
             }
         }
         realDrawableId = enemyPlane.drawableIds[drawableIdsIndex]
-        //LogUtil.printLog(message = "EnemyPlaneFly Enemy Plane Was Hit And Bomb -----------------------> drawableIdsIndex $drawableIdsIndex")
     }
 
     //绘制图片

@@ -119,37 +119,40 @@ fun GameStartPlaneInAndOut(
     widthPixels: Int,
     heightPixels: Int
 ) {
-
+    //初始化动画飞机大小，起始位置
     val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
     val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
 
     val startOffsetY = heightPixels + playerPlaneSizePx
     val endOffsetY = heightPixels / 2f - playerPlaneSizePx / 2f
 
+    //飞入的Y轴值
     var offsetYIn by remember {
         mutableStateOf(startOffsetY)
     }
 
+    //实际显示用到的Y轴值
     var realOffsetY by remember {
         mutableStateOf(0f)
     }
 
-    val offsetX by remember {
+    //实际显示的用到的X轴值
+    val realOffsetX by remember {
         mutableStateOf(widthPixels / 2f - playerPlaneSizePx / 2f)
     }
 
-    //可以考虑rememberUpdatedState：在效应中引用某个值，该效应在值改变时不应重启
+    //控制飞机是否显示
     var show by remember {
         mutableStateOf(true)
     }
 
+    //游戏结束，不再显示动画
     if (gameState == GameState.Over) {
         show = false
     }
 
-    //从底部飞入动画
+    //从底部飞入动画(只会触发一次)
     val animateInState by remember { mutableStateOf(0) }
-
     var playTimeIn by remember { mutableStateOf(0L) }
     val animIn = remember {
         TargetBasedAnimation(
@@ -172,7 +175,7 @@ fun GameStartPlaneInAndOut(
 
     }
 
-    //原地喷气动画
+    //原地喷气动画（重复动画）
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -183,7 +186,7 @@ fun GameStartPlaneInAndOut(
         )
     )
 
-    //向顶部飞出动画
+    //向顶部飞出动画（通过游戏状态触发）
     var offsetYOut by remember {
         mutableStateOf(endOffsetY)//飞出的起点，是飞入的终点
     }
@@ -200,7 +203,6 @@ fun GameStartPlaneInAndOut(
             targetValue = -playerPlaneSizePx * 2f
         )
     }
-
     LaunchedEffect(gameState) {
         val startTime = withFrameNanos { it }
         do {
@@ -210,7 +212,7 @@ fun GameStartPlaneInAndOut(
 
     }
 
-    LogUtil.printLog(message = "GameStart() offsetYIn $offsetYIn, offsetYOut $offsetYOut，offsetX $offsetX, alpha $alpha")
+    LogUtil.printLog(message = "GameStart() offsetYIn $offsetYIn, offsetYOut $offsetYOut，offsetX $realOffsetX, alpha $alpha")
 
     //ImageBitmap.imageResource(id = R.drawable.sprite_loading_1)
     LogUtil.printLog(message = "GameStart() before realOffsetY $realOffsetY")
@@ -231,7 +233,7 @@ fun GameStartPlaneInAndOut(
             contentScale = ContentScale.FillBounds,
             contentDescription = null,
             modifier = Modifier
-                .offset { IntOffset(offsetX.toInt(), realOffsetY.toInt()) }
+                .offset { IntOffset(realOffsetX.toInt(), realOffsetY.toInt()) }
                 .size(playerPlaneSize),
             alpha = if (show) {
                 if (offsetYIn >= endOffsetY) {
@@ -250,7 +252,7 @@ fun GameStartPlaneInAndOut(
             contentScale = ContentScale.FillBounds,
             contentDescription = null,
             modifier = Modifier
-                .offset { IntOffset(offsetX.toInt(), realOffsetY.toInt()) }
+                .offset { IntOffset(realOffsetX.toInt(), realOffsetY.toInt()) }
                 .size(playerPlaneSize),
             alpha = if (offsetYIn >= endOffsetY && show) {
                 if (1 - alpha < 0.5f) 0f else 1f
