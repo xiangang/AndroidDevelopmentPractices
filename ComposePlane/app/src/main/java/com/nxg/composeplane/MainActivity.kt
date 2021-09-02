@@ -8,6 +8,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -21,11 +22,8 @@ import com.nxg.composeplane.util.SoundPoolUtil
 import com.nxg.composeplane.util.StatusBarUtil
 import com.nxg.composeplane.view.Stage
 import com.nxg.composeplane.viewmodel.GameViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
 
@@ -81,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     }
                     gameViewModel.onGameScoreChange(score)
 
-                    //简单处理
+                    //简单处理，不同分数对应不同的等级
                     if (score in 100..999) {
                         gameViewModel.onGameLevelChange(2)
 
@@ -127,6 +125,15 @@ class MainActivity : ComponentActivity() {
             ComposePlaneTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
+
+                    //利用协程定时生成子弹，目前没有用到敌机上。
+                    LaunchedEffect(key1 = Unit) {
+                        while (isActive) {
+                            delay(100)
+                            gameViewModel.createBulletSprite()
+                        }
+                    }
+
                     Stage(gameViewModel, onGameAction)
                 }
             }

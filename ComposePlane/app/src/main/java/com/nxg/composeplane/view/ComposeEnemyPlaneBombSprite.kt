@@ -48,7 +48,7 @@ fun ComposeEnemyPlaneBombSprite(
 ) {
     for (bomb in bombList) {
         ComposeShowBombSprite(gameScore, bomb)
-        LogUtil.printLog(message = "ComposeEnemyPlaneBombSprite() bomb ${bomb}")
+        //LogUtil.printLog(message = "ComposeEnemyPlaneBombSprite() bomb ${bomb}")
     }
 
 }
@@ -61,7 +61,7 @@ fun ComposeShowBombSprite(
     bomb: Bomb
 ) {
     //准备爆炸动画
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} ------------------------------ segment = ${bomb.segment}")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} ------------------------------ segment = ${bomb.segment}")
     val segment = bomb.segment
     val anim = remember {
         TargetBasedAnimation(
@@ -77,7 +77,7 @@ fun ComposeShowBombSprite(
 
     var playTime by remember { mutableStateOf(0L) }
 
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb.state ${bomb.state} ")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb.state ${bomb.state} ")
 
     LaunchedEffect(gameScore) {
         val startTime = withFrameNanos { it }
@@ -87,7 +87,8 @@ fun ComposeShowBombSprite(
         } while (!anim.isFinishedFromNanos(playTime))
 
     }
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} --------------> animationSegmentIndex $animationSegmentIndex")
+
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} --------------> animationSegmentIndex $animationSegmentIndex")
 
     //越界检测
     if (animationSegmentIndex >= bomb.segment) {
@@ -110,9 +111,9 @@ fun ComposeShowBombSprite(
         bombWidthWidthPx / displayBitmapWidth,
         bombWidthWidthPx / bitmap.height
     )
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} bitmap.width ${bitmap.width}")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} displayBitmapWidth $displayBitmapWidth")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationSegmentIndex * displayBitmapWidth ${animationSegmentIndex * displayBitmapWidth}")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} bitmap.width ${bitmap.width}")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} displayBitmapWidth $displayBitmapWidth")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationSegmentIndex * displayBitmapWidth ${animationSegmentIndex * displayBitmapWidth}")
 
     //越界检测
     if ((animationSegmentIndex * displayBitmapWidth) + displayBitmapWidth > bitmap.width) {
@@ -132,12 +133,12 @@ fun ComposeShowBombSprite(
     val imageBitmap: ImageBitmap = displayBitmap.asImageBitmap()
     val imageBitmapWidth = imageBitmap.width
     val imageBitmapHeight = imageBitmap.height
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} bombWidthWidthPx $bombWidthWidthPx")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationValue * displayBitmapWidth) ${animationSegmentIndex * displayBitmapWidth}")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} imageBitmapWidth $imageBitmapWidth")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} imageBitmapHeight $imageBitmapHeight")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationSegmentIndex $animationSegmentIndex")
-    LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} ------------------------------bomb $bomb")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} bombWidthWidthPx $bombWidthWidthPx")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationValue * displayBitmapWidth) ${animationSegmentIndex * displayBitmapWidth}")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} imageBitmapWidth $imageBitmapWidth")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} imageBitmapHeight $imageBitmapHeight")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} animationSegmentIndex $animationSegmentIndex")
+    //LogUtil.printLog(message = "ComposeShowBombSprite() bomb ${bomb.id} ------------------------------bomb $bomb")
 
     //播放到最后一帧动画就进入死亡状态
     if (animationSegmentIndex == bomb.segment - 1) {
@@ -168,15 +169,12 @@ fun ComposeShowBombSprite(
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun ComposeShowEnemyPlaneBomb(
+fun EnemyPlaneSpriteBomb(
     gameScore: Int = 0,
     enemyPlane: EnemyPlane,
     showBombAnim: Boolean,
     onBombAnimChange: (Boolean) -> Unit
 ) {
-    //准备爆炸动画
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() showBombAnim $showBombAnim, enemyPlane ${enemyPlane.id} ------------------------------ segment = ${enemyPlane.segment}")
-
     val segment = enemyPlane.segment
     val anim = remember {
         TargetBasedAnimation(
@@ -197,7 +195,6 @@ fun ComposeShowEnemyPlaneBomb(
         } while (!anim.isFinishedFromNanos(playTime))
 
     }
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> animationSegmentIndex = $animationSegmentIndex, enemyPlane =  $enemyPlane")
 
     //越界检测
     if (animationSegmentIndex >= enemyPlane.segment) {
@@ -253,35 +250,11 @@ fun ComposeShowEnemyPlaneBomb(
         )
     }
 
-
-    //播放到最后一帧动画就进入死亡状态
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> before showBombAnim = $showBombAnim, animationSegmentIndex = $animationSegmentIndex ")
+    //播放到最后一帧动画就隐藏
     if (animationSegmentIndex == enemyPlane.segment - 2 && showBombAnim) {
+        //隐爆炸动画
         onBombAnimChange(false)
     }
-    LogUtil.printLog(message = "ComposeShowEnemyPlaneBomb() ---> after showBombAnim = $showBombAnim, animationSegmentIndex = $animationSegmentIndex ")
-
-}
-
-@Composable
-fun TextAndTextField(name: String, onValueChange: (String) -> Unit) {
-
-    Column(modifier = Modifier.padding(16.dp)) {
-
-        Text(
-            text = "Hello，$name",
-            modifier = Modifier.padding(bottom = 6.dp),
-            style = MaterialTheme.typography.h5,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = onValueChange,
-            label = { Text(text = "name") })
-    }
-
 }
 
 /**
@@ -340,17 +313,14 @@ fun TestComposeShowBombSprite() {
             )
         }
     }
-    LogUtil.printLog(message = "TestComposeShowBombSprite() animationSegmentIndex $animationSegmentIndex")
-    LogUtil.printLog(message = "TestComposeShowBombSprite() bomb.state ${bomb.state}")
-
+    //LogUtil.printLog(message = "TestComposeShowBombSprite() animationSegmentIndex $animationSegmentIndex")
+    //LogUtil.printLog(message = "TestComposeShowBombSprite() bomb.state ${bomb.state}")
     PlayBombSpriteAnimate(bomb, animationSegmentIndex)
-
 }
 
 @InternalCoroutinesApi
 @Composable
 fun PlayBombSpriteAnimate(bomb: Bomb, animationSegmentIndex: Int) {
-    LogUtil.printLog(message = "PlayBombSpriteAnimate() -----------bomb $bomb")
     //越界检测
     if (animationSegmentIndex >= bomb.segment) {
         return
