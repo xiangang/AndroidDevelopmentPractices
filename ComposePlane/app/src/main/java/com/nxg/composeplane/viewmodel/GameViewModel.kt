@@ -75,6 +75,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * 子弹奖励
+     */
+    fun onPlayerAwardBullet(bulletAward: Int) {
+        val playerPlane = playerPlaneFlow.value
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                playerPlane.bulletAward = bulletAward
+                _playerPlaneFlow.emit(playerPlane)
+            }
+        }
+    }
+
+    /**
      * 玩家飞机重生
      */
     private fun onPlayerPlaneReBirth() {
@@ -90,11 +103,30 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     val enemyPlaneListFlow = _enemyPlaneListFlow.asStateFlow()
 
-    private fun onEnemyPlaneListFlowChange(list: List<EnemyPlane>) {
+    private fun onEnemyPlaneListFlowChange(list: MutableList<EnemyPlane>) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
-                _enemyPlaneListFlow.emit(list as MutableList<EnemyPlane>)
+                _enemyPlaneListFlow.emit(list)
             }
+        }
+    }
+
+    fun onDestroyAllEnemy() {
+        viewModelScope.launch {
+            //敌机全部消失
+            val listEnemyPlane = enemyPlaneListFlow.value
+            var countScore = 0
+            withContext(Dispatchers.Default) {
+                for (enemyPlane in listEnemyPlane) {
+                    //存活并且在屏幕内
+                    if (enemyPlane.isAlive() && !enemyPlane.isNoPower() && enemyPlane.y > 0 && enemyPlane.y < getApplication<Application>().resources.displayMetrics.heightPixels) {
+                        countScore += enemyPlane.value
+                        enemyPlane.bomb()//能量归零就爆炸
+                    }
+                }
+                _enemyPlaneListFlow.emit(listEnemyPlane)
+            }
+            gameScore.value?.plus(countScore)?.let { onGameScoreChange(it) }
         }
     }
 
@@ -206,12 +238,58 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun createBulletSprite() {
         //游戏开始并且飞机在屏幕内才会生成
         if (gameStateFlow.value == GameState.Running && playerPlaneFlow.value.y < getApplication<Application>().resources.displayMetrics.heightPixels) {
+            val bulletAward = playerPlaneFlow.value.bulletAward
+            var bulletNum = bulletAward and 0xFFFF //数量
+            val bulletType = bulletAward shr 16 //类型
             val bulletList = bulletListFlow.value as ArrayList
             val firstBullet = bulletList.firstOrNull { it.isDead() }
             if (firstBullet == null) {
-                bulletList.add(Bullet(state = SpriteState.LIFE, init = false))
+                //子弹奖励
+                var newBullet = Bullet(
+                    type = 0,
+                    drawableId = R.drawable.sprite_bullet_single,
+                    width = BULLET_SPRITE_WIDTH.dp,
+                    hit = 1,
+                    state = SpriteState.LIFE,
+                    init = false
+                )
+                if (bulletNum > 0 && bulletType == 1) {
+                    newBullet = newBullet.copy(
+                        type = 1,
+                        drawableId = R.drawable.sprite_bullet_double,
+                        width = 18.dp,
+                        hit = 2,
+                        state = SpriteState.LIFE,
+                        init = false
+                    )
+                    bulletNum--
+                    LogUtil.printLog(message = "createBulletSprite bulletNum $bulletNum")
+                    onPlayerAwardBullet(1 shl 16 or bulletNum)
+                }
+                bulletList.add(newBullet)
             } else {
-                val newBullet = firstBullet.copy(state = SpriteState.LIFE, init = false)
+                //子弹奖励
+                var newBullet = firstBullet.copy(
+                    type = 0,
+                    drawableId = R.drawable.sprite_bullet_single,
+                    width = BULLET_SPRITE_WIDTH.dp,
+                    hit = 1,
+                    state = SpriteState.LIFE,
+                    init = false
+                )
+                if (bulletNum > 0 && bulletType == 1) {
+                    newBullet = firstBullet.copy(
+                        type = 1,
+                        drawableId = R.drawable.sprite_bullet_double,
+                        width = 18.dp,
+                        hit = 2,
+                        state = SpriteState.LIFE,
+                        init = false
+                    )
+                    bulletNum--
+                    LogUtil.printLog(message = "createBulletSprite bulletNum $bulletNum")
+                    onPlayerAwardBullet(1 shl 16 or bulletNum)
+                }
                 bulletList.add(newBullet)
                 bulletList.removeAt(0)
             }
@@ -258,7 +336,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             velocity = 8,
             segment = 4,
             power = 4,
-            value = 30
+            value = 40
         )
         val bigEnemyPlane = EnemyPlane(
             id = id.getAndIncrement(),
@@ -277,7 +355,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             velocity = 4,
             segment = 6,
             power = 9,
-            value = 80
+            value = 90
         )
         val listEnemyPlane = enemyPlaneListFlow.value
         //敌机飞行距离给定是高度的两倍，随机生成的时候要控制在这个范围内

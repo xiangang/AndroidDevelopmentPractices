@@ -101,6 +101,9 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
         //子弹
         BulletSprite(gameState, playerPlane, bulletList, onGameAction)
 
+        //爆炸奖励
+        ComposeBombAward(playerPlane, onGameAction)
+
         //敌军飞机
         ShowEnemyPlaneSprite(
             gameState,
