@@ -21,6 +21,7 @@ enum class SpriteState {
 open class Sprite(
     open var id: Long = System.currentTimeMillis(), //id
     open var name: String = "精灵之父", //名称
+    open var type: Int = 0, //类型
     @DrawableRes open val drawableIds: List<Int> = listOf(
         R.drawable.sprite_player_plane_1,
         R.drawable.sprite_player_plane_2
@@ -81,8 +82,9 @@ data class PlayerPlane(
     override var height: Dp = PLAYER_PLANE_SPRITE_SIZE.dp, //高
     override var speed: Int = 200, //飞行速度，沿着Y轴从屏幕底部往屏幕顶部（屏幕高度）飞行一次所花费的时间
     var protect: Int = PLAYER_PLANE_PROTECT, //刚出现时的闪烁次数（此时无敌状态）
-    var animateIn: Boolean = true, //飞入动画标志位
     var life: Int = 1, //生命值
+    var bulletAward: Int = 0 shl 16 or 0, //子弹奖励（子弹类型 | 子弹数量）
+    var bombAward: Int = 0 shl 16 or 1, //爆炸奖励（爆炸类型 | 爆炸数量）
 ) : Sprite() {
 
     /**
@@ -97,7 +99,6 @@ data class PlayerPlane(
     fun isNoProtect() = protect <= 0
 
     override fun reBirth() {
-        animateIn = true
         state = SpriteState.LIFE
         x = startX
         y = startY
@@ -115,7 +116,8 @@ const val BULLET_SPRITE_HEIGHT = 18
 data class Bullet(
     override var id: Long = System.currentTimeMillis(), //id
     override var name: String = "蓝色单发子弹",
-    @DrawableRes val drawableId: Int = R.drawable.sprite_bullut_single, //子弹资源图标
+    override var type: Int = 0, //类型:0单发子弹，1双发子弹
+    @DrawableRes val drawableId: Int = R.drawable.sprite_bullet_single, //子弹资源图标
     override var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     override var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
     override var speed: Int = 200, //飞行速度，从玩家飞机头部沿着Y轴往屏幕顶部飞行一次屏幕高度所花费的时间
@@ -162,6 +164,10 @@ data class EnemyPlane(
     }
 
     fun isNoPower() = (power - hit) <= 0
+
+    fun bomb() {
+        hit = power
+    }
 
     override fun reBirth() {
         state = SpriteState.LIFE

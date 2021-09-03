@@ -64,13 +64,11 @@ class MainActivity : ComponentActivity() {
             },
             onPlayerMove = { x, y ->
                 run {
-                    LogUtil.printLog(message = "OnGameAction onPlayerMove $x $x")
                     gameViewModel.onPlayerPlaneMove(x, y)
                 }
             },
             onScore = { score ->
                 run {
-                    LogUtil.printLog(message = "OnGameAction onScore $score")
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             SoundPoolUtil.getInstance(applicationContext)
@@ -82,11 +80,13 @@ class MainActivity : ComponentActivity() {
                     //简单处理，不同分数对应不同的等级
                     if (score in 100..999) {
                         gameViewModel.onGameLevelChange(2)
-
                     }
                     if (score in 1000..1999) {
                         gameViewModel.onGameLevelChange(3)
-
+                    }
+                    //模拟奖励双发子弹有100发
+                    if (score == 100) {
+                        gameViewModel.onPlayerAwardBullet(1 shl 16 or 100)
                     }
                 }
             },
@@ -106,6 +106,10 @@ class MainActivity : ComponentActivity() {
             },
             onExit = {
                 finish()
+            },
+            onDestroyAllEnemy = {
+                LogUtil.printLog(message = "onDestroyAllEnemy --->")
+                gameViewModel.onDestroyAllEnemy()
             },
             onShooting = { resId ->
                 run {

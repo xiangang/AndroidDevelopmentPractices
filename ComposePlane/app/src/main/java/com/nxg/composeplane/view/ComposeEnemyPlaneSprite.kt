@@ -161,6 +161,18 @@ fun EnemyPlaneSpriteFly(
 
     //碰撞检测逻辑
     if (gameState == GameState.Running) {
+
+        //这里是使用了爆炸道具
+        if (enemyPlane.isAlive() && enemyPlane.isNoPower()) {
+            //敌机死亡
+            enemyPlane.die()
+            //爆炸动画可显示
+            onBombAnimChange(true)
+            //爆炸动画是观察分数变化来触发的(onDestroyAllEnemy触发)
+            //onGameAction.onScore(gameScore + enemyPlane.value)
+
+        }
+
         //如果敌机碰撞到了玩家飞机(碰撞检测要求，碰撞双方必须都在屏幕内)
         if (enemyPlane.isAlive() && playerPlane.x > 0 && playerPlane.y > 0 && enemyPlane.x > 0 && enemyPlane.y > 0 && isCollisionWithRect(
                 playerPlane.x,
