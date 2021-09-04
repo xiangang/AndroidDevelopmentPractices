@@ -41,7 +41,7 @@ fun PlayerPlaneSprite(
     playerPlane: PlayerPlane,
     gameAction: OnGameAction
 ) {
-    if (gameState != GameState.Running) {
+    if (!(gameState == GameState.Running || gameState == GameState.Paused)) {
         return
     }
 
@@ -81,9 +81,7 @@ fun PlayerPlaneSprite(
                         change.consumeAllChanges()
                         //这里有点奇怪，打印的状态没有跟着变化，可能是作用域的问题？
                         LogUtil.printLog(message = "PlayerPlaneSprite() detectDragGestures gameState =  $gameState")
-                        /*if (gameState != GameState.Running) {
-                            return@detectDragGestures
-                        }*/
+
                         var newOffsetX = playerPlane.x
                         var newOffsetY = playerPlane.y
                         //边界检测
@@ -117,7 +115,7 @@ fun PlayerPlaneSprite(
                     }
                 }
                 .alpha(
-                    if (gameState == GameState.Running) {
+                    if (gameState == GameState.Running || gameState == GameState.Paused) {
                         if (alpha < 0.5f) 0f else 1f
                     } else {
                         0f
@@ -135,7 +133,7 @@ fun PlayerPlaneSprite(
                 //.background(Color.Blue)
                 .size(playerPlane.width, playerPlane.height)
                 .alpha(
-                    if (gameState == GameState.Running) {
+                    if (gameState == GameState.Running || gameState == GameState.Paused) {
                         //如果处于保护状态这里就不显示了
                         if (!playerPlane.isNoProtect()) {
                             0f
@@ -162,9 +160,11 @@ fun PlayerPlaneAnimIn(
     playerPlane: PlayerPlane,
     gameAction: OnGameAction = OnGameAction()
 ) {
-    if (gameState == GameState.Dying || gameState == GameState.Over) {
+    if (gameState != GameState.Running) {
         return
     }
+
+    LogUtil.printLog(message = "PlayerPlaneAnimIn() playerPlane.animateIn = ${playerPlane.animateIn}")
 
     //初始化必要的参数
     val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
@@ -202,6 +202,10 @@ fun PlayerPlaneAnimIn(
 
     }
     LogUtil.printLog(message = "PlayerPlaneAnimIn() before animInState = $animInState")
+
+    if (!playerPlane.animateIn) {
+        return
+    }
 
     //运行后修改状态，重新执行一次动画
     if (gameState == GameState.Running && !show && !animInState) {

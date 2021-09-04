@@ -108,7 +108,7 @@ fun EnemyPlaneSpriteFly(
     val enemyPlaneWidthPx = with(LocalDensity.current) { enemyPlaneWidth.toPx() }
     val enemyPlaneVelocity = enemyPlane.velocity
     val maxEnemyPlaneSpriteX = widthPixels - enemyPlaneWidthPx //X轴屏幕宽度向左偏移一个机身
-    val maxEnemyPlaneSpriteY = heightPixels * 1.5 //Y轴屏幕宽度偏移一个机身
+    val maxEnemyPlaneSpriteY = heightPixels * 1.5 //Y轴1.5倍屏幕高度
 
     //玩家飞机大小
     val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
@@ -135,8 +135,6 @@ fun EnemyPlaneSpriteFly(
     //同步敌机Y轴上的位置
     if (gameState == GameState.Running) {
         enemyPlane.y += enemyPlaneVelocity
-    } else {
-        enemyPlane.y = enemyPlane.startY
     }
 
     //如果未初始化，则给个随机值(在屏幕范围内)
@@ -170,7 +168,6 @@ fun EnemyPlaneSpriteFly(
             onBombAnimChange(true)
             //爆炸动画是观察分数变化来触发的(onDestroyAllEnemy触发)
             //onGameAction.onScore(gameScore + enemyPlane.value)
-
         }
 
         //如果敌机碰撞到了玩家飞机(碰撞检测要求，碰撞双方必须都在屏幕内)

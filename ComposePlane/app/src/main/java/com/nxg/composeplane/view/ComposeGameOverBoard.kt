@@ -21,11 +21,13 @@ import com.nxg.composeplane.model.OnGameAction
 import com.nxg.composeplane.ui.theme.COLOR_999
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.ScoreFontFamily
+import kotlinx.coroutines.InternalCoroutinesApi
 
 
 /**
  * 游戏结束面板
  */
+@InternalCoroutinesApi
 @Composable
 fun GameOverBoard(
     gameState: GameState,
@@ -134,7 +136,7 @@ fun GameOverBoard(
                     )
 
                     TextButton(
-                        onClick = onGameAction.onRestart,
+                        onClick = onGameAction.onReset,
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentSize()
@@ -197,6 +199,7 @@ fun GameOverBoard(
     }
 }
 
+@InternalCoroutinesApi
 @Preview()
 @Composable
 fun PreviewGameOverBoard() {

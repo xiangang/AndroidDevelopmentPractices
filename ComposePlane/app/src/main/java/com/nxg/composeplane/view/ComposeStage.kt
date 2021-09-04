@@ -44,6 +44,9 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
     //获取所有子弹
     val bulletList by gameViewModel.bulletListFlow.collectAsState()
 
+    //获取所有奖励
+    val awardList by gameViewModel.awardListFlow.collectAsState()
+
     //获取所有敌军
     val enemyPlaneList by gameViewModel.enemyPlaneListFlow.collectAsState()
 
@@ -79,7 +82,7 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
         FarBackground(modifier)
 
         //游戏开始界面
-        GameStart(gameState, onGameAction)
+        GameStart(gameState, playerPlane, onGameAction)
 
         //玩家飞机
         PlayerPlaneSprite(
@@ -101,7 +104,10 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
         //子弹
         BulletSprite(gameState, playerPlane, bulletList, onGameAction)
 
-        //爆炸奖励
+        //道具奖励
+        ComposeAwardSprite(gameState, playerPlane, awardList, onGameAction)
+
+        //爆炸道具
         ComposeBombAward(playerPlane, onGameAction)
 
         //敌军飞机
@@ -114,14 +120,11 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
             onGameAction
         )
 
-        //敌军飞机爆炸动画
-        //ComposeEnemyPlaneBombSprite(bombList, gameScore)
-
         //测试爆炸动画
         //TestComposeShowBombSprite()
 
         //得分
-        ComposeScore(gameScore)
+        ComposeScore(gameState, gameScore, onGameAction)
 
         //游戏开始界面
         GameOverBoard(gameState, gameScore, onGameAction)

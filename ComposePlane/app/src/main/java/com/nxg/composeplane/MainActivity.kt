@@ -14,8 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.nxg.composeplane.model.GameState
-import com.nxg.composeplane.model.OnGameAction
+import com.nxg.composeplane.model.*
 import com.nxg.composeplane.ui.theme.ComposePlaneTheme
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.SoundPoolUtil
@@ -59,8 +58,13 @@ class MainActivity : ComponentActivity() {
                 gameViewModel.onGameStateFlowChange(GameState.Running)
             },
 
-            onRestart = {
+            onReset = {
+                gameViewModel.resetGame()
                 gameViewModel.onGameStateFlowChange(GameState.Waiting)
+            },
+            onPause = {
+                gameViewModel.onGameStateFlowChange(GameState.Paused)
+
             },
             onPlayerMove = { x, y ->
                 run {
@@ -85,9 +89,28 @@ class MainActivity : ComponentActivity() {
                         gameViewModel.onGameLevelChange(3)
                     }
                     //模拟奖励双发子弹有100发
-                    if (score == 100) {
-                        gameViewModel.onPlayerAwardBullet(1 shl 16 or 100)
+                    if (score % 100 == 0) {
+                        gameViewModel.createAwardSprite()
                     }
+                }
+            },
+            onAward = { award ->
+                run {
+                    //奖励子弹
+                    if (award.type == AWARD_BULLET) {
+                        val bulletAward = gameViewModel.playerPlaneFlow.value.bulletAward
+                        var num = bulletAward and 0xFFFF //数量
+                        num += award.amount
+                        gameViewModel.onPlayerAwardBullet(BULLET_DOUBLE shl 16 or num)
+                    }
+                    //奖励爆炸道具
+                    if (award.type == AWARD_BOMB) {
+                        val bombAward = gameViewModel.playerPlaneFlow.value.bombAward
+                        var num = bombAward and 0xFFFF //数量
+                        num += award.amount
+                        gameViewModel.onPlayerAwardBomb(0 shl 16 or num)
+                    }
+                    gameViewModel.onAwardRemove(award)
                 }
             },
             onDying = {

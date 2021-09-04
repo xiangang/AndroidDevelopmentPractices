@@ -26,6 +26,7 @@ import com.nxg.composeplane.R
 import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.OnGameAction
 import com.nxg.composeplane.model.PLAYER_PLANE_SPRITE_SIZE
+import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.ScoreFontFamily
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -38,6 +39,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun GameStart(
     gameState: GameState,
+    playerPlane: PlayerPlane,
     onGameAction: OnGameAction = OnGameAction()
 
 ) {
@@ -106,19 +108,27 @@ fun GameStart(
 
     }
 
-    GameStartPlaneInAndOut(gameState, widthPixels, heightPixels)
+    GameStartPlaneInAndOut(gameState, playerPlane, widthPixels, heightPixels)
 
 }
 
-
+/**
+ * 游戏开始玩家爱飞机出场动画
+ */
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
 fun GameStartPlaneInAndOut(
     gameState: GameState,
+    playerPlane: PlayerPlane,
     widthPixels: Int,
     heightPixels: Int
 ) {
+
+    if (!playerPlane.animateIn) {
+        return
+    }
+
     //初始化动画飞机大小，起始位置
     val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
     val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
@@ -272,8 +282,17 @@ fun GameStartPlaneInAndOut(
 @Composable
 fun PreviewGameStart() {
     FarBackground()
+
+    //初始化动画飞机大小，起始位置
+    val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
+    val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
+    val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
+    val offsetX = widthPixels / 2f - playerPlaneSizePx / 2f
+    val offsetY = widthPixels / 2f - playerPlaneSizePx / 2f
+
     GameStart(
         GameState.Waiting,
+        PlayerPlane(x = offsetX.toInt(), y = offsetY.toInt()),
         OnGameAction()
     )
 }
