@@ -83,8 +83,9 @@ data class PlayerPlane(
     override var speed: Int = 200, //飞行速度，沿着Y轴从屏幕底部往屏幕顶部（屏幕高度）飞行一次所花费的时间
     var protect: Int = PLAYER_PLANE_PROTECT, //刚出现时的闪烁次数（此时无敌状态）
     var life: Int = 1, //生命值
-    var bulletAward: Int = 0 shl 16 or 0, //子弹奖励（子弹类型 | 子弹数量）
-    var bombAward: Int = 0 shl 16 or 1, //爆炸奖励（爆炸类型 | 爆炸数量）
+    var animateIn: Boolean = true, //是否需要出场动画
+    var bulletAward: Int = BULLET_DOUBLE shl 16 or 0, //子弹奖励（子弹类型 | 子弹数量），目前类型是1
+    var bombAward: Int = 0 shl 16 or 0, //爆炸奖励（爆炸类型 | 爆炸数量），目前类型只有0
 ) : Sprite() {
 
     /**
@@ -100,9 +101,12 @@ data class PlayerPlane(
 
     override fun reBirth() {
         state = SpriteState.LIFE
+        animateIn = true
         x = startX
         y = startY
         protect = PLAYER_PLANE_PROTECT
+        bulletAward = 0
+        bombAward = 0
     }
 }
 
@@ -111,12 +115,14 @@ data class PlayerPlane(
  */
 const val BULLET_SPRITE_WIDTH = 6
 const val BULLET_SPRITE_HEIGHT = 18
+const val BULLET_SINGLE = 0
+const val BULLET_DOUBLE = 1
 
 @InternalCoroutinesApi
 data class Bullet(
     override var id: Long = System.currentTimeMillis(), //id
     override var name: String = "蓝色单发子弹",
-    override var type: Int = 0, //类型:0单发子弹，1双发子弹
+    override var type: Int = BULLET_SINGLE, //类型:0单发子弹，1双发子弹
     @DrawableRes val drawableId: Int = R.drawable.sprite_bullet_single, //子弹资源图标
     override var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     override var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
@@ -125,9 +131,32 @@ data class Bullet(
     override var y: Int = 0, //实时y轴坐标
     override var state: SpriteState = SpriteState.DEATH, //默认死亡
     override var init: Boolean = false, //默认未初始化
-    /*var offsetX: Int = 500, //子弹飞出时的起点位置（玩家飞机的位置x）
-    var offsetY: Int = 1080, //子弹飞出时的起点位置（玩家飞机的位置y）*/
     var hit: Int = 1,//击打能力，击中一次敌人，敌人减掉的生命值
+) : Sprite()
+
+
+/**
+ * 道具奖励精灵
+ */
+
+const val AWARD_BULLET = 0
+const val AWARD_BOMB = 1
+
+@InternalCoroutinesApi
+data class Award(
+    override var id: Long = System.currentTimeMillis(), //id
+    override var name: String = "子弹道具奖励",
+    override var type: Int = AWARD_BULLET, //类型:0子弹道具奖励，1爆炸道具奖励
+    @DrawableRes var drawableId: Int = R.drawable.sprite_blue_shot_down, //子弹资源图标
+    override var width: Dp = 50.dp, //宽
+    override var height: Dp = 80.dp, //高
+    override var velocity: Int = 20, //飞行速度（每帧移动的像素）
+    override var x: Int = 0, //实时x轴坐标
+    override var y: Int = 0, //实时y轴坐标
+    override var state: SpriteState = SpriteState.DEATH, //默认死亡
+    override var init: Boolean = false, //默认未初始化
+    var amount: Int = 1, //数量
+
 ) : Sprite()
 
 /**

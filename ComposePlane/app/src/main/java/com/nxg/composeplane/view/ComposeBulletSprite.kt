@@ -6,14 +6,11 @@ package com.nxg.composeplane.view
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -25,8 +22,6 @@ import com.nxg.composeplane.R
 import com.nxg.composeplane.model.*
 import com.nxg.composeplane.util.LogUtil
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlin.math.roundToInt
 
 /**
@@ -40,9 +35,7 @@ fun BulletSprite(
     playerPlane: PlayerPlane,
     bulletList: List<Bullet>,
     onGameAction: OnGameAction = OnGameAction()
-
 ) {
-
     //重复动画，1秒60帧
     val infiniteTransition = rememberInfiniteTransition()
     val frame by infiniteTransition.animateInt(
@@ -50,14 +43,12 @@ fun BulletSprite(
         targetValue = 60,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                //delayMillis = index * 100,
                 durationMillis = 1000,
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
         )
     )
-
 
     for ((index, bullet) in bulletList.withIndex()) {
 
@@ -68,9 +59,6 @@ fun BulletSprite(
     }
 
     LogUtil.printLog(message = "BulletSprite()---> frame = $frame, bulletList.size = ${bulletList.size}")
-
-    //BulletShootingSprite(gameState, playerPlane, bulletList[0], 0, onGameAction)
-
 
 }
 
@@ -99,7 +87,6 @@ fun BulletShootingSprite(
 
     //游戏进行中
     if (gameState == GameState.Running) {
-
         //初始化起点
         if (!bullet.init) {
             bullet.startX =
@@ -155,8 +142,8 @@ fun BulletShootingSprite(
                     }
                 )*/
                 .alpha(
-                    if (gameState == GameState.Running) {
-                        if (bullet.isDead()) 0f else 1f
+                    if (bullet.isAlive()) {
+                        1f
                     } else {
                         0f
                     }

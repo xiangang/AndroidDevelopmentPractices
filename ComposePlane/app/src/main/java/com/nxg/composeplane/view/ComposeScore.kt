@@ -1,6 +1,7 @@
 package com.nxg.composeplane.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -12,9 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
+import com.nxg.composeplane.model.GameState
+import com.nxg.composeplane.model.OnGameAction
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.ScoreFontFamily
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -24,28 +26,50 @@ import kotlinx.coroutines.InternalCoroutinesApi
  */
 @InternalCoroutinesApi
 @Composable
-fun ComposeScore(gameScore: Int) {
+fun ComposeScore(
+    gameState: GameState = GameState.Paused,
+    gameScore: Int = 0,
+    gameAction: OnGameAction = OnGameAction()
+) {
     LogUtil.printLog(message = "ComposeScore()")
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
+            .clickable(
+                onClick = if (gameState == GameState.Running) {
+                    gameAction.onPause
+                } else {
+                    gameAction.onStart
+                }
+            )
             .absolutePadding(top = 20.dp)
+            .alpha(if (gameState == GameState.Running || gameState == GameState.Paused) 1f else 0f)
     ) {
+
         Image(
-            painter = painterResource(id = R.drawable.pause),
+            painter = painterResource(
+                id = if (gameState == GameState.Running) {
+                    R.drawable.sprite_pause
+                } else {
+                    R.drawable.sprite_play
+                }
+            ),
             contentScale = ContentScale.FillBounds,
             contentDescription = null,
             modifier = Modifier
                 .padding(start = 4.dp)
                 .size(40.dp)
-                .alpha(0f)
+        )
+
+        Spacer(
+            modifier = Modifier
+                .weight(2f)
         )
 
         Text(
             text = "score: $gameScore",
             modifier = Modifier
-                .weight(1f)
                 .padding(start = 4.dp)
                 .align(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.End),
@@ -61,5 +85,5 @@ fun ComposeScore(gameScore: Int) {
 @Preview()
 @Composable
 fun PreviewComposeScore() {
-    ComposeScore(800)
+    ComposeScore()
 }
