@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import com.nxg.composeplane.R
 import com.nxg.composeplane.model.GameState
-import com.nxg.composeplane.model.OnGameAction
+import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -39,7 +39,7 @@ const val SMALL_ENEMY_PLANE_SPRITE_ALPHA = 100; //喷气速度
 fun PlayerPlaneSprite(
     gameState: GameState,
     playerPlane: PlayerPlane,
-    gameAction: OnGameAction
+    gameAction: GameAction
 ) {
     if (!(gameState == GameState.Running || gameState == GameState.Paused)) {
         return
@@ -111,7 +111,7 @@ fun PlayerPlaneSprite(
                                 newOffsetY += dragAmount.y.roundToInt()
                             }
                         }
-                        gameAction.onPlayerMove(newOffsetX, newOffsetY)
+                        gameAction.playerMove(newOffsetX, newOffsetY)
                     }
                 }
                 .alpha(
@@ -158,7 +158,7 @@ fun PlayerPlaneSprite(
 fun PlayerPlaneAnimIn(
     gameState: GameState,
     playerPlane: PlayerPlane,
-    gameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 ) {
     if (gameState != GameState.Running) {
         return
@@ -231,7 +231,7 @@ fun PlayerPlaneAnimIn(
     if (show && offsetYIn <= endOffsetY) {
         show = false
         //此时更新飞机真正的位置
-        gameAction.onPlayerMove(realOffsetX.roundToInt(), realOffsetY.roundToInt())
+        gameAction.playerMove(realOffsetX.roundToInt(), realOffsetY.roundToInt())
     }
     LogUtil.printLog(message = "PlayerPlaneAnimIn() offsetYIn2 = $offsetYIn, realOffsetY = $realOffsetY, show $show ")
 
@@ -293,6 +293,6 @@ fun PreviewFighterJetPlaneSprite() {
     PlayerPlaneSprite(
         GameState.Waiting,
         PlayerPlane(x = 480, y = 1900),
-        OnGameAction()
+        GameAction()
     )
 }

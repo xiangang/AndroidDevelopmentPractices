@@ -34,7 +34,7 @@ fun BulletSprite(
     gameState: GameState = GameState.Waiting,
     playerPlane: PlayerPlane,
     bulletList: List<Bullet>,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 ) {
     //重复动画，1秒60帧
     val infiniteTransition = rememberInfiniteTransition()
@@ -53,7 +53,7 @@ fun BulletSprite(
     for ((index, bullet) in bulletList.withIndex()) {
 
         if (bullet.isAlive()) {
-            BulletShootingSprite(gameState, playerPlane, bullet, index, onGameAction)
+            BulletShootingSprite(gameState, playerPlane, bullet, index, gameAction)
         }
 
     }
@@ -70,7 +70,7 @@ fun BulletShootingSprite(
     playerPlane: PlayerPlane,
     bullet: Bullet,
     index: Int,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 
 ) {
 
@@ -96,7 +96,7 @@ fun BulletShootingSprite(
             bullet.x = bullet.startX
             bullet.y = bullet.startY
             //播放音频要放到IO线程
-            onGameAction.onShooting(R.raw.shoot)
+            gameAction.shooting(R.raw.shoot)
             LogUtil.printLog(message = "BulletShootingSprite() init start x,y  ---> index = $index, bullet.state = ${bullet.state}, bullet.startY = ${bullet.startY}")
             bullet.init = true
         }

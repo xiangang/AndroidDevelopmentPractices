@@ -31,22 +31,22 @@ import kotlin.math.roundToInt
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun ShowEnemyPlaneSprite(
+fun EnemyPlaneSprite(
     gameState: GameState,
     gameScore: Int,
     playerPlane: PlayerPlane,
     bulletList: List<Bullet>,
     enemyPlaneList: List<EnemyPlane>,
-    onGameAction: OnGameAction
+    gameAction: GameAction
 ) {
     for (enemyPlane in enemyPlaneList) {
-        EnemyPlaneSpriteBomb(
+        EnemyPlaneSpriteBombAndFly(
             gameState,
             gameScore,
             playerPlane,
             bulletList,
             enemyPlane,
-            onGameAction
+            gameAction
         )
     }
 }
@@ -54,20 +54,20 @@ fun ShowEnemyPlaneSprite(
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun EnemyPlaneSpriteBomb(
+fun EnemyPlaneSpriteBombAndFly(
     gameState: GameState,
     gameScore: Int,
     playerPlane: PlayerPlane,
     bulletList: List<Bullet>,
     enemyPlane: EnemyPlane,
-    onGameAction: OnGameAction
+    gameAction: GameAction
 ) {
     //爆炸动画控制标志位
     var showBombAnim by remember {
         mutableStateOf(false)
     }
 
-    EnemyPlaneSpriteBomb(gameScore, enemyPlane, showBombAnim,
+    EnemyPlaneSpriteBombAndFly(gameScore, enemyPlane, showBombAnim,
         onBombAnimChange = {
             showBombAnim = it
         })
@@ -81,7 +81,7 @@ fun EnemyPlaneSpriteBomb(
             showBombAnim = it
         },
         enemyPlane,
-        onGameAction
+        gameAction
     )
 
 }
@@ -97,7 +97,7 @@ fun EnemyPlaneSpriteFly(
     bulletList: List<Bullet>,
     onBombAnimChange: (Boolean) -> Unit,
     enemyPlane: EnemyPlane,
-    onGameAction: OnGameAction
+    gameAction: GameAction
 ) {
     //获取屏幕宽高
     val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
@@ -185,7 +185,7 @@ fun EnemyPlaneSpriteFly(
             //玩家飞机爆炸，进入GameState.Dying状态，播放爆炸动画，动画结束后进入GameState.Over，弹出提示框，选择重新开始或退出
             if (gameState == GameState.Running) {
                 if (playerPlane.isNoProtect()) {
-                    onGameAction.onDying()
+                    gameAction.die()
                 }
             }
 
@@ -215,7 +215,7 @@ fun EnemyPlaneSpriteFly(
                     //爆炸动画可显示
                     onBombAnimChange(true)
                     //爆炸动画是观察分数变化来触发的
-                    onGameAction.onScore(gameScore + enemyPlane.value)
+                    gameAction.score(gameScore + enemyPlane.value)
                     break
                 }
             }
