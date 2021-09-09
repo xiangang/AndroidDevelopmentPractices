@@ -1,19 +1,16 @@
 package com.nxg.composeplane.view
 
-import android.view.MotionEvent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.nxg.composeplane.model.OnGameAction
+import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.viewmodel.GameViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -25,7 +22,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameAction()) {
+fun Stage(gameViewModel: GameViewModel) {
 
     LogUtil.printLog(message = "Stage -------> ")
 
@@ -36,98 +33,74 @@ fun Stage(gameViewModel: GameViewModel, onGameAction: OnGameAction = OnGameActio
     val gameState by gameViewModel.gameStateFlow.collectAsState()
 
     //获取游戏分数
-    val gameScore by gameViewModel.gameScore.observeAsState(0)
+    val gameScore by gameViewModel.gameScoreStateFlow.collectAsState(0)
 
     //获取玩家飞机
-    val playerPlane by gameViewModel.playerPlaneFlow.collectAsState()
+    val playerPlane by gameViewModel.playerPlaneStateFlow.collectAsState()
 
     //获取所有子弹
-    val bulletList by gameViewModel.bulletListFlow.collectAsState()
+    val bulletList by gameViewModel.bulletListStateFlow.collectAsState()
 
     //获取所有奖励
-    val awardList by gameViewModel.awardListFlow.collectAsState()
+    val awardList by gameViewModel.awardListStateFlow.collectAsState()
 
     //获取所有敌军
-    val enemyPlaneList by gameViewModel.enemyPlaneListFlow.collectAsState()
+    val enemyPlaneList by gameViewModel.enemyPlaneListStateFlow.collectAsState()
 
-    //获取所有爆炸动画
-    val bombList by gameViewModel.bombListFlow.collectAsState()
-
+    //获取游戏动作函数
+    val gameAction: GameAction = gameViewModel.onGameAction
 
     val modifier = Modifier.fillMaxSize()
 
-    Box(modifier = modifier
-        .run {
-            pointerInteropFilter {
-                when (it.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        LogUtil.printLog(message = "GameScreen ACTION_DOWN ")
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        LogUtil.printLog(message = "GameScreen ACTION_MOVE")
-                        return@pointerInteropFilter false
-                    }
-
-                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                        LogUtil.printLog(message = "GameScreen ACTION_CANCEL/UP")
-                        return@pointerInteropFilter false
-                    }
-                }
-                false
-            }
-        }) {
+    Box(modifier = modifier) {
 
         // 远景
         FarBackground(modifier)
 
         //游戏开始界面
-        GameStart(gameState, playerPlane, onGameAction)
+        GameStart(gameState, playerPlane, gameAction)
 
         //玩家飞机
         PlayerPlaneSprite(
             gameState,
             playerPlane,
-            onGameAction
+            gameAction
         )
 
         //玩家飞机出场飞入动画
         PlayerPlaneAnimIn(
             gameState,
             playerPlane,
-            onGameAction
+            gameAction
         )
 
         //玩家飞机爆炸动画
-        PlayerPlaneBombSprite(gameState, playerPlane, onGameAction)
-
-        //子弹
-        BulletSprite(gameState, playerPlane, bulletList, onGameAction)
-
-        //道具奖励
-        ComposeAwardSprite(gameState, playerPlane, awardList, onGameAction)
-
-        //爆炸道具
-        ComposeBombAward(playerPlane, onGameAction)
+        PlayerPlaneBombSprite(gameState, playerPlane, gameAction)
 
         //敌军飞机
-        ShowEnemyPlaneSprite(
+        EnemyPlaneSprite(
             gameState,
             gameScore,
             playerPlane,
             bulletList,
             enemyPlaneList,
-            onGameAction
+            gameAction
         )
 
-        //测试爆炸动画
-        //TestComposeShowBombSprite()
+        //子弹
+        BulletSprite(gameState, playerPlane, bulletList, gameAction)
 
-        //得分
-        ComposeScore(gameState, gameScore, onGameAction)
+        //奖励
+        AwardSprite(gameState, playerPlane, awardList, gameAction)
+
+        //爆炸道具
+        BombAward(playerPlane, gameAction)
+
+        //游戏得分
+        GameScore(gameState, gameScore, gameAction)
 
         //游戏开始界面
-        GameOverBoard(gameState, gameScore, onGameAction)
+        GameOver(gameState, gameScore, gameAction)
 
     }
 

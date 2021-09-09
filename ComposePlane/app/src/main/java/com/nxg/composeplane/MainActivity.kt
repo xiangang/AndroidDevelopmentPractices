@@ -14,15 +14,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.nxg.composeplane.model.*
+import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.ui.theme.ComposePlaneTheme
 import com.nxg.composeplane.util.LogUtil
-import com.nxg.composeplane.util.SoundPoolUtil
 import com.nxg.composeplane.util.StatusBarUtil
 import com.nxg.composeplane.view.Stage
 import com.nxg.composeplane.viewmodel.GameViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
         //启动页
         installSplashScreen()
 
-        // 状态栏沉浸式
+        //状态栏沉浸式
         StatusBarUtil.transparentStatusBar(this)
 
         //生命周期观察
@@ -48,111 +50,17 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             gameViewModel.gameStateFlow.collect {
                 LogUtil.printLog(message = "lifecycleScope gameState $it")
+                //退出app
+                if (GameState.Exit == it) {
+                    finish()
+                }
             }
         }
 
-        //游戏动作
-        val onGameAction = OnGameAction(
-
-            onStart = {
-                gameViewModel.onGameStateFlowChange(GameState.Running)
-            },
-
-            onReset = {
-                gameViewModel.resetGame()
-                gameViewModel.onGameStateFlowChange(GameState.Waiting)
-            },
-            onPause = {
-                gameViewModel.onGameStateFlowChange(GameState.Paused)
-
-            },
-            onPlayerMove = { x, y ->
-                run {
-                    gameViewModel.onPlayerPlaneMove(x, y)
-                }
-            },
-            onScore = { score ->
-                run {
-                    lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
-                            SoundPoolUtil.getInstance(applicationContext)
-                                .playByRes(R.raw.explosion)//播放res中的音频
-                        }
-                    }
-                    gameViewModel.onGameScoreChange(score)
-
-                    //简单处理，不同分数对应不同的等级
-                    if (score in 100..999) {
-                        gameViewModel.onGameLevelChange(2)
-                    }
-                    if (score in 1000..1999) {
-                        gameViewModel.onGameLevelChange(3)
-                    }
-                    //模拟奖励双发子弹有100发
-                    if (score % 100 == 0) {
-                        gameViewModel.createAwardSprite()
-                    }
-                }
-            },
-            onAward = { award ->
-                run {
-                    //奖励子弹
-                    if (award.type == AWARD_BULLET) {
-                        val bulletAward = gameViewModel.playerPlaneFlow.value.bulletAward
-                        var num = bulletAward and 0xFFFF //数量
-                        num += award.amount
-                        gameViewModel.onPlayerAwardBullet(BULLET_DOUBLE shl 16 or num)
-                    }
-                    //奖励爆炸道具
-                    if (award.type == AWARD_BOMB) {
-                        val bombAward = gameViewModel.playerPlaneFlow.value.bombAward
-                        var num = bombAward and 0xFFFF //数量
-                        num += award.amount
-                        gameViewModel.onPlayerAwardBomb(0 shl 16 or num)
-                    }
-                    gameViewModel.onAwardRemove(award)
-                }
-            },
-            onDying = {
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        SoundPoolUtil.getInstance(applicationContext)
-                            .playByRes(R.raw.explosion)//播放res中的音频
-                    }
-                }
-
-                gameViewModel.onGameStateFlowChange(GameState.Dying)
-
-            },
-            onOver = {
-                gameViewModel.onGameStateFlowChange(GameState.Over)
-            },
-            onExit = {
-                finish()
-            },
-            onDestroyAllEnemy = {
-                LogUtil.printLog(message = "onDestroyAllEnemy --->")
-                gameViewModel.onDestroyAllEnemy()
-            },
-            onShooting = { resId ->
-                run {
-                    LogUtil.printLog(message = "onShooting resId $resId")
-                    lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
-                            SoundPoolUtil.getInstance(applicationContext)
-                                .playByRes(resId)//播放res中的音频
-                        }
-                    }
-                }
-            },
-        )
-
-        //绘制
+        //绘制界面
         setContent {
             ComposePlaneTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-
                     //利用协程定时生成子弹，目前没有用到敌机上。
                     LaunchedEffect(key1 = Unit) {
                         while (isActive) {
@@ -160,18 +68,12 @@ class MainActivity : ComponentActivity() {
                             gameViewModel.createBulletSprite()
                         }
                     }
-
-                    Stage(gameViewModel, onGameAction)
+                    Stage(gameViewModel)
                 }
             }
         }
     }
 
-    @InternalCoroutinesApi
-    override fun onPause() {
-        super.onPause()
-        //gameViewModel.onGameStateFlowChange(GameState.Paused)
-    }
 }
 
 

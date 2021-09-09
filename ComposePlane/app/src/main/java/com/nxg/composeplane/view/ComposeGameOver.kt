@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.model.GameState
-import com.nxg.composeplane.model.OnGameAction
+import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.ui.theme.COLOR_999
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.ScoreFontFamily
@@ -29,10 +29,10 @@ import kotlinx.coroutines.InternalCoroutinesApi
  */
 @InternalCoroutinesApi
 @Composable
-fun GameOverBoard(
+fun GameOver(
     gameState: GameState,
     gameScore: Int,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 ) {
     LogUtil.printLog(message = "GameOverBoard()")
     Box(
@@ -136,7 +136,7 @@ fun GameOverBoard(
                     )
 
                     TextButton(
-                        onClick = onGameAction.onReset,
+                        onClick = gameAction.reset,
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentSize()
@@ -157,7 +157,7 @@ fun GameOverBoard(
                     )
 
                     TextButton(
-                        onClick = onGameAction.onExit,
+                        onClick = gameAction.exit,
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentSize()
@@ -202,8 +202,8 @@ fun GameOverBoard(
 @InternalCoroutinesApi
 @Preview()
 @Composable
-fun PreviewGameOverBoard() {
+fun PreviewGameOver() {
     FarBackground()
-    GameOverBoard(GameState.Over, 100, OnGameAction())
+    GameOver(GameState.Over, 100, GameAction())
 }
 

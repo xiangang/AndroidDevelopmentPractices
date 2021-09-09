@@ -15,8 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
+import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.model.GameState
-import com.nxg.composeplane.model.OnGameAction
 import com.nxg.composeplane.util.LogUtil
 import com.nxg.composeplane.util.ScoreFontFamily
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -26,23 +26,16 @@ import kotlinx.coroutines.InternalCoroutinesApi
  */
 @InternalCoroutinesApi
 @Composable
-fun ComposeScore(
+fun GameScore(
     gameState: GameState = GameState.Paused,
     gameScore: Int = 0,
-    gameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 ) {
-    LogUtil.printLog(message = "ComposeScore()")
+    LogUtil.printLog(message = "GameScore()")
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .clickable(
-                onClick = if (gameState == GameState.Running) {
-                    gameAction.onPause
-                } else {
-                    gameAction.onStart
-                }
-            )
             .absolutePadding(top = 20.dp)
             .alpha(if (gameState == GameState.Running || gameState == GameState.Paused) 1f else 0f)
     ) {
@@ -60,6 +53,13 @@ fun ComposeScore(
             modifier = Modifier
                 .padding(start = 4.dp)
                 .size(40.dp)
+                .clickable(
+                    onClick = if (gameState == GameState.Running) {
+                        gameAction.pause
+                    } else {
+                        gameAction.start
+                    }
+                )
         )
 
         Spacer(
@@ -85,5 +85,5 @@ fun ComposeScore(
 @Preview()
 @Composable
 fun PreviewComposeScore() {
-    ComposeScore()
+    GameScore()
 }

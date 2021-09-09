@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
 import com.nxg.composeplane.model.GameState
-import com.nxg.composeplane.model.OnGameAction
+import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.model.PLAYER_PLANE_SPRITE_SIZE
 import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
@@ -40,7 +40,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 fun GameStart(
     gameState: GameState,
     playerPlane: PlayerPlane,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 
 ) {
     LogUtil.printLog(message = "GameStart()")
@@ -79,7 +79,7 @@ fun GameStart(
             )
 
             TextButton(
-                onClick = onGameAction.onStart,
+                onClick = gameAction.start,
                 modifier = Modifier
                     .weight(1f)
                     .padding(20.dp)
@@ -113,7 +113,7 @@ fun GameStart(
 }
 
 /**
- * 游戏开始玩家爱飞机出场动画
+ * 游戏开始玩家飞机出场动画
  */
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
@@ -293,7 +293,7 @@ fun PreviewGameStart() {
     GameStart(
         GameState.Waiting,
         PlayerPlane(x = offsetX.toInt(), y = offsetY.toInt()),
-        OnGameAction()
+        GameAction()
     )
 }
 

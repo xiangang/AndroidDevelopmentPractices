@@ -34,11 +34,11 @@ import kotlin.math.roundToInt
 @SuppressLint("RememberReturnType")
 @InternalCoroutinesApi
 @Composable
-fun ComposeAwardSprite(
+fun AwardSprite(
     gameState: GameState,
     playerPlane: PlayerPlane,
     awardList: List<Award>,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 
 ) {
 
@@ -59,7 +59,7 @@ fun ComposeAwardSprite(
     for ((index, award) in awardList.withIndex()) {
         LogUtil.printLog(message = "ComposeAwardSprite()---> award.isAlive() = ${award.isAlive()}")
         if (award.isAlive()) {
-            ComposeAwardSpriteFall(gameState, playerPlane, award, index, onGameAction)
+            AwardSpriteFall(gameState, playerPlane, award, index, gameAction)
         }
     }
 
@@ -73,12 +73,12 @@ fun ComposeAwardSprite(
  */
 @InternalCoroutinesApi
 @Composable
-fun ComposeAwardSpriteFall(
+fun AwardSpriteFall(
     gameState: GameState = GameState.Waiting,
     playerPlane: PlayerPlane,
     award: Award,
     index: Int,
-    onGameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 
 ) {
     LogUtil.printLog(message = "ComposeAwardSpriteFall() ---> award = ${award}")
@@ -131,7 +131,7 @@ fun ComposeAwardSpriteFall(
                 awardHeightPx.roundToInt()
             )
         ) {
-            onGameAction.onAward(award)
+            gameAction.award(award)
             award.die()
         }
 
@@ -177,9 +177,9 @@ fun PreviewComposeAward() {
  */
 @InternalCoroutinesApi
 @Composable
-fun ComposeBombAward(
+fun BombAward(
     playerPlane: PlayerPlane = PlayerPlane(bombAward = (0 shl 16 or 100)),
-    gameAction: OnGameAction = OnGameAction()
+    gameAction: GameAction = GameAction()
 ) {
     LogUtil.printLog(message = "ComposeBombAward()")
     //初始化必要的参数
@@ -215,7 +215,7 @@ fun ComposeBombAward(
                     modifier = Modifier
                         .padding(start = 4.dp)
                         .size(bombWidth, bombHeight)
-                        .clickable(onClick = gameAction.onDestroyAllEnemy)
+                        .clickable(onClick = gameAction.destroyAllEnemy)
                 )
 
                 Text(
@@ -240,5 +240,5 @@ fun ComposeBombAward(
 @Preview()
 @Composable
 fun PreviewComposeBombAward() {
-    ComposeBombAward()
+    BombAward()
 }
