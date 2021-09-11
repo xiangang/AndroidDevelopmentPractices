@@ -28,9 +28,6 @@ object StatusBarUtil {
 
 object DensityUtil {
 
-    fun dxToDp(resources: Resources, px: Int): Int =
-        (px / resources.displayMetrics.density + 0.5f).toInt()
-
     fun dp2px(resources: Resources, dp: Int): Int? {
         return resources.displayMetrics?.density?.let { (dp * it + 0.5).toInt() }
     }
