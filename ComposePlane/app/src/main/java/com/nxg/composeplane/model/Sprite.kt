@@ -34,7 +34,6 @@ open class Sprite(
     open var startY: Int = -100, //出现的起始位置
     open var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     open var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
-    open var speed: Int = 500, //飞行速度（弃用）
     open var velocity: Int = 40, //飞行速度（每帧移动的像素）
     open var state: SpriteState = SpriteState.LIFE, //控制是否显示
     open var init: Boolean = false, //是否初始化，主要用于精灵金初始化起点x，y坐标等，这里为什么不用state控制？state用于否显示，init用于重新初始化数据，而且必须是精灵离开屏幕后（走完整个移动的周期）才能重新初始化
@@ -53,10 +52,8 @@ open class Sprite(
     }
 
     override fun toString(): String {
-        return "Sprite(id=$id, name='$name', drawableIds=$drawableIds, bombDrawableId=$bombDrawableId, segment=$segment, x=$x, y=$y, width=$width, height=$height, speed=$speed, state=$state)"
+        return "Sprite(id=$id, name='$name', drawableIds=$drawableIds, bombDrawableId=$bombDrawableId, segment=$segment, x=$x, y=$y, width=$width, height=$height, state=$state)"
     }
-
-
 }
 
 
@@ -80,11 +77,10 @@ data class PlayerPlane(
     override var y: Int = -100, //玩家飞机在Y轴上的位置
     override var width: Dp = PLAYER_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = PLAYER_PLANE_SPRITE_SIZE.dp, //高
-    override var speed: Int = 200, //飞行速度，沿着Y轴从屏幕底部往屏幕顶部（屏幕高度）飞行一次所花费的时间
     var protect: Int = PLAYER_PLANE_PROTECT, //刚出现时的闪烁次数（此时无敌状态）
-    var life: Int = 1, //生命值
+    var life: Int = 1, //生命(几条命的意思，不像敌机，可以经受多次击打，玩家飞机碰一下就Over)
     var animateIn: Boolean = true, //是否需要出场动画
-    var bulletAward: Int = BULLET_DOUBLE shl 16 or 0, //子弹奖励（子弹类型 | 子弹数量），目前类型是1
+    var bulletAward: Int = BULLET_DOUBLE shl 16 or 0, //子弹奖励（子弹类型 | 子弹数量），类型0是单发红色子弹，1是蓝色双发子弹
     var bombAward: Int = 0 shl 16 or 0, //爆炸奖励（爆炸类型 | 爆炸数量），目前类型只有0
 ) : Sprite() {
 
@@ -126,13 +122,26 @@ data class Bullet(
     @DrawableRes val drawableId: Int = R.drawable.sprite_bullet_single, //子弹资源图标
     override var width: Dp = BULLET_SPRITE_WIDTH.dp, //宽
     override var height: Dp = BULLET_SPRITE_HEIGHT.dp, //高
-    override var speed: Int = 200, //飞行速度，从玩家飞机头部沿着Y轴往屏幕顶部飞行一次屏幕高度所花费的时间
     override var x: Int = 0, //实时x轴坐标
     override var y: Int = 0, //实时y轴坐标
     override var state: SpriteState = SpriteState.DEATH, //默认死亡
     override var init: Boolean = false, //默认未初始化
     var hit: Int = 1,//击打能力，击中一次敌人，敌人减掉的生命值
-) : Sprite()
+) : Sprite() {
+
+    /**
+     * 是否失效，飞出屏幕就失效(这里判断y<0就行了，如果y<0时跟敌机碰撞，敌机肯定是在屏幕外看不到的，所以这里这么处理是可以的)
+     */
+    fun isInvalid() = this.y < 0
+
+    /**
+     * 射击(位移)
+     */
+    fun shoot() {
+        this.x = this.startX
+        this.y -= this.velocity
+    }
+}
 
 
 /**
@@ -178,7 +187,6 @@ data class EnemyPlane(
     override var startY: Int = -100, //出现的起始位置
     override var width: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //高
-    override var speed: Int = 6000, //飞行速度，从屏幕顶端部沿着Y轴飞行到屏幕底部所花费的时间(弃用)
     override var velocity: Int = 1, //飞行速度（每帧移动的像素）
     var bombX: Int = -100, //爆炸动画当前在X轴上的位置
     var bombY: Int = -100, //爆炸动画当前在Y轴上的位置
@@ -210,7 +218,7 @@ data class EnemyPlane(
     }
 
     override fun toString(): String {
-        return "EnemyPlane(state=$state, id=$id, name='$name', drawableIds=$drawableIds, bombDrawableId=$bombDrawableId, segment=$segment, x=$x, y=$y, width=$width, height=$height, speed=$speed, power=$power, hit=$hit, value=$value, startY=$startY)"
+        return "EnemyPlane(state=$state, id=$id, name='$name', drawableIds=$drawableIds, bombDrawableId=$bombDrawableId, segment=$segment, x=$x, y=$y, width=$width, height=$height, power=$power, hit=$hit, value=$value, startY=$startY)"
     }
 
 

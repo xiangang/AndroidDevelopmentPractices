@@ -3,7 +3,6 @@ package com.nxg.composeplane.view
 /**
  * 子弹
  */
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,28 +11,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
-import com.nxg.composeplane.model.*
-import com.nxg.composeplane.util.LogUtil
+import com.nxg.composeplane.model.Bullet
+import com.nxg.composeplane.model.GameAction
+import com.nxg.composeplane.model.GameState
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlin.math.roundToInt
 
 /**
  * 子弹从玩家飞机顶部发射，只能沿着X轴运动，超出屏幕则销毁，与敌机碰撞也销毁，同时计算得分
  */
-@SuppressLint("RememberReturnType")
 @InternalCoroutinesApi
 @Composable
 fun BulletSprite(
     gameState: GameState = GameState.Waiting,
-    playerPlane: PlayerPlane,
-    bulletList: List<Bullet>,
+    bulletList: List<Bullet> = mutableListOf(),
     gameAction: GameAction = GameAction()
 ) {
     //重复动画，1秒60帧
@@ -50,69 +44,53 @@ fun BulletSprite(
         )
     )
 
-    for ((index, bullet) in bulletList.withIndex()) {
+    //游戏不在进行中
+    if (gameState != GameState.Running) {
+        return
+    }
+
+    //每100毫秒生成一颗子弹
+    if (frame % 6 == 0) {
+        gameAction.createBullet()
+    }
+
+    for (bullet in bulletList) {
 
         if (bullet.isAlive()) {
-            BulletShootingSprite(gameState, playerPlane, bullet, index, gameAction)
+
+            //初始化起点(为什么单独搞一个init属性，因为init属性是添加到队里列时才设置false,这样渲染时检测init为false才去初始化起点.
+            //如果根据isAlive来检测会导致Bullet一死亡就算重新初始化位置，但是复用重新发射时，飞机的位置可能已经变动了。
+            if (!bullet.init) {
+                //初始化子弹出生位置
+                gameAction.initBullet(bullet)
+                //播放射击音效，放到非UI线程
+                gameAction.shooting(R.raw.shoot)
+            }
+
+            //子弹离开屏幕后则死亡
+            if (bullet.isInvalid()) {
+                bullet.die()
+            }
+
+            //射击
+            bullet.shoot()
+
+            //显示子弹图片
+            BulletShootingSprite(bullet)
         }
 
     }
-
-    LogUtil.printLog(message = "BulletSprite()---> frame = $frame, bulletList.size = ${bulletList.size}")
 
 }
 
-@SuppressLint("RememberReturnType")
+/**
+ * 更新子弹x、y值，显示子弹图片
+ */
 @InternalCoroutinesApi
 @Composable
 fun BulletShootingSprite(
-    gameState: GameState = GameState.Waiting,
-    playerPlane: PlayerPlane,
-    bullet: Bullet,
-    index: Int,
-    gameAction: GameAction = GameAction()
-
+    bullet: Bullet = Bullet()
 ) {
-
-    //准备工作
-    val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
-    val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
-    val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
-    val bulletWidth = bullet.width
-    val bulletWidthPx = with(LocalDensity.current) { bulletWidth.toPx() }
-    val bulletHeight = bullet.height
-    val bulletHeightPx = with(LocalDensity.current) { bulletHeight.toPx() }
-
-    //LogUtil.printLog(message = "BulletShootingSprite()---> frame = $frame, playerPlane.x = ${playerPlane.x}, playerPlane.y = ${playerPlane.y}")
-
-    //游戏进行中
-    if (gameState == GameState.Running) {
-        //初始化起点
-        if (!bullet.init) {
-            bullet.startX =
-                (playerPlane.x + playerPlaneSizePx / 2 - bulletWidthPx / 2).roundToInt()
-            bullet.startY =
-                (playerPlane.y - bulletHeightPx).roundToInt()
-            bullet.x = bullet.startX
-            bullet.y = bullet.startY
-            //播放音频要放到IO线程
-            gameAction.shooting(R.raw.shoot)
-            LogUtil.printLog(message = "BulletShootingSprite() init start x,y  ---> index = $index, bullet.state = ${bullet.state}, bullet.startY = ${bullet.startY}")
-            bullet.init = true
-        }
-
-        //子弹飞行指定的距离(这里是一个屏幕高度的距离)后
-        if (bullet.isAlive() && bullet.startY - bullet.y >= heightPixels) {
-            LogUtil.printLog(message = "BulletShootingSprite() die  ---> index = $index, bullet.state = ${bullet.state}, bullet.startY = ${bullet.startY}")
-            bullet.die()
-        }
-
-        bullet.x = bullet.startX
-        bullet.y -= bullet.velocity
-    }
-
-    LogUtil.printLog(message = "BulletShootingSprite() shooting --->  index = $index, bullet.state = ${bullet.state}, bullet.startY = ${bullet.startY},  bullet.y = ${bullet.y}")
-
     //绘制图片
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -128,19 +106,6 @@ fun BulletShootingSprite(
                 }
                 .width(bullet.width)
                 .height(bullet.height)
-                /*.background(
-                    when (index) {
-                        0 -> {
-                            Color.Red
-                        }
-                        1 -> {
-                            Color.Yellow
-                        }
-                        else -> {
-                            Color.Blue
-                        }
-                    }
-                )*/
                 .alpha(
                     if (bullet.isAlive()) {
                         1f

@@ -28,6 +28,8 @@ data class GameAction(
     val playerMove: (x: Int, y: Int) -> Unit = { _: Int, _: Int -> },//玩家移动
     val score: (score: Int) -> Unit = { _: Int -> },//更新分数
     val award: (award: Award) -> Unit = { _: Award -> },//获得奖励
+    val createBullet: () -> Unit = { },//子弹生成
+    val initBullet: (bullet: Bullet) -> Unit = { _: Bullet -> },//子弹初始化出生位置
     val shooting: (resId: Int) -> Unit = { _: Int -> },//射击
     val destroyAllEnemy: () -> Unit = {},//摧毁所有敌机
     val levelUp: (score: Int) -> Unit = { _: Int -> },//难度升级

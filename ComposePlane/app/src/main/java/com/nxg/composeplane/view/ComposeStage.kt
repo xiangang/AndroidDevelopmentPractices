@@ -88,7 +88,7 @@ fun Stage(gameViewModel: GameViewModel) {
         )
 
         //子弹
-        BulletSprite(gameState, playerPlane, bulletList, gameAction)
+        BulletSprite(gameState, bulletList, gameAction)
 
         //奖励
         AwardSprite(gameState, playerPlane, awardList, gameAction)

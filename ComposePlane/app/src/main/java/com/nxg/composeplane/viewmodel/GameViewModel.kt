@@ -1,6 +1,7 @@
 package com.nxg.composeplane.viewmodel
 
 import android.app.Application
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.math.roundToInt
 
 @InternalCoroutinesApi
 class GameViewModel(application: Application) : AndroidViewModel(application) {
@@ -260,17 +262,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 生成子弹
      */
-    fun createBulletSprite() {
+    private fun createBullet() {
         //游戏开始并且飞机在屏幕内才会生成
         if (gameStateFlow.value == GameState.Running && playerPlaneStateFlow.value.y < getApplication<Application>().resources.displayMetrics.heightPixels) {
             val bulletAward = playerPlaneStateFlow.value.bulletAward
             var bulletNum = bulletAward and 0xFFFF //数量
             val bulletType = bulletAward shr 16 //类型
-            LogUtil.printLog(message = "createBulletSprite bulletNum $bulletNum bulletType $bulletType")
             val bulletList = bulletListStateFlow.value as ArrayList
+            LogUtil.printLog(message = "createBullet bulletNum $bulletNum bulletType $bulletType bulletList size ${bulletList.size}")
             val firstBullet = bulletList.firstOrNull { it.isDead() }
             if (firstBullet == null) {
-                //子弹奖励
                 var newBullet = Bullet(
                     type = BULLET_SINGLE,
                     drawableId = R.drawable.sprite_bullet_single,
@@ -279,6 +280,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     state = SpriteState.LIFE,
                     init = false
                 )
+                //子弹奖励
                 if (bulletNum > 0 && bulletType == BULLET_DOUBLE) {
                     newBullet = newBullet.copy(
                         type = BULLET_DOUBLE,
@@ -290,12 +292,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     )
                     //消耗子弹
                     bulletNum--
-                    LogUtil.printLog(message = "createBulletSprite bulletNum $bulletNum")
+                    LogUtil.printLog(message = "createBullet bulletNum $bulletNum")
                     onPlayerAwardBullet(BULLET_DOUBLE shl 16 or bulletNum)
                 }
                 bulletList.add(newBullet)
             } else {
-                //子弹奖励
                 var newBullet = firstBullet.copy(
                     type = BULLET_SINGLE,
                     drawableId = R.drawable.sprite_bullet_single,
@@ -304,6 +305,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     state = SpriteState.LIFE,
                     init = false
                 )
+                //子弹奖励
                 if (bulletNum > 0 && bulletType == BULLET_DOUBLE) {
                     newBullet = firstBullet.copy(
                         type = BULLET_DOUBLE,
@@ -315,7 +317,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     )
                     //消耗子弹
                     bulletNum--
-                    LogUtil.printLog(message = "createBulletSprite bulletNum $bulletNum")
+                    LogUtil.printLog(message = "createBullet bulletNum $bulletNum")
                     onPlayerAwardBullet(BULLET_DOUBLE shl 16 or bulletNum)
                 }
                 bulletList.add(newBullet)
@@ -323,6 +325,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
             onBulletListStateFlowChange(bulletList)
         }
+    }
+
+    /**
+     * 初始化子弹出生位置
+     */
+    private fun initBullet(bullet: Bullet) {
+        val playerPlane = playerPlaneStateFlow.value
+        val playerPlaneWidthPx = dp2px(playerPlane.width)
+        val bulletWidthPx = dp2px(bullet.width)
+        val bulletHeightPx = dp2px(bullet.height)
+        val startX = (playerPlane.x + playerPlaneWidthPx!! / 2 - bulletWidthPx!! / 2)
+        val startY = (playerPlane.y - bulletHeightPx!!)
+        bullet.startX = startX
+        bullet.startY = startY
+        bullet.x = bullet.startX
+        bullet.y = bullet.startY
+        bullet.init = true
     }
 
 
@@ -369,7 +388,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             drawableIds = listOf(R.drawable.sprite_small_enemy_plane),
             bombDrawableId = R.drawable.sprite_small_enemy_plane_seq,
             startY = (-heightPixels..0).random(),
-            speed = 6000,
             velocity = 10,
             segment = 3,
             power = 1,
@@ -386,7 +404,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             startY = (-heightPixels * 1.5.toInt()..-heightPixels).random(),
             width = MIDDLE_ENEMY_PLANE_SPRITE_SIZE.dp,
             height = MIDDLE_ENEMY_PLANE_SPRITE_SIZE.dp,
-            speed = 8000,
             velocity = 8,
             segment = 4,
             power = 4,
@@ -405,7 +422,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             startY = (-heightPixels * 2..-heightPixels * 1.5.toInt()).random(),
             width = BIG_ENEMY_PLANE_SPRITE_SIZE.dp,
             height = BIG_ENEMY_PLANE_SPRITE_SIZE.dp,
-            speed = 12000,
             velocity = 4,
             segment = 6,
             power = 9,
@@ -557,5 +573,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         },
+        createBullet = { createBullet() },
+        initBullet = { initBullet(it) },
     )
+}
+
+/**
+ * dp转px
+ */
+@InternalCoroutinesApi
+fun GameViewModel.dp2px(dp: Dp): Int? {
+    val resources = getApplication<Application>().resources
+    return DensityUtil.dp2px(resources, dp.value.roundToInt())
 }

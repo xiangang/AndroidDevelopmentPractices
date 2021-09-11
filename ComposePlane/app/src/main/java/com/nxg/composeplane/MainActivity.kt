@@ -61,13 +61,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposePlaneTheme {
                 Surface(color = MaterialTheme.colors.background) {
-                    //利用协程定时生成子弹，目前没有用到敌机上。
-                    LaunchedEffect(key1 = Unit) {
-                        while (isActive) {
-                            delay(100)
-                            gameViewModel.createBulletSprite()
-                        }
-                    }
                     Stage(gameViewModel)
                 }
             }
