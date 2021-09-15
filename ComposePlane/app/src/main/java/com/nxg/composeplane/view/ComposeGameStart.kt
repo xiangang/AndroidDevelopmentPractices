@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.nxg.composeplane.R
-import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.GameAction
+import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.PLAYER_PLANE_SPRITE_SIZE
 import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
@@ -124,7 +124,7 @@ fun GameStartPlaneInAndOut(
     widthPixels: Int,
     heightPixels: Int
 ) {
-
+    //不需要飞入动画
     if (!playerPlane.animateIn) {
         return
     }
@@ -133,12 +133,13 @@ fun GameStartPlaneInAndOut(
     val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
     val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
 
-    val startOffsetY = heightPixels + playerPlaneSizePx
-    val endOffsetY = heightPixels / 2f - playerPlaneSizePx / 2f
+    //飞入动画的起点终点Y轴的值
+    val startOffsetYIn = heightPixels + playerPlaneSizePx
+    val endOffsetYIn = heightPixels / 2f - playerPlaneSizePx / 2f
 
     //飞入的Y轴值
     var offsetYIn by remember {
-        mutableStateOf(startOffsetY)
+        mutableStateOf(startOffsetYIn)
     }
 
     //实际显示用到的Y轴值
@@ -172,8 +173,8 @@ fun GameStartPlaneInAndOut(
                 easing = FastOutSlowInEasing
             ),
             typeConverter = Float.VectorConverter,
-            initialValue = startOffsetY,
-            targetValue = endOffsetY
+            initialValue = startOffsetYIn,
+            targetValue = endOffsetYIn
         )
     }
     LaunchedEffect(animateInState) {
@@ -198,7 +199,7 @@ fun GameStartPlaneInAndOut(
 
     //向顶部飞出动画（通过游戏状态触发）
     var offsetYOut by remember {
-        mutableStateOf(endOffsetY)//飞出的起点，是飞入的终点
+        mutableStateOf(endOffsetYIn)//飞出的起点，是飞入的终点
     }
     var playTimeOut by remember { mutableStateOf(0L) }
     val animOut = remember {
@@ -209,7 +210,7 @@ fun GameStartPlaneInAndOut(
                 easing = LinearEasing
             ),
             typeConverter = Float.VectorConverter,
-            initialValue = endOffsetY,
+            initialValue = endOffsetYIn,
             targetValue = -playerPlaneSizePx * 2f
         )
     }
@@ -246,7 +247,7 @@ fun GameStartPlaneInAndOut(
                 .offset { IntOffset(realOffsetX.toInt(), realOffsetY.toInt()) }
                 .size(playerPlaneSize),
             alpha = if (show) {
-                if (offsetYIn >= endOffsetY) {
+                if (offsetYIn >= endOffsetYIn) {
                     if (alpha < 0.5f) 0f else 1f
                 } else {
                     1f
@@ -264,7 +265,7 @@ fun GameStartPlaneInAndOut(
             modifier = Modifier
                 .offset { IntOffset(realOffsetX.toInt(), realOffsetY.toInt()) }
                 .size(playerPlaneSize),
-            alpha = if (offsetYIn >= endOffsetY && show) {
+            alpha = if (offsetYIn >= endOffsetYIn && show) {
                 if (1 - alpha < 0.5f) 0f else 1f
             } else {
                 0f

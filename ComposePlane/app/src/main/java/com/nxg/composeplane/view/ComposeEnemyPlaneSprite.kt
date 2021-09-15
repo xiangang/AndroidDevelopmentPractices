@@ -100,13 +100,10 @@ fun EnemyPlaneSpriteMove(
         return
     }
 
-    //敌机初始化
-    gameAction.moveEnemyPlane(enemyPlane)
+    //敌机飞行，包含碰撞检测
+    gameAction.moveEnemyPlane(enemyPlane,onBombAnimChange)
 
     LogUtil.printLog(message = "EnemyPlaneSpriteFly: state = ${enemyPlane.state}，enemyPlane.x = ${enemyPlane.x}， enemyPlane.y = ${enemyPlane.y}, frame = $frame ")
-
-    //碰撞检测
-    gameAction.collisionDetect(enemyPlane, onBombAnimChange)
 
     //绘制
     Box(modifier = Modifier.fillMaxSize()) {

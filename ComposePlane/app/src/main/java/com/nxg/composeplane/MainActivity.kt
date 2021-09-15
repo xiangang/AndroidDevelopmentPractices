@@ -43,6 +43,9 @@ class MainActivity : ComponentActivity() {
         //状态栏沉浸式
         StatusBarUtil.transparentStatusBar(this)
 
+        //SoundPool初始化和资源预加载
+        gameViewModel.onSoundPoolInit()
+
         //生命周期观察
         lifecycle.addObserver(GameLifecycleObserver(gameViewModel))
 
