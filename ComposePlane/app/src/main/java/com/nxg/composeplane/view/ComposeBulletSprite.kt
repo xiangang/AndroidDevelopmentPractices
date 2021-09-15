@@ -14,7 +14,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import com.nxg.composeplane.R
 import com.nxg.composeplane.model.Bullet
 import com.nxg.composeplane.model.GameAction
 import com.nxg.composeplane.model.GameState
@@ -58,22 +57,8 @@ fun BulletSprite(
 
         if (bullet.isAlive()) {
 
-            //初始化起点(为什么单独搞一个init属性，因为init属性是添加到队里列时才设置false,这样渲染时检测init为false才去初始化起点.
-            //如果根据isAlive来检测会导致Bullet一死亡就算重新初始化位置，但是复用重新发射时，飞机的位置可能已经变动了。
-            if (!bullet.init) {
-                //初始化子弹出生位置
-                gameAction.initBullet(bullet)
-                //播放射击音效，放到非UI线程
-                gameAction.shooting(R.raw.shoot)
-            }
-
-            //子弹离开屏幕后则死亡
-            if (bullet.isInvalid()) {
-                bullet.die()
-            }
-
-            //射击
-            bullet.shoot()
+            //子弹位移
+            gameAction.moveBullet(bullet)
 
             //显示子弹图片
             BulletShootingSprite(bullet)

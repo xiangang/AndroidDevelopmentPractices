@@ -98,9 +98,6 @@ fun PlayerPlaneBombSprite(
             .size(spriteSize)
     ) {
 
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-
         drawImage(
             imageBitmap,
             topLeft = Offset(
@@ -133,7 +130,7 @@ fun PreviewPlayerPlaneBombSprite() {
 @InternalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun EnemyPlaneSpriteBombAndFly(
+fun EnemyPlaneSpriteBomb(
     gameScore: Int = 0,
     enemyPlane: EnemyPlane,
     showBombAnim: Boolean,

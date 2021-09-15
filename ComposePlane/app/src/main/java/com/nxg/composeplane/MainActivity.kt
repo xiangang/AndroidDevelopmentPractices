@@ -51,6 +51,9 @@ class MainActivity : ComponentActivity() {
             gameViewModel.gameStateFlow.collect {
                 LogUtil.printLog(message = "lifecycleScope gameState $it")
                 //退出app
+                if (GameState.Waiting == it) {
+                    gameViewModel.onGameInit()
+                }
                 if (GameState.Exit == it) {
                     finish()
                 }

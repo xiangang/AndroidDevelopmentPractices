@@ -135,9 +135,9 @@ data class Bullet(
     fun isInvalid() = this.y < 0
 
     /**
-     * 射击(位移)
+     * 位移(射击)
      */
-    fun shoot() {
+    fun move() {
         this.x = this.startX
         this.y -= this.velocity
     }
@@ -166,7 +166,12 @@ data class Award(
     override var init: Boolean = false, //默认未初始化
     var amount: Int = 1, //数量
 
-) : Sprite()
+) : Sprite(){
+
+    fun move() {
+        this.y += this.velocity
+    }
+}
 
 /**
  * 敌机精灵
@@ -179,12 +184,12 @@ const val BIG_ENEMY_PLANE_SPRITE_SIZE = 100
 data class EnemyPlane(
     override var id: Long = System.currentTimeMillis(), //id
     override var name: String = "敌军侦察机",
+    override var type: Int = 0,
     @DrawableRes override val drawableIds: List<Int> = listOf(R.drawable.sprite_small_enemy_plane), //飞机资源图标
     @DrawableRes override val bombDrawableId: Int = R.drawable.sprite_small_enemy_plane_seq, //敌机爆炸帧动画资源
     override var segment: Int = 3, //爆炸效果由segment个片段组成，小飞机是3，中飞机是4，大飞机是6
     override var x: Int = 0, //敌机当前在X轴上的位置
-    override var y: Int = -100, //敌机当前在Y轴上的位置
-    override var startY: Int = -100, //出现的起始位置
+    override var y: Int = 0, //敌机当前在Y轴上的位置
     override var width: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //宽
     override var height: Dp = SMALL_ENEMY_PLANE_SPRITE_SIZE.dp, //高
     override var velocity: Int = 1, //飞行速度（每帧移动的像素）
@@ -204,6 +209,31 @@ data class EnemyPlane(
 
     fun bomb() {
         hit = power
+    }
+
+    fun move() {
+        this.y += this.velocity
+    }
+
+    fun getRealDrawableId(): Int {
+        var realDrawableId = drawableIds[0]
+        //如果被击中，则重新计算显示的图片index，先算生命值按图片数量平均，一张图片对应的powerSegment是多少，再用被击中消耗的生命值除以powerSegment，得到倍数
+        if (hit > 0) {
+            val hitPerPower = hit / (power / drawableIds.size)
+            val drawableIdsIndex = when {
+                hitPerPower < 0 -> {
+                    0
+                }
+                hitPerPower >= drawableIds.size -> {
+                    drawableIds.size - 1
+                }
+                else -> {
+                    hitPerPower
+                }
+            }
+            realDrawableId = drawableIds[drawableIdsIndex]
+        }
+        return realDrawableId
     }
 
     override fun reBirth() {

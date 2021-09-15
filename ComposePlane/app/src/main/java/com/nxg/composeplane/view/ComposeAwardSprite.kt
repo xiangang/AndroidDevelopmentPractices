@@ -36,7 +36,6 @@ import kotlin.math.roundToInt
 @Composable
 fun AwardSprite(
     gameState: GameState,
-    playerPlane: PlayerPlane,
     awardList: List<Award>,
     gameAction: GameAction = GameAction()
 
@@ -56,10 +55,15 @@ fun AwardSprite(
         )
     )
 
+    //游戏不在进行中
+    if (gameState != GameState.Running) {
+        return
+    }
+
+
     for ((index, award) in awardList.withIndex()) {
-        LogUtil.printLog(message = "ComposeAwardSprite()---> award.isAlive() = ${award.isAlive()}")
         if (award.isAlive()) {
-            AwardSpriteFall(gameState, playerPlane, award, index, gameAction)
+            AwardSpriteFall(gameState, award, index, gameAction)
         }
     }
 
@@ -75,67 +79,19 @@ fun AwardSprite(
 @Composable
 fun AwardSpriteFall(
     gameState: GameState = GameState.Waiting,
-    playerPlane: PlayerPlane,
     award: Award,
     index: Int,
     gameAction: GameAction = GameAction()
 
 ) {
-    LogUtil.printLog(message = "ComposeAwardSpriteFall() ---> award = ${award}")
-    //准备工作
-    val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
-    val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
-    val playerPlaneSize = PLAYER_PLANE_SPRITE_SIZE.dp
-    val playerPlaneSizePx = with(LocalDensity.current) { playerPlaneSize.toPx() }
-    val awardWidth = award.width
-    val awardWidthPx = with(LocalDensity.current) { awardWidth.toPx() }
-    val awardHeight = award.height
-    val awardHeightPx = with(LocalDensity.current) { awardHeight.toPx() }
-    val maxAwardSpriteX = widthPixels - awardWidthPx //X轴屏幕宽度向左偏移一个身位
-    val maxAwardSpriteY = heightPixels * 1.5 //屏幕高度
+    LogUtil.printLog(message = "ComposeAwardSpriteFall() ---> award = $award")
 
-    //游戏进行中
-    if (gameState == GameState.Running) {
-
-        //初始化起点
-        if (!award.init) {
-            award.startX = (0..maxAwardSpriteX.roundToInt()).random()
-            award.startY = -awardHeightPx.toInt()
-            award.x = award.startX
-            award.y = award.startY
-            LogUtil.printLog(message = "ComposeAwardFall() init start x,y  ---> index = $index, award.state = ${award.state}, award.startY = ${award.startY}")
-            award.init = true
-        }
-
-        //飞行指定的距离(这里是一个屏幕高度的距离)后
-        if (award.isAlive() && award.y >= maxAwardSpriteY) {
-            LogUtil.printLog(message = "ComposeAwardFall() die  ---> index = $index, award.state = ${award.state}, award.startY = ${award.startY}")
-            award.die()
-        }
-
-        //下落
-        award.x = award.startX
-        award.y += award.velocity
-
-        LogUtil.printLog(message = "ComposeAwardFall() falling --->  index = $index, award.state = ${award.state}, award.startY = ${award.startY},  award.y = ${award.y}")
-
-        //如果道具奖励碰撞到了玩家飞机(碰撞检测要求，碰撞双方必须都在屏幕内)
-        if (playerPlane.isAlive() && playerPlane.x > 0 && playerPlane.y > 0 && award.isAlive() && award.x > 0 && award.y > 0 && SpriteUtil.isCollisionWithRect(
-                playerPlane.x,
-                playerPlane.y,
-                playerPlaneSizePx.roundToInt(),
-                playerPlaneSizePx.roundToInt(),
-                award.x,
-                award.y,
-                awardWidthPx.roundToInt(),
-                awardHeightPx.roundToInt()
-            )
-        ) {
-            gameAction.award(award)
-            award.die()
-        }
-
+    //游戏不在进行中
+    if (gameState != GameState.Running) {
+        return
     }
+
+    gameAction.moveAward(award)
 
     //绘制图片
     Box(modifier = Modifier.fillMaxSize()) {
