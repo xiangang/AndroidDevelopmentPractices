@@ -28,6 +28,18 @@ import kotlin.math.roundToInt
 @InternalCoroutinesApi
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
+    //游戏音效
+    private val resIds = listOf(
+        R.raw.music,
+        R.raw.explosion,
+        R.raw.bullet_double,
+        R.raw.achievement,
+        R.raw.bullet_single,
+        R.raw.over,
+        R.raw.down,
+        R.raw.out
+    )
+
     //id
     val id = AtomicLong(0L)
 
@@ -145,16 +157,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     init {
         //初始化SoundPoolUtil
         viewModelScope.launch {
-            withContext(Dispatchers.Default) {
-                SoundPoolUtil.getInstance(application.applicationContext)
-            }
 
             gameStateFlow.collect {
                 LogUtil.printLog(message = "viewModelScope gameState $it")
+
+                //游戏开始，播放背景音乐
+                if (it == GameState.Running) {
+                    onPlayByRes(getApplication(), R.raw.music, -1)
+                }
             }
 
             gameLevelStateFlow.collect {
                 LogUtil.printLog(message = "viewModelScope gameLevelStateFlow $it")
+
 
             }
         }
@@ -162,12 +177,24 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * SoundPool初始化和资源预加载
+     */
+    fun onSoundPoolInit() {
+
+        resIds.forEach {
+            SoundPoolUtil.getInstance(getApplication()).load(it)
+        }
+    }
+
+    /**
      * 初始化
      */
     fun onGameInit() {
 
+        //初始化玩家飞机位置
         initPlayerSprite()
 
+        //游戏等级默认1级
         onGameLevelStateFlowChange(1)
     }
 
@@ -379,7 +406,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     bullet.init = true
 
                     //播放射击音效，放到非UI线程
-                    onPlayByRes(getApplication(), R.raw.shoot)
+                    val bulletNum = playerPlane.bulletAward and 0xFFFF //子弹数量
+                    onPlayByRes(
+                        getApplication(),
+                        if (bulletNum == 0) R.raw.bullet_single else R.raw.bullet_double
+                    )
                 }
 
                 //子弹离开屏幕后则死亡
@@ -514,7 +545,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 敌机移动
      */
-    private fun onEnemyPlaneMove(enemyPlane: EnemyPlane) {
+    private fun onEnemyPlaneMove(
+        enemyPlane: EnemyPlane,
+        onBombAnimChange: (Boolean) -> Unit
+    ) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 //获取屏幕宽高
@@ -551,6 +585,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 //敌机位移
                 enemyPlane.move()
+
+                onCollisionDetect(enemyPlane, onBombAnimChange)
             }
         }
 
@@ -635,8 +671,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             enemyPlane.die()
                             //爆炸动画可显示
                             onBombAnimChange(true)
-                            //爆炸动画是观察分数变化来触发的
-                            onGameAction.score(gameScoreStateFlow.value + enemyPlane.value)
+                            //游戏得分，爆炸动画是观察分数变化来触发的
+                            onGameScore(gameScoreStateFlow.value + enemyPlane.value)
+                            //播放爆炸音效
+                            onPlayByRes(getApplication(), R.raw.explosion)
                             return@forEach
                         }
                     }
@@ -728,7 +766,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 awardHeightPx!!,
             )
         ) {
-            onGameAction.award(award)
+            //播放音效
+            onPlayByRes(getApplication(), R.raw.achievement)
+            //获得奖励
+            onGetAward(award)
+            //奖励精灵死亡
             award.die()
         }
     }
@@ -736,20 +778,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 游戏得分
      */
-    private fun onGameScore(application: Application, score: Int) {
-        //播放爆炸音效
-        onPlayByRes(application, R.raw.explosion)
-
+    private fun onGameScore(score: Int) {
         //更新分数
         onGameScoreStateFlowChange(score)
 
-        //简单处理，不同分数对应不同的等级
-        if (score in 100..999) {
-            onGameLevelStateFlowChange(2)
-        }
-        if (score in 1000..1999) {
-            onGameLevelStateFlowChange(3)
-        }
+        onGameLevelUp()
 
         //分数是100整数时，产生随机奖励
         if (score % 100 == 0) {
@@ -775,7 +808,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             num += award.amount
             onPlayerAwardBomb(0 shl 16 or num)
         }
+
+        //用完后移除
         onAwardRemove(award)
+    }
+
+    /**
+     * 难度升级
+     */
+    private fun onGameLevelUp() {
+        //简单处理，不同分数对应不同的等级
+        val score = gameScoreStateFlow.value
+        if (score in 100..999) {
+            onGameLevelStateFlowChange(2)
+        }
+        if (score in 1000..1999) {
+            onGameLevelStateFlowChange(3)
+        }
     }
 
     /**
@@ -795,11 +844,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 播放音效
      */
-    private fun onPlayByRes(context: Context, @RawRes resId: Int) {
+    private fun onPlayByRes(
+        context: Context, @RawRes resId: Int,
+        loop: Int = 0,
+    ) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 SoundPoolUtil.getInstance(context.applicationContext)
-                    .playByRes(resId)//播放res中的音频
+                    .playByRes(resId, loop = loop)//播放res中的音频
             }
         }
     }
@@ -808,6 +860,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     //游戏动作
     val onGameAction = GameAction(
         start = {
+            //播放飞出动画音效
+            onPlayByRes(getApplication(), R.raw.down)
             //游戏开始
             onGameStateFlowChange(GameState.Running)
         },
@@ -830,19 +884,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             //玩家飞机拖拽
             onDragPlayerPlane(dragAmount)
         },
-        score = { score ->
-            //游戏得分
-            onGameScore(application, score)
-        },
-        award = { award ->
-            //获得获道具奖励
-            onGetAward(award)
+        playByRes = { resId ->
+            //播放音效
+            onPlayByRes(application, resId)
         },
         die = {
             //播放爆炸音效
-            onPlayByRes(application, R.raw.explosion)
+            onPlayByRes(application, R.raw.over)
             onGameStateFlowChange(GameState.Dying)
-
         },
         over = {
             //游戏结束
@@ -853,22 +902,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             onGameStateFlowChange(GameState.Exit)
         },
         destroyAllEnemy = {
+            //播放爆炸音效
+            onPlayByRes(application, R.raw.over)
             //摧毁所有敌机
             onDestroyAllEnemy()
         },
-        moveEnemyPlane = {
-            //敌机飞行
-            onEnemyPlaneMove(it)
+        moveEnemyPlane = { enemyPlane, onBombAnimChange ->
+            //敌机飞行，并且需要不断的和子弹，玩家飞机碰撞检测
+            onEnemyPlaneMove(enemyPlane, onBombAnimChange)
         },
         moveAward = {
             //奖励下落
             onAwardMove(it)
-        },
-        collisionDetect = { enemyPlane, onBombAnimChange ->
-            run {
-                //敌机和子弹，玩家飞机碰撞碰撞
-                onCollisionDetect(enemyPlane, onBombAnimChange)
-            }
         },
         createBullet = {
             //生成子弹
