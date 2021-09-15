@@ -81,8 +81,6 @@ fun Stage(gameViewModel: GameViewModel) {
         EnemyPlaneSprite(
             gameState,
             gameScore,
-            playerPlane,
-            bulletList,
             enemyPlaneList,
             gameAction
         )
@@ -91,7 +89,7 @@ fun Stage(gameViewModel: GameViewModel) {
         BulletSprite(gameState, bulletList, gameAction)
 
         //奖励
-        AwardSprite(gameState, playerPlane, awardList, gameAction)
+        AwardSprite(gameState, awardList, gameAction)
 
         //爆炸道具
         BombAward(playerPlane, gameAction)

@@ -20,8 +20,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import com.nxg.composeplane.R
-import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.GameAction
+import com.nxg.composeplane.model.GameState
 import com.nxg.composeplane.model.PlayerPlane
 import com.nxg.composeplane.util.LogUtil
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -45,11 +45,6 @@ fun PlayerPlaneSprite(
         return
     }
 
-    //初始化参数
-    val widthPixels = LocalContext.current.resources.displayMetrics.widthPixels
-    val heightPixels = LocalContext.current.resources.displayMetrics.heightPixels
-    val playerPlaneHeightPx = with(LocalDensity.current) { playerPlane.height.toPx() }
-
     //循环动画
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
@@ -66,7 +61,6 @@ fun PlayerPlaneSprite(
         playerPlane.reduceProtect()
     }
 
-    LogUtil.printLog(message = "PlayerPlaneSprite() playerPlane.x = ${playerPlane.x}  playerPlane.y = ${playerPlane.y}")
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.sprite_player_plane_1),
@@ -79,39 +73,7 @@ fun PlayerPlaneSprite(
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
                         change.consumeAllChanges()
-                        //这里有点奇怪，打印的状态没有跟着变化，可能是作用域的问题？
-                        LogUtil.printLog(message = "PlayerPlaneSprite() detectDragGestures gameState =  $gameState")
-
-                        var newOffsetX = playerPlane.x
-                        var newOffsetY = playerPlane.y
-                        //边界检测
-                        when {
-                            newOffsetX + dragAmount.x <= 0 -> {
-                                newOffsetX = 0
-                            }
-                            (newOffsetX + dragAmount.x + playerPlaneHeightPx) >= widthPixels -> {
-                                widthPixels.let {
-                                    newOffsetX = it - playerPlaneHeightPx.roundToInt()
-                                }
-                            }
-                            else -> {
-                                newOffsetX += dragAmount.x.roundToInt()
-                            }
-                        }
-                        when {
-                            newOffsetY + dragAmount.y <= 0 -> {
-                                newOffsetY = 0
-                            }
-                            (newOffsetY + dragAmount.y) >= heightPixels -> {
-                                heightPixels.let {
-                                    newOffsetY = it
-                                }
-                            }
-                            else -> {
-                                newOffsetY += dragAmount.y.roundToInt()
-                            }
-                        }
-                        gameAction.playerMove(newOffsetX, newOffsetY)
+                        gameAction.dragPlayerPlane(dragAmount)
                     }
                 }
                 .alpha(
@@ -231,7 +193,7 @@ fun PlayerPlaneAnimIn(
     if (show && offsetYIn <= endOffsetY) {
         show = false
         //此时更新飞机真正的位置
-        gameAction.playerMove(realOffsetX.roundToInt(), realOffsetY.roundToInt())
+        gameAction.movePlayerPlane(realOffsetX.roundToInt(), realOffsetY.roundToInt())
     }
     LogUtil.printLog(message = "PlayerPlaneAnimIn() offsetYIn2 = $offsetYIn, realOffsetY = $realOffsetY, show $show ")
 
