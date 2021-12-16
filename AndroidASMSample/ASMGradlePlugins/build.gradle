@@ -1,0 +1,45 @@
+plugins {
+    id 'maven-publish'
+    id 'java-library'
+    id 'kotlin'
+    id 'groovy'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.tools.build:gradle:3.5.0"
+    implementation gradleApi()
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30"
+    implementation group: 'org.ow2.asm', name: 'asm', version: '7.2'
+    implementation group: 'org.ow2.asm', name: 'asm-commons', version: '7.2'
+}
+
+
+//定义Maven仓库信息
+def MAVEN_GROUP_ID = "com.nxg.plugins"
+def MAVEN_ARTIFACT_ID = "asm-gradle-plugin"
+def MAVEN_VERSION = "1.0.0"
+
+publishing {
+    publications {
+        java(MavenPublication) {
+            from components.java
+            groupId = MAVEN_GROUP_ID
+            artifactId = MAVEN_ARTIFACT_ID
+            version = MAVEN_VERSION
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = layout.buildDirectory.dir('repo')
+        }
+    }
+}
