@@ -1,0 +1,28 @@
+plugins {
+    //使用java库，用于开发插件
+    id 'java-library'
+    id 'groovy'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation gradleApi()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+//配置sourceSets
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            //srcDir 'src/main/kotlin'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}

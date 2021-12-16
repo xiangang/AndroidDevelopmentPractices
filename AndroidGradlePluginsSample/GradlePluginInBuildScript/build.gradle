@@ -1,0 +1,50 @@
+plugins {
+    id 'maven-publish'
+    id 'java-library'
+    id 'kotlin'
+}
+
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        project.task('hello') {
+            doLast {
+                println 'Hello from the GreetingPlugin'
+            }
+        }
+    }
+}
+
+// Apply the plugin
+apply plugin: GreetingPlugin
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.tools.build:gradle:3.5.0"
+    implementation gradleApi()
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30"
+    implementation group: 'org.ow2.asm', name: 'asm', version: '7.2'
+    implementation group: 'org.ow2.asm', name: 'asm-commons', version: '7.2'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.nxg.plugin'
+            artifactId = 'custom-plugin'
+            version = '1.0.0'
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = layout.buildDirectory.dir('repo')
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
