@@ -8,3 +8,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AndroidJetpackComposeSample"
 include ':app'
+include ':ffmpeg'
+include ':LibRtmpSample'
+include ':CommonLib'
+include ':CommonUI'
+include ':CommonUtils'
