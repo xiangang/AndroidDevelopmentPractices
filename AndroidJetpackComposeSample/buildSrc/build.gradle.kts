@@ -1,9 +1,9 @@
 plugins {
     `kotlin-dsl`
 }
+
 repositories {
-    mavenCentral()
     google()
+    mavenCentral()
     gradlePluginPortal()
-    maven("https://maven.aliyun.com/repository/public")
 }

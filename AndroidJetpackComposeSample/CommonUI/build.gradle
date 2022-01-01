@@ -1,18 +1,18 @@
+import kotlin.collections.*
+
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
+    id("com.android.library")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
-    compileSdk 31
-
+    compileSdk = BuildConfig.compileSdk
     defaultConfig {
-        minSdk 21
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        minSdk = BuildConfig.minSdkVersion
+        targetSdk = BuildConfig.targetSdkVersion
+        testInstrumentationRunner = BuildConfig.testInstrumentationRunner
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -27,16 +27,60 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "11"
     }
 }
 
 dependencies {
+    implementation(AndroidX.appcompat)
+    implementation(AndroidX.constraintlayout)
+    implementation(AndroidX.cardview)
+    implementation(AndroidX.recyclerView)
+    implementation(AndroidX.coreKtx)
+    implementation(AndroidX.activityKtx)
+    implementation(AndroidX.fragmentKtx)
+    //material包
+    implementation(Google.material)
 
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation(TestLib.junit)
+    androidTestImplementation(TestLib.androidJunit)
+    androidTestImplementation(TestLib.espresso)
+
+    //JetPack navigation
+    implementation(NavigationLib.fragmentKtx)
+    implementation(NavigationLib.uiKtx)
+    implementation(NavigationLib.dynamic)
+
+    //JetPack lifecycle
+    implementation(Lifecycle.liveDataKtx)
+    implementation(Lifecycle.viewModelKtx)
+    implementation(Lifecycle.viewModelSavedState)
+    implementation(Lifecycle.commonJava8)
+    implementation(Lifecycle.service)
+    implementation(Lifecycle.runtimeKtx)
+
+    //Hilt
+    println(Hilt.common)
+    implementation(Hilt.common)
+    kapt(Hilt.compiler)
+
+    //JetPack Room
+    implementation(Room.runtime)
+    kapt(Room.compiler)
+    implementation(Room.ktx)
+    implementation(Room.rxjava3)
+    implementation(Room.guava)
+
+    //viewPager
+    implementation(ViewPager.viewpager2)
+    implementation(ViewPager.viewpager)
+
+    //okhttp
+    implementation(OkHttp.okhttp)
+    implementation(OkHttp.urlConnection)
+    implementation(OkHttp.loggingInterceptor)
+
+    //glide
+    implementation(Glide.glide)
+    implementation(Glide.compiler)
 }
