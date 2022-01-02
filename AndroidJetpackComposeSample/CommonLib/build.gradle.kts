@@ -1,50 +1,39 @@
-import kotlin.collections.*
-
 plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-kapt")
 }
 
+
 android {
     compileSdk = BuildConfig.compileSdk
+
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
         testInstrumentationRunner = BuildConfig.testInstrumentationRunner
-
-        consumerProguardFiles "consumer-rules.pro"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = "11"
     }
+
 }
 
 dependencies {
-    implementation(AndroidX.appcompat)
-    implementation(AndroidX.constraintlayout)
-    implementation(AndroidX.cardview)
-    implementation(AndroidX.recyclerView)
-    implementation(AndroidX.coreKtx)
-    implementation(AndroidX.activityKtx)
-    implementation(AndroidX.fragmentKtx)
-    //material包
-    implementation(Google.material)
-
-    testImplementation(TestLib.junit)
-    androidTestImplementation(TestLib.androidJunit)
-    androidTestImplementation(TestLib.espresso)
 
     //JetPack navigation
     implementation(NavigationLib.fragmentKtx)
@@ -58,11 +47,6 @@ dependencies {
     implementation(Lifecycle.commonJava8)
     implementation(Lifecycle.service)
     implementation(Lifecycle.runtimeKtx)
-
-    //Hilt
-    println(Hilt.common)
-    implementation(Hilt.common)
-    kapt(Hilt.compiler)
 
     //JetPack Room
     implementation(Room.runtime)
@@ -83,4 +67,30 @@ dependencies {
     //glide
     implementation(Glide.glide)
     implementation(Glide.compiler)
+    implementation(ThirdParty.javapoet)
+
+    //Hilt
+    /*implementation(Hilt.hilt_android)
+    kapt(Hilt.hilt_compiler)
+    kapt(Hilt.hilt_android_compiler)*/
+
+    /*// Dagger & Hilt
+    implementation("com.google.dagger:hilt-android:2.40")
+    kapt("com.google.dagger:hilt-android-compiler:2.40")
+    implementation("androidx.hilt:hilt-common:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation("androidx.hilt:hilt-work:1.0.0")*/
+
+
+
+
+    /*implementation("com.google.dagger:hilt-android:2.40")
+    kapt("com.google.dagger:hilt-android-compiler:2.40")
+    implementation("androidx.hilt:hilt-common:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0") i
+    mplementation("androidx.hilt:hilt-work:1.0.0")*/
+
+
 }

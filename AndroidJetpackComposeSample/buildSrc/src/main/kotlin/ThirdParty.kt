@@ -77,6 +77,8 @@ object ThirdParty {
 
     //Android-Iconics
     const val iconCore = "com.mikepenz:iconics-core:5.3.1"
+
+    const val javapoet = "com.squareup:javapoet:1.13.0"
 }
 
 object PermissionDispatcher {

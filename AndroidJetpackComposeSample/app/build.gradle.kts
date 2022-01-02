@@ -7,6 +7,7 @@ plugins {
     //id("dagger.hilt.android.plugin")
 }
 
+
 android {
     compileSdk = BuildConfig.compileSdk
     buildToolsVersion = BuildConfig.buildToolsVersion
@@ -21,6 +22,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        ndk {
+            //不配置则默认构建并打包所有可用的ABI
+            //same with gradle-> abiFilters 'x86_64','armeabi-v7a','arm64-v8a'
+            abiFilters.addAll(arrayListOf("x86_64", "armeabi-v7a", "arm64-v8a"))
+        }
     }
 
     buildTypes {
@@ -32,12 +38,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
     }
     buildFeatures {
         dataBinding = true
@@ -46,14 +51,19 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = Compose.version
-        kotlinCompilerVersion = Kotlin.kotlin_version
     }
     packagingOptions {
         resources.excludes += "META-INF/gradle/incremental.annotation.processors"
+        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":CommonUI")))
+    implementation(project(mapOf("path" to ":CommonLib")))
+    implementation(project(mapOf("path" to ":CommonUtils")))
+    implementation(project(mapOf("path" to ":ffmpeg")))
+    implementation(project(mapOf("path" to ":LibRtmpSample")))
     testImplementation(TestLib.junit)
     testImplementation(TestLib.espresso)
     implementation(AndroidX.appcompat)
