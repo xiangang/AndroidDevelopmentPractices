@@ -1,6 +1,6 @@
 
 object Kotlin {
-    var kotlin_version = "1.5.31"
+    var kotlin_version = "1.6.10"
 
     //Kotlin 1.4 以后，您不再需要在 gradle 上声明 stdlib
     var stdlib ="org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
