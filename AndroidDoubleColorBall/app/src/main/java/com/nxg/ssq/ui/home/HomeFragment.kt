@@ -6,26 +6,24 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.nxg.ssq.databinding.FragmentHomeBinding
 import java.lang.Math.PI
-import java.lang.Math.pow
 import kotlin.math.pow
-
 import kotlin.math.sin
-import androidx.dynamicanimation.animation.SpringAnimation
-
-import androidx.dynamicanimation.animation.SpringForce
 
 
 class HomeFragment : Fragment() {
@@ -34,7 +32,7 @@ class HomeFragment : Fragment() {
     companion object {
         private const val ANIMATION_VALUES = 1f
         private const val ANIMATION_SPRING_VALUES = 1f
-        private const val SCROLL_Y_STEP = 40
+        private const val SCROLL_Y_STEP = 30
         private const val TAG = "HomeFragment"
     }
 
@@ -65,7 +63,7 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        animator.duration = 2000
+        animator.duration = 3000
         animator.interpolator = AccelerateDecelerateInterpolator()
 
         animatorSpring.duration = 500
@@ -78,6 +76,10 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = numberAdapter
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
+        val disabler: OnItemTouchListener = RecyclerViewDisabler()
+
+        recyclerView.addOnItemTouchListener(disabler)
+        //recyclerView.removeOnItemTouchListener(disabler)
 
         val springForce = SpringForce(0f)
             .setDampingRatio(SpringForce.DAMPING_RATIO_HIGH_BOUNCY)
@@ -114,7 +116,7 @@ class HomeFragment : Fragment() {
         }
         animator.addUpdateListener {
             val value = it.animatedValue as Float
-            //Log.i(TAG, "animator addUpdateListener: $value")
+            Log.i(TAG, "animator addUpdateListener: $value")
             recyclerView.scrollBy(0, -(value * SCROLL_Y_STEP).toInt())
             if (value == ANIMATION_VALUES) {
                 val position = layoutManager.findLastVisibleItemPosition() - 1
@@ -243,7 +245,7 @@ class HomeFragment : Fragment() {
      */
     class SpringInterpolator : Interpolator {
         override fun getInterpolation(input: Float): Float {
-            return sin(input * 2 * Math.PI).toFloat()
+            return sin(input * 2 * PI).toFloat()
         }
     }
 
@@ -268,6 +270,21 @@ class HomeFragment : Fragment() {
                 lastInterpolation = interpolation
                 step * 1f * -1
             }
+        }
+    }
+
+    class RecyclerViewDisabler : RecyclerView.OnItemTouchListener {
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+        }
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+
         }
     }
 
