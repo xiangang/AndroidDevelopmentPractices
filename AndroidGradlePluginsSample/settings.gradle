@@ -1,19 +1,24 @@
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            println("resolutionStrategy eachPlugin ${requested.id.namespace}")
+            if (requested.id.namespace == 'com.nxg.plugins') {
+                useModule("com.nxg.plugins:greeting-standalone:${requested.version}")
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+        maven {
+            url = "/home/xiangang/.m2/repository/"
+        }
+    }
+}
 dependencyResolutionManagement {
     //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        pluginManagement {
-            resolutionStrategy {
-                eachPlugin {
-                    /*if (requested.id.namespace == 'com.nxg.plugins') {
-                        useModule('com.nxg.plugins:greeting-standalone:1.0.0')
-                    }*/
-                }
-            }
-            repositories {
-                mavenLocal()
-                gradlePluginPortal()
-            }
-        }
         google()
         mavenCentral()
         mavenLocal()
