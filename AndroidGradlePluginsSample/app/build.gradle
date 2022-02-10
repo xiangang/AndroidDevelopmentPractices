@@ -1,21 +1,11 @@
-buildscript {
-    repositories {
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'com.nxg.plugins:greeting-standalone:1.0.0'
-    }
-}
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.nxg.plugins.greeting'
-    //id 'com.nxg.plugins.greeting-standalone' version '1.0.0'
+    //如果是本地没发过该插件，需要先注释掉这里，插件发布后在打开注释
+    id 'com.nxg.plugins.greeting-standalone' version '1.0.0'
 }
 
-// Apply the plugin
-apply plugin: 'greeting-standalone'
 
 android {
     compileSdk 31
