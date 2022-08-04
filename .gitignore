@@ -85,3 +85,13 @@ lint/tmp/
 # lint/reports/
 
 ComposePlane/.idea/
+
+AndroidComposeExamples/.idea/
+
+AndroidGradlePluginsSample/.idea/
+
+AndroidASMSample/.idea/
+
+AndroidJetpackComposeSample/.idea/
+
+ASanTest/\.idea/
