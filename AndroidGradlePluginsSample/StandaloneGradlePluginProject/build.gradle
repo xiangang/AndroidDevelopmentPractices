@@ -8,17 +8,14 @@ def MAVEN_GROUP_ID = "com.nxg.plugins"
 def MAVEN_ARTIFACT_ID = "greeting-standalone"
 def MAVEN_VERSION = "1.0.0"
 def MAVEN_NAME = "repo"
-def MAVEN_RELEASE_URL = "mavenLocal"
-def MAVEN_USERNAME = ""
-def MAVEN_PASSWORD = ""
-
 
 gradlePlugin {
     plugins {
         standaloneGradlePlugins {
-            id = MAVEN_ARTIFACT_ID
+            id = MAVEN_GROUP_ID + "." + MAVEN_ARTIFACT_ID
             implementationClass = 'com.nxg.plugins.GreetingStandaloneGradlePlugins'
         }
+        automatedPublishing = false
     }
 }
 
@@ -34,8 +31,10 @@ publishing {
 
     repositories {
         maven {
-            // change to point to your repo, e.g. http://my.org/repo
             url = layout.buildDirectory.dir(MAVEN_NAME)
+        }
+        maven {
+            url = "/home/xiangang/.m2/repository/"
         }
     }
 }

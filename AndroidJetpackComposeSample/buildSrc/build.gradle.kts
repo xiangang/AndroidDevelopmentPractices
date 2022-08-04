@@ -1,9 +1,18 @@
 plugins {
     `kotlin-dsl`
 }
+
 repositories {
-    mavenCentral()
     google()
+    mavenCentral()
     gradlePluginPortal()
-    maven("https://maven.aliyun.com/repository/public")
+}
+
+dependencies{
+    implementation("com.android.tools.build:gradle:7.0.4")
+    implementation("com.android.tools.build:gradle-api:7.0.4")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+//    implementation(ThirdParty.javapoet)
+    implementation("com.squareup:javapoet:1.13.0")
+
 }
