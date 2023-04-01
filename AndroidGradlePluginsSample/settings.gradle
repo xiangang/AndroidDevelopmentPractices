@@ -11,9 +11,6 @@ pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
-        maven {
-            url = "/home/xiangang/.m2/repository/"
-        }
     }
 }
 dependencyResolutionManagement {

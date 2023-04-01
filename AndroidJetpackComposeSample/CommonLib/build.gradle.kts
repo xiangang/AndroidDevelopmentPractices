@@ -64,33 +64,25 @@ dependencies {
     implementation(OkHttp.urlConnection)
     implementation(OkHttp.loggingInterceptor)
 
+    //okhttp
+    implementation(Retrofit.retrofit)
+    implementation(Retrofit.convertGson)
+
     //glide
     implementation(Glide.glide)
     implementation(Glide.compiler)
+
+    //coil
+    implementation(Coil.coil)
+
+    //ThirdParty
+    implementation(ThirdParty.brvah)
     implementation(ThirdParty.javapoet)
+    implementation(ThirdParty.utilCodex)
 
-    //Hilt
-    /*implementation(Hilt.hilt_android)
-    kapt(Hilt.hilt_compiler)
-    kapt(Hilt.hilt_android_compiler)*/
-
-    /*// Dagger & Hilt
-    implementation("com.google.dagger:hilt-android:2.40")
-    kapt("com.google.dagger:hilt-android-compiler:2.40")
-    implementation("androidx.hilt:hilt-common:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
-    implementation("androidx.hilt:hilt-work:1.0.0")*/
-
-
-
-
-    /*implementation("com.google.dagger:hilt-android:2.40")
-    kapt("com.google.dagger:hilt-android-compiler:2.40")
-    implementation("androidx.hilt:hilt-common:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0") i
-    mplementation("androidx.hilt:hilt-work:1.0.0")*/
-
+    // Dagger & Hilt
+    implementation(Hilt.android)
+    kapt (Hilt.android_compiler)
+    kapt (Hilt.compiler)
 
 }

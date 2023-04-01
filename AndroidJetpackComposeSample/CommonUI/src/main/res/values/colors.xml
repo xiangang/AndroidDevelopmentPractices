@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="common_ui_primary">#ff3c9cff</color>
+    <color name="common_ui_primary_variant">#ff3c9cff</color>
+    <color name="common_ui_secondary">#ff2b85e4</color>
+    <color name="common_ui_secondary_variant">#ff2b85e4</color>
+    <color name="common_ui_background">#fff3f4f6</color>
+    <color name="common_ui_surface">#fff3f4f6</color>
+    <color name="common_ui_on_primary">#ff3c9cff</color>
+    <color name="common_ui_on_primary_variant">#ff3c9cff</color>
+    <color name="common_ui_on_secondary">#ff3c9cff</color>
+    <color name="common_ui_on_secondary_variant">#ff3c9cff</color>
+    <color name="common_ui_on_background">#fff3f4f6</color>
+    <color name="common_ui_on_surface">#fff3f4f6</color>
+
+    <color name="common_ui_success">#FFBB86FC</color>
+    <color name="common_ui_warn">#FFBB86FC</color>
+    <color name="common_ui_error">#FFBB86FC</color>
+    <color name="common_ui_info">#FFBB86FC</color>
+    <color name="common_ui_black">#FF000000</color>
+    <color name="common_ui_white">#FFFFFFFF</color>
+</resources>

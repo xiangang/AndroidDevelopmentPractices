@@ -2,14 +2,13 @@ package com.nxg.compose
 
 import android.animation.ArgbEvaluator
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -18,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
             AndroidComposeExamplesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    //Greeting("Android")
 
-                    TestComposeGradientColorAnimate()
+                    TestComposeGradientColorAnimate2()
                 }
             }
         }
@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
+
     Text(text = "Hello $name!")
 }
 
@@ -130,3 +131,33 @@ fun TestComposeGradientColorAnimate() {
     }
 
 }
+
+
+/**
+ * 测试渐变动画
+ */
+@Composable
+fun TestComposeGradientColorAnimate2() {
+
+    //触发渐变动画用的状态
+    var state by remember {
+        mutableStateOf(0)
+    }
+
+
+
+    print("state $state")
+
+    Box(
+        modifier = Modifier
+            .size(100.dp)
+            .background(Color.DarkGray)
+            .offset(x = 100.dp, y = (100).dp)
+            .clickable {
+                print("触发渐变动画-------->")
+                state++
+            }
+    )
+
+}
+

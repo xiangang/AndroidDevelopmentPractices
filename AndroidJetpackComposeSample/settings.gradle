@@ -4,12 +4,26 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "AndroidJetpackComposeSample"
 include ':app'
-include ':ffmpeg'
-include ':LibRtmpSample'
+include ':FastMvvm'
 include ':CommonLib'
 include ':CommonUI'
 include ':CommonUtils'
+include ':FFmpegMobile'
+include ':RtmpMobile'
+include ':YuvUtil'
+include ':AcodecMobile'
+include ':AudioRecordUtils'
+include ':WebrtcMobile'
+include ':SocketIOMobile'
+include ':IM'
+include ':FFmpegStudyComponent'
+include ':SocketIOStudyComponent'
+include ':UserComponent'
+include ':SettingComponent'
+include ':NoticeComponent'
+include ':CommonUIComponent'

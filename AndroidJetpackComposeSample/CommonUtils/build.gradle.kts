@@ -31,5 +31,6 @@ android {
 }
 
 dependencies {
-
+    testImplementation(TestLib.junit)
+    testImplementation(TestLib.espresso)
 }

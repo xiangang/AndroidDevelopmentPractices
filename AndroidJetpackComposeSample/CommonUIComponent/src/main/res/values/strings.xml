@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nui_component">nView 1.0.0</string>
+    <string name="nui_component_desc">nView UI，是基于Jetpack Compose和Material Design的UI组件，全面的组件和边界的工具会让您信手拈来，如鱼得水</string>
+    <string name="nui_component_from_string_resource">从string.xml获取文本内容</string>
+    <string name="nui_component_back">返回</string>
+    <string name="nui_component_confirm">确认</string>
+    <string name="nui_component_cancel">取消</string>
+    <string name="nui_component_close">关闭</string>
+    <string name="nui_component_base">基础组件</string>
+    <string name="nui_component_base_color">Color色彩</string>
+    <string name="nui_component_base_icon">Icon图标</string>
+    <string name="nui_component_base_image">Image图片</string>
+    <string name="nui_component_base_button">Button按钮</string>
+    <string name="nui_component_base_text">Text文本</string>
+    <string name="nui_component_base_layout">Layout布局</string>
+    <string name="nui_component_base_cell">Cell单元格</string>
+    <string name="nui_component_base_badge">Badge徽标</string>
+    <string name="nui_component_base_tag">Tag标签</string>
+    <string name="nui_component_base_loading">Loading加载动画</string>
+    <string name="nui_component_base_loading_page">Loading page加载动画</string>
+    <string name="nui_component_form">表单组件</string>
+    <string name="nui_component_form_form">Form表单</string>
+    <string name="nui_component_form_calendar">Calendar日历</string>
+    <string name="nui_component_form_keyboard">Keyboard键盘</string>
+    <string name="nui_component_form_picker">Picker选择器</string>
+    <string name="nui_component_form_datetime_picker">DatetimePicker时间选择器械</string>
+    <string name="nui_component_form_rate">Rate评分</string>
+    <string name="nui_component_form_search">Search搜索</string>
+    <string name="nui_component_form_number_box">数据组件</string>
+    <string name="nui_component_form_upload">Upload上传</string>
+    <string name="nui_component_form_code">验证码倒计时</string>
+    <string name="nui_component_form_input">Input输入框</string>
+    <string name="nui_component_form_textarea">Textarea文本域</string>
+    <string name="nui_component_form_checkbox">Checkbox复选框</string>
+    <string name="nui_component_form_radio">Radio单选框</string>
+    <string name="nui_component_form_switch">Switch开关选择</string>
+    <string name="nui_component_form_slider">Slider滑动选择器</string>
+    <string name="nui_component_form_album">Album相册</string>
+    <string name="nui_component_data">数据组件</string>
+    <string name="nui_component_data_list">List列表</string>
+    <string name="nui_component_data_progress">Progress进度条</string>
+    <string name="nui_component_data_countdown">CountDown倒计时</string>
+    <string name="nui_component_data_count_to">CountTo数字滚动</string>
+    <string name="nui_component_feedback">反馈组件</string>
+    <string name="nui_component_feedback_tool_tips">Tooltip长按提示</string>
+    <string name="nui_component_feedback_action_sheet">ActionSheet上拉菜单</string>
+    <string name="nui_component_feedback_alert">Alert警告提示</string>
+    <string name="nui_component_feedback_toast">Toast消息提示</string>
+    <string name="nui_component_feedback_notice_bar">NoticeBar滚动通知</string>
+    <string name="nui_component_feedback_notify">Notify消息提示</string>
+    <string name="nui_component_feedback_swipe_action">SwipeAction滑动单元格</string>
+    <string name="nui_component_feedback_collapse">Collapse折叠面板</string>
+    <string name="nui_component_feedback_popup">Popup弹出层</string>
+    <string name="nui_component_feedback_modal">模态框</string>
+    <string name="nui_component_layout">布局组件</string>
+    <string name="nui_component_layout_scroll_list">横向滚动列表</string>
+    <string name="nui_component_layout_line">Line线条</string>
+    <string name="nui_component_layout_overlay">Overlay遮罩层</string>
+    <string name="nui_component_layout_no_network">NoNetwork无网络提示</string>
+    <string name="nui_component_layout_grid">Gird宫格布局</string>
+    <string name="nui_component_layout_swiper">Swiper轮播图</string>
+    <string name="nui_component_layout_skeleton">Skeleton骨架层</string>
+    <string name="nui_component_layout_sticky">Sticky吸顶</string>
+    <string name="nui_component_layout_divider">Divider分割线</string>
+    <string name="nui_component_navigation">导航组件</string>
+    <string name="nui_component_navigation_tab_bar">TabBar底部导航栏</string>
+    <string name="nui_component_navigation_back_top">BackTop返回顶部</string>
+    <string name="nui_component_navigation_nav_bar">NavBar导航栏</string>
+    <string name="nui_component_navigation_tab">Tabs标签</string>
+    <string name="nui_component_navigation_sub_section">SubSection分段器</string>
+    <string name="nui_component_navigation_index_list">IndexList索引列表</string>
+    <string name="nui_component_navigation_steps">Steps步骤条</string>
+    <string name="nui_component_navigation_empty">Empty内容为空</string>
+    <string name="nui_component_other">其它组件</string>
+    <string name="nui_component_other_parse">Parse富文本解析</string>
+    <string name="nui_component_other_code_input">CodeInput验证输入</string>
+    <string name="nui_component_other_load_more">LoadMore加载更多</string>
+    <string name="nui_component_other_read_more">ReadMore展开阅读更多</string>
+    <string name="nui_component_other_gap">Gap间隔槽</string>
+    <string name="nui_component_other_avatar">其它组件</string>
+    <string name="nui_component_other_link">Link超链接</string>
+    <string name="nui_component_other_transition">Transition动画</string>
+
+    <string name="nui_component_base_color_primary">主色调</string>
+    <string name="nui_component_base_color_primary_primary">Primary</string>
+    <string name="nui_component_base_color_primary_dark">Dark</string>
+    <string name="nui_component_base_color_primary_disabled">Disabled</string>
+    <string name="nui_component_base_color_primary_light">Light</string>
+
+    <string name="nui_component_base_color_error">Error</string>
+    <string name="nui_component_base_color_error_primary">Primary</string>
+    <string name="nui_component_base_color_error_dark">Dark</string>
+    <string name="nui_component_base_color_error_disabled">Disabled</string>
+    <string name="nui_component_base_color_error_light">Light</string>
+
+    <string name="nui_component_base_color_warn">Warn</string>
+    <string name="nui_component_base_color_warn_primary">Primary</string>
+    <string name="nui_component_base_color_warn_dark">Dark</string>
+    <string name="nui_component_base_color_warn_disabled">Disabled</string>
+    <string name="nui_component_base_color_warn_light">Light</string>
+
+    <string name="nui_component_base_color_info">Info</string>
+    <string name="nui_component_base_color_info_primary">Primary</string>
+    <string name="nui_component_base_color_info_dark">Dark</string>
+    <string name="nui_component_base_color_info_disabled">Disabled</string>
+    <string name="nui_component_base_color_info_light">Light</string>
+
+    <string name="nui_component_base_color_success">Success</string>
+    <string name="nui_component_base_color_success_primary">Primary</string>
+    <string name="nui_component_base_color_success_dark">Dark</string>
+    <string name="nui_component_base_color_success_disabled">Disabled</string>
+    <string name="nui_component_base_color_success_light">Light</string>
+
+    <string name="nui_component_base_color_text">Text</string>
+    <string name="nui_component_base_color_text_primary">Primary</string>
+    <string name="nui_component_base_color_text_dark">Dark</string>
+    <string name="nui_component_base_color_text_disabled">Disabled</string>
+    <string name="nui_component_base_color_text_light">Light</string>
+
+    <string name="nui_component_base_color_border">边框颜色</string>
+    <string name="nui_component_base_color_border_primary">Primary</string>
+    <string name="nui_component_base_color_border_dark">Dark</string>
+    <string name="nui_component_base_color_border_disabled">Disabled</string>
+    <string name="nui_component_base_color_border_light">Light</string>
+
+    <string name="nui_component_base_color_background">背景颜色</string>
+    <string name="nui_component_base_color_background_primary">背景颜色</string>
+
+
+    <string name="nui_component_base_icon_filled">Filled Icons</string>
+    <string name="nui_component_base_icon_filled_action">Filled Action Icons</string>
+    <string name="nui_component_base_icon_filled_alert">Filled Alert Icons</string>
+
+    <string name="nui_component_base_image_base">基本案例</string>
+    <string name="nui_component_base_image_custom">自定义形状</string>
+    <string name="nui_component_base_image_custom_circle">自定义圆角</string>
+    <string name="nui_component_base_image_width_fit">图片模式</string>
+    <string name="nui_component_base_image_custom_painter">自定义Painter</string>
+    <string name="nui_component_base_image_network">加载网络图片</string>
+    <string name="nui_component_base_image_network_placeholder">加载网络图片使用Placeholder</string>
+    <string name="nui_component_base_image_network_loading">加载网络图片使用Loading</string>
+    <string name="nui_component_base_image_network_state">加载网络图片使用State</string>
+
+</resources>
