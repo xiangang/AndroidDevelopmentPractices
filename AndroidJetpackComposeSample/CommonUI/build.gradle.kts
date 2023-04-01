@@ -28,19 +28,46 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = Compose.version
+    }
 }
 
 dependencies {
-    implementation(AndroidX.appcompat)
-    implementation(AndroidX.constraintlayout)
-    implementation(AndroidX.cardview)
-    implementation(AndroidX.recyclerView)
-    implementation(AndroidX.coreKtx)
-    implementation(AndroidX.activityKtx)
-    implementation(AndroidX.fragmentKtx)
-    implementation(Google.material)
     testImplementation(TestLib.junit)
     androidTestImplementation(TestLib.androidJunit)
     androidTestImplementation(TestLib.espresso)
-
+    api(AndroidX.appcompat)
+    api(AndroidX.constraintlayout)
+    api(AndroidX.cardview)
+    api(AndroidX.recyclerView)
+    api(AndroidX.coreKtx)
+    api(AndroidX.activityKtx)
+    api(AndroidX.fragmentKtx)
+    api(AndroidX.legacySupportV4)
+    api(AndroidX.swiperefreshlayout)
+    api(Lifecycle.liveDataKtx)
+    api(Lifecycle.viewModelKtx)
+    api(NavigationLib.fragmentKtx)
+    api(NavigationLib.uiKtx)
+    api(NavigationLib.compose)
+    api(Google.material)
+    api(Compose.ui)
+    api(Compose.material)
+    api(Compose.materialIcons)
+    api(Compose.activity)
+    api(Compose.preview)
+    api(Compose.lifecycleViewModel)
+    api(Compose.uiTooling)
+    api(Compose.accompanistPager)
+    api(Compose.accompanistPagerIndicators)
+    api(Compose.accompanistSystemUiController)
+    api(Coil.coilCompose)
+    api(Coil.coilGif)
+    api(Coil.coilSvg)
 }

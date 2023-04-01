@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">AndroidJetpackComposeSample</string>
+    <string name="app_name">Android练习项目</string>
+    <string name="permissions_tips">此应用是需要录音录像权限才可以正常使用</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_main">首页</string>
+    <string name="menu_address_book">通信录</string>
+    <string name="menu_navigation">发现</string>
+    <string name="menu_mine">我的</string>
+    <string name="menu_jetpack">Jetpack</string>
+    <string name="menu_compose">Compose</string>
+    <string name="menu_kotlin">Kotlin</string>
+    <string name="menu_av">音视频</string>
 </resources>

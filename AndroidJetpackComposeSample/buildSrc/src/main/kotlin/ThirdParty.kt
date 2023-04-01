@@ -79,6 +79,9 @@ object ThirdParty {
     const val iconCore = "com.mikepenz:iconics-core:5.3.1"
 
     const val javapoet = "com.squareup:javapoet:1.13.0"
+    const val rtmpClient = "net.butterflytv.utils:rtmp-client:3.1.0"
+    const val brvah = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7"
+    const val linkageRecyclerview = "com.kunminx.linkage:linkage-recyclerview:2.6.0"
 }
 
 object PermissionDispatcher {
@@ -130,7 +133,13 @@ object Glide {
 }
 
 //线圈（Kotlin 协程支持的 Android 图像加载库）
-const val coil = "io.coil-kt:coil:1.3.2"
+object Coil {
+    const val coil = "io.coil-kt:coil:1.3.2"
+    const val coilCompose = "io.coil-kt:coil-compose:2.1.0"
+    const val coilGif = "io.coil-kt:coil-gif:2.1.0"
+    const val coilSvg = "io.coil-kt:coil-svg:2.1.0"
+
+}
 
 /**播放器**/
 object ExoPlayer {

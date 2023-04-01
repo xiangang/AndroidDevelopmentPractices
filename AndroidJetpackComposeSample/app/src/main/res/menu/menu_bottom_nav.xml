@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_jetpack"
+        android:icon="@drawable/ic_rocket"
+        android:title="@string/menu_jetpack" />
+    <item
+        android:id="@+id/action_compose"
+        android:icon="@drawable/ic_rocket"
+        android:title="@string/menu_compose" />
+    <item
+        android:id="@+id/action_kotlin"
+        android:icon="@drawable/ic_rocket"
+        android:title="@string/menu_kotlin" />
+    <item
+        android:id="@+id/action_av"
+        android:icon="@drawable/ic_rocket"
+        android:title="@string/menu_av" />
+</menu>

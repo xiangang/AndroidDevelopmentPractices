@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/common_ui_component_graph"
+    app:startDestination="@id/commonUIShowFragment">
+
+    <fragment
+        android:id="@+id/commonUIShowFragment"
+        android:name="com.nxg.commonui.component.main.MainFragment"
+        android:label="NUI 1.0.0">
+
+    </fragment>
+
+
+</navigation>

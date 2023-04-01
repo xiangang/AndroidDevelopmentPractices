@@ -52,30 +52,39 @@ object AndroidX {
 }
 
 object Compose {
-    const val version = "1.1.0-beta01"
+    const val version = "1.2.0-rc01"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
+    const val materialIcons = "androidx.compose.material:material-icons-extended:$version"
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
+    const val material3 = "androidx.compose.material3:material3:1.0.0-alpha02"
+    const val animation = "androidx.compose.animation:animation:$version"
+    const val activity = "androidx.activity:activity-compose:1.4.0"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
+    const val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta0"
+    const val test = "androidx.compose.ui:ui-test-junit4:$version"
 
     //use debugImplementation
     const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
-    const val material3 = "androidx.compose.material3:material3:1.0.0-alpha02"
-    const val activity = "androidx.activity:activity-compose:1.4.0"
-    const val test = "androidx.compose.ui:ui-test-junit4:$version"
+    const val splashscreen = "androidx.core:core-splashscreen:1.0.0-alpha01"
     //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
+    private const val accompanistVersion = "0.24.13-rc"
+    const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
+    const val accompanistPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
+    const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
 }
 
 object Hilt {
     private const val version = "2.40"
-    const val common = "com.google.dagger:hilt-android:$version"
-    const val compiler = "com.google.dagger:hilt-android-compiler:$version"
-    const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
-    private const val hiltVersion = "2.40"
-    const val hiltCompilerVersion = "1.0.0"
-    const val hilt_android = "com.google.dagger:hilt-android:$hiltVersion"
-    const val hilt_android_compiler = "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    const val hilt_compiler = "androidx.hilt:hilt-compiler:$hiltVersion"
-    const val hilt_android_gradle_plugin = "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
+    private const val hiltCompilerVersion = "1.0.0-beta01"
+    const val android = "com.google.dagger:hilt-android:$version"
+    const val common = "androidx.hilt:hilt-common:1.0.0"
+    const val android_compiler = "com.google.dagger:hilt-android-compiler:$version"
+    const val compiler = "androidx.hilt:hilt-compiler:$hiltCompilerVersion"
+    const val android_gradle_plugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
+    const val navigation_fragment = "androidx.hilt:hilt-navigation-fragment:1.0.0"
+    const val work = "androidx.hilt:hilt-work:1.0.0"
+    const val lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
 }
 
 
@@ -88,7 +97,7 @@ object ViewPager {
 }
 
 object Paging {
-    private const val version = "3.1.0-alpha03"
+    private const val version = "3.1.1"
     const val runtime = "androidx.paging:paging-runtime:$version"
     const val runtimeKtx = "androidx.paging:paging-runtime-ktx:$version"
 
@@ -107,7 +116,7 @@ object Paging {
     const val testingCommonKtx = "androidx.paging:paging-common-ktx:$version"
 
     // optional - Jetpack Compose integration
-    const val compose = "androidx.paging:paging-compose:1.0.0-alpha12"
+    const val compose = "androidx.paging:paging-compose:1.0.0-alpha14"
 }
 
 object Lifecycle {
@@ -147,7 +156,7 @@ object Lifecycle {
 
 object NavigationLib {
     //这个版本支持多返回栈了
-    private const val version = "2.4.0-alpha04"
+    private const val version = "2.4.2"
 
     //const val fragment = "androidx.navigation:navigation-fragment:$version"
     const val fragmentKtx = "androidx.navigation:navigation-fragment-ktx:$version"
