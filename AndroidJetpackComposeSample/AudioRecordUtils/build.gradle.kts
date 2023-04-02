@@ -44,6 +44,7 @@ android {
 dependencies {
     testImplementation(TestLib.junit)
     testImplementation(TestLib.espresso)
+    debugImplementation(Compose.uiTooling)
     androidTestImplementation(Compose.test)
     implementation(AndroidX.appcompat)
     implementation(AndroidX.constraintlayout)
@@ -78,4 +79,8 @@ dependencies {
     implementation(Hilt.lifecycle_viewmodel)
     kapt(Hilt.android_compiler)
     kapt(Hilt.compiler)
+    implementation(project(mapOf("path" to ":CommonUI")))
+    implementation(project(mapOf("path" to ":CommonLib")))
+    implementation(project(mapOf("path" to ":CommonUtils")))
+    implementation(project(mapOf("path" to ":FastMvvm")))
 }
