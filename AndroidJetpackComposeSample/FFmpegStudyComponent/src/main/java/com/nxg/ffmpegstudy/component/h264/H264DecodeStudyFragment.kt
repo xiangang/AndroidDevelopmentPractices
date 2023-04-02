@@ -3,6 +3,7 @@ package com.nxg.ffmpegstudy.component.h264
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
@@ -15,24 +16,18 @@ import com.nxg.audiorecord.AudioTrackHandler
 import com.nxg.audiorecord.LogUtil
 import com.nxg.ffmpeg_mobile.FFmpegMobile
 import com.nxg.ffmpegstudy.component.databinding.AvH264DecodeStudyFragmentBinding
+import com.nxg.mvvm.logger.SimpleLogger
 import java.io.File
 
 /**
  * h264解码学习
  */
-class H264DecodeStudyFragment : Fragment() {
-
-    companion object {
-        const val TAG = "H264DecodeStudyFragment"
-    }
+class H264DecodeStudyFragment : Fragment(), SimpleLogger {
 
     private lateinit var viewModel: H264DecodeStudyViewModel
 
-
     private var _binding: AvH264DecodeStudyFragmentBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     private lateinit var renderSurfaceView: RenderSurfaceView
@@ -46,7 +41,7 @@ class H264DecodeStudyFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(this)[H264DecodeStudyViewModel::class.java]
         _binding = AvH264DecodeStudyFragmentBinding.inflate(inflater, container, false)
-        renderSurfaceView = _binding!!.renderSurfaceView
+        renderSurfaceView = binding.renderSurfaceView
         surfaceHolder = renderSurfaceView.holder
         return binding.root
     }
@@ -60,16 +55,23 @@ class H264DecodeStudyFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.R)
     private fun testFFmpegDecodeH264AndPlay() {
         val decoderPtr = FFmpegMobile.nativeInit()
-        val h264FilePath = Environment.getExternalStorageDirectory().absolutePath + "/test.h264"
+        val externalStorageDirectory = Environment.getExternalStorageDirectory().absolutePath
+        val h264FilePath = "$externalStorageDirectory/test.h264"
+        val aacFilePath = "$externalStorageDirectory/source.aac"
+        val fileH264 = File(h264FilePath)
+        val fileAAC = File(aacFilePath)
+        logger.debug { "fileH264 ${fileH264.exists()}" }
+        logger.debug { "fileAAC ${fileAAC.exists()}" }
+        Log.i("H264DecodeStudyFragment", "fileAAC ${fileAAC.exists()}")
+        Log.i("H264DecodeStudyFragment", "fileH264 ${fileH264.exists()}")
+        if (!fileH264.exists() && !fileAAC.exists()) {
+            logger.debug { "both h264 aac not exists!" }
+            return
+        }
         val flvFilePath =
             Environment.getExternalStorageDirectory().absolutePath + "/source.200kbps.768x320.flv"
-        val aacFilePath =
-            Environment.getExternalStorageDirectory().absolutePath + "/source.aac"
-        val file = File(h264FilePath)
-        LogUtil.i(TAG, "file ${file.exists()}")
         val videoOutputFilePath =
             Environment.getExternalStorageDirectory().absolutePath + "/test_output.h264"
-
         val audioOutputFilePath =
             Environment.getExternalStorageDirectory().absolutePath + "/test_output_audio"
         val audioTrackHandler = AudioTrackHandler.Builder().build()
@@ -77,10 +79,10 @@ class H264DecodeStudyFragment : Fragment() {
         audioTrackHandler.start()
         audioTrackHandler.play()
         binding.buttonStart.setOnClickListener {
-            /*Thread {
-                FFmpegMobile.nativePlayAudio(aacFilePath)
-            }.start()*/
-
+            if (!fileH264.exists() && !fileAAC.exists()) {
+                logger.debug { "both h264 aac not exists!" }
+                return@setOnClickListener
+            }
             decodeAudioThread = DecodeAudioThread(
                 "FFmpegDecodeAudioThread",
                 decoderPtr,
