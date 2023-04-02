@@ -8,6 +8,7 @@ plugins {
 }
 
 android {
+    resourcePrefix = "nui_"
     compileSdk = BuildConfig.compileSdk
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion

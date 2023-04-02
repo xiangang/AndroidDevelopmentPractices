@@ -22,31 +22,5 @@ import kotlinx.coroutines.launch
  */
 class AppShareViewModel(application: Application) : AndroidViewModel(application) {
 
-    /**
-     * 单Activity架构
-     */
-    private val _uiState = MutableStateFlow(UiState.MAIN)
-
-    // The UI collects from this StateFlow to get its state updates
-    val uiState: StateFlow<UiState> = _uiState
-
-    init {
-        viewModelScope.launch {
-            _uiState.value = UiState.MAIN
-        }
-    }
-
-    fun setUiState(state: UiState) {
-        viewModelScope.launch {
-            _uiState.value = state
-        }
-    }
-
-    /**
-     * 界面状态
-     */
-    enum class UiState {
-        MAIN, PERMISSION, NUI
-    }
 
 }

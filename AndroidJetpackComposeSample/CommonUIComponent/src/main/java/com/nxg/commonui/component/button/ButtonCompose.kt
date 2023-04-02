@@ -39,7 +39,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.nxg.commonui.component.R
 import com.nxg.commonui.component.color.ColorComponentHeader
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.theme.*
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -51,7 +51,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun ButtonCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     Scaffold(
         topBar = {

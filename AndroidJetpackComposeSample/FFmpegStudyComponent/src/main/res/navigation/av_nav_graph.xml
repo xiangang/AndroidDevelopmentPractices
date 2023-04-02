@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/av_nav_graph"
+    app:startDestination="@id/navigation_av_entry_point_fragment">
+
+    <fragment
+        android:id="@+id/navigation_av_entry_point_fragment"
+        android:name="com.nxg.ffmpegstudy.component.entrypoint.AvEntryPointFragment"
+        android:label="@string/av_app_name"
+        tools:layout="@layout/av_entry_point_fragment">
+
+        <action
+            android:id="@+id/av_action_entry_point_to_h264_decode_study"
+            app:destination="@id/navigation_av_h264_decode_study_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_av_h264_decode_study_fragment"
+        android:name="com.nxg.ffmpegstudy.component.h264.H264DecodeStudyFragment"
+        android:label="@string/av_h264_decode"
+        tools:layout="@layout/av_h264_decode_study_fragment" />
+
+
+</navigation>

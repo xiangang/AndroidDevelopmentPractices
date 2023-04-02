@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.nxg.commonui.component.R
 import com.nxg.commonui.component.layout.LayoutComponentList
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 
 /**
  * LayoutCompose组件
@@ -19,7 +19,7 @@ import com.nxg.commonui.component.main.MainViewModel
 @Composable
 fun CellCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     Scaffold(
         topBar = {

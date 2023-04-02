@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nxg.commonui.component.R
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.component.text.TextComponentHeader
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorBorder
@@ -31,7 +31,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun LayoutCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     Scaffold(
         topBar = {

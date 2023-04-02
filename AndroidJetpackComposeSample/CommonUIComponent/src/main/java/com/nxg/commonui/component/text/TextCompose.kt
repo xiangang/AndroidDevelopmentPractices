@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nxg.commonui.component.R
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.theme.*
 import com.nxg.commonui.theme.SourceHanSansFontFamily.sourceHanSansCn
 import com.nxg.commonui.utils.ActivityUtil
@@ -45,7 +45,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun TextCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     Scaffold(
         topBar = {

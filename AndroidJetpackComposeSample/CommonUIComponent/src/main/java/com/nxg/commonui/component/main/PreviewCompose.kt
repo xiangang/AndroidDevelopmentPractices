@@ -35,7 +35,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun MainCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     val uiComponentList by viewModel.uiComponentListStateFlow.collectAsState()
     val grouped =

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_fragment_nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.nxg.androidsample.main.HomeFragment"
+        android:label="@string/menu_home">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_discovery"
+        android:name="com.nxg.commonui.component.main.PreviewFragment"
+        android:label="@string/menu_discovery">
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/navigation_mine"
+        android:name="com.nxg.commonui.component.main.PreviewFragment"
+        android:label="@string/menu_mine">
+
+    </fragment>
+
+
+</navigation>

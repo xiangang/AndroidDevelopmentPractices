@@ -14,7 +14,7 @@ import com.nxg.acodecmobile.views.RenderSurfaceView
 import com.nxg.audiorecord.AudioTrackHandler
 import com.nxg.audiorecord.LogUtil
 import com.nxg.ffmpeg_mobile.FFmpegMobile
-import com.nxg.ffmpegstudy.component.databinding.H264DecodeStudyFragmentBinding
+import com.nxg.ffmpegstudy.component.databinding.AvH264DecodeStudyFragmentBinding
 import java.io.File
 
 /**
@@ -24,13 +24,12 @@ class H264DecodeStudyFragment : Fragment() {
 
     companion object {
         const val TAG = "H264DecodeStudyFragment"
-        fun newInstance() = H264DecodeStudyFragment()
     }
 
     private lateinit var viewModel: H264DecodeStudyViewModel
 
 
-    private var _binding: H264DecodeStudyFragmentBinding? = null
+    private var _binding: AvH264DecodeStudyFragmentBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -46,8 +45,7 @@ class H264DecodeStudyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this)[H264DecodeStudyViewModel::class.java]
-        _binding = H264DecodeStudyFragmentBinding.inflate(inflater, container, false)
-
+        _binding = AvH264DecodeStudyFragmentBinding.inflate(inflater, container, false)
         renderSurfaceView = _binding!!.renderSurfaceView
         surfaceHolder = renderSurfaceView.holder
         return binding.root

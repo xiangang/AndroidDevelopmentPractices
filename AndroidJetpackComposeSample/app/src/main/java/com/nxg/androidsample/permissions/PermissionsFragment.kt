@@ -25,8 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.nxg.androidsample.databinding.PermissionFragmentBinding
-import com.nxg.mvvm.navigation.NavigationCenter
-import com.nxg.mvvm.navigation.NavigationDestination
+
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.mvvm.ui.PERMISSIONS_REQUIRED
 
@@ -60,7 +59,7 @@ class PermissionsFragment : BaseBusinessFragment() {
         Log.i(TAG, "onCreateView: ")
         return PermissionFragmentBinding.inflate(inflater, container, false).also {
             if (checkSelfPermissions(requireContext())) {
-                mBaseSharedAndroidViewModel.navigate(NavigationDestination.MAIN)
+                //TODO 跳转到主界面
             } else {
                 Log.e(
                     PermissionsFragment::class.java.simpleName,

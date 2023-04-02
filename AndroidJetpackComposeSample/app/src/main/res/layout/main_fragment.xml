@@ -7,48 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".main.MainFragment">
 
-    <com.nxg.acodecmobile.views.RenderSurfaceView
-        android:id="@+id/render_surface_view"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_fragment_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        app:layout_constraintDimensionRatio="16:9"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/main_fragment_bottom_nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/app_main_fragment_nav_graph" />
 
-    <Button
-        android:id="@+id/buttonStart"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/main_fragment_bottom_nav"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="播放"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPause"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/render_surface_view" />
-
-    <Button
-        android:id="@+id/buttonPause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="暂停"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStop"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonStart"
-        app:layout_constraintTop_toBottomOf="@+id/render_surface_view" />
-
-    <Button
-        android:id="@+id/buttonStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="停止"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonPause"
-        app:layout_constraintTop_toBottomOf="@+id/render_surface_view" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/app_main_fragment_menu_bottom_nav" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
