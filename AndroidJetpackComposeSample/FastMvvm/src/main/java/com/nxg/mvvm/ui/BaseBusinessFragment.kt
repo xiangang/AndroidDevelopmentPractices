@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
+import com.nxg.mvvm.ktx.findMainActivityNavController
 
 var PERMISSIONS_REQUIRED = arrayOf(
     Manifest.permission.CAMERA,
@@ -16,6 +17,9 @@ var PERMISSIONS_REQUIRED = arrayOf(
 
 open class BaseBusinessFragment : BaseViewModelFragment() {
 
+    /**
+     * TODO 改成获取权限导航到指定Fragment
+     */
     val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
         { permissions ->
@@ -28,10 +32,15 @@ open class BaseBusinessFragment : BaseViewModelFragment() {
             if (!permissionGranted) {
                 Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
             } else {
-               //跳转到主界面
+                navigation2MainFragment()
             }
 
         }
+
+    /**
+     * 导航到主界面
+     */
+    open fun navigation2MainFragment() {}
 
     /**
      * 检查所有的权限是否已经拥有

@@ -48,7 +48,7 @@ class MainActivity : BaseViewModelActivity() {
             appBarConfiguration
         )
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
-        lifecycle.addObserver(fragmentLifecycleObserver)
+        //lifecycle.addObserver(fragmentLifecycleObserver)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -57,7 +57,7 @@ class MainActivity : BaseViewModelActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycle.removeObserver(fragmentLifecycleObserver)
+        //lifecycle.removeObserver(fragmentLifecycleObserver)
     }
 
 }

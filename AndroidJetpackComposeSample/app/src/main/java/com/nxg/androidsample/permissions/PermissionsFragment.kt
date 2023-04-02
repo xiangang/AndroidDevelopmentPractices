@@ -25,10 +25,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.nxg.androidsample.databinding.PermissionFragmentBinding
+import com.nxg.mvvm.ktx.findMainActivityNavController
 
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.mvvm.ui.PERMISSIONS_REQUIRED
-
 
 /**
  * This [Fragment] requests permissions and, once granted, it will navigate to the next fragment
@@ -59,14 +59,17 @@ class PermissionsFragment : BaseBusinessFragment() {
         Log.i(TAG, "onCreateView: ")
         return PermissionFragmentBinding.inflate(inflater, container, false).also {
             if (checkSelfPermissions(requireContext())) {
-                //TODO 跳转到主界面
+                navigation2MainFragment()
             } else {
-                Log.e(
-                    PermissionsFragment::class.java.simpleName,
-                    "Re-requesting permissions ..."
-                )
                 activityResultLauncher.launch(PERMISSIONS_REQUIRED)
             }
         }.root
+    }
+
+    override fun navigation2MainFragment() {
+        //跳转到主界面
+        findMainActivityNavController().navigate(
+            PermissionsFragmentDirections.actionPermissionToMain()
+        )
     }
 }
