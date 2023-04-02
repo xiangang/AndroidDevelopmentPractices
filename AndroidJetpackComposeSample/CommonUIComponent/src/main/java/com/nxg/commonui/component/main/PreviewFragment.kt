@@ -21,104 +21,100 @@ import com.nxg.commonui.component.layout.LayoutCompose
 import com.nxg.commonui.component.text.TextCompose
 import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
 
-class MainFragment : Fragment() {
+class PreviewFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var previewViewModel: PreviewViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        previewViewModel = ViewModelProvider(this)[PreviewViewModel::class.java]
         return ComposeView(requireContext()).apply {
             setContent {
                 AndroidJetpackComposeSampleTheme {
-                    NavContent(mainViewModel)
+                    NavContent(previewViewModel)
                 }
             }
         }
     }
 
     @Composable
-    fun NavContent(mainViewModel: MainViewModel) {
+    fun NavContent(previewViewModel: PreviewViewModel) {
         val navHostController = rememberNavController()
         NavHost(navController = navHostController, startDestination = RouteHub.MAIN) {
             composable(RouteHub.MAIN) {
                 MainCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
 
             composable(RouteHub.COLOR) {
                 ColorCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
 
             composable(RouteHub.ICON) {
                 IconCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.IMAGE) {
                 ImageCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.BUTTON) {
                 ButtonCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.TEXT) {
                 TextCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.LAYOUT) {
                 LayoutCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.CELL) {
                 CellCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.BADGE) {
                 ColorCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.TAG) {
                 ColorCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.LOADING) {
                 ColorCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
             composable(RouteHub.LOADING_PAGE) {
                 ColorCompose(
                     navHostController,
-                    mainViewModel
+                    previewViewModel
                 )
             }
 

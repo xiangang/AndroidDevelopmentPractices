@@ -1,25 +1,28 @@
 plugins {
+    kotlin("kapt")
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
+    id("androidx.navigation.safeargs")
+    id("com.google.dagger.hilt.android")
 }
 
+
 android {
-    compileSdk = 31
-
+    resourcePrefix = "av_"
+    compileSdk = BuildConfig.compileSdk
     defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = BuildConfig.minSdkVersion
+        targetSdk = BuildConfig.targetSdkVersion
+        testInstrumentationRunner = BuildConfig.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
     }
-
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -41,31 +44,10 @@ android {
 }
 
 dependencies {
-    implementation(AndroidX.appcompat)
-    implementation(AndroidX.constraintlayout)
-    implementation(AndroidX.cardview)
-    implementation(AndroidX.recyclerView)
-    implementation(AndroidX.coreKtx)
-    implementation(AndroidX.activityKtx)
-    implementation(AndroidX.fragmentKtx)
-    implementation(AndroidX.swiperefreshlayout)
-    implementation(AndroidX.legacySupportV4)
-    implementation(Lifecycle.liveDataKtx)
-    implementation(Lifecycle.viewModelKtx)
-    implementation(NavigationLib.fragmentKtx)
-    implementation(NavigationLib.uiKtx)
-    //implementation(NavigationLib.safeArgs)
-    implementation(Google.material)
-    implementation(Compose.ui)
-    implementation(Compose.material)
-    implementation(Compose.preview)
-    implementation(Compose.activity)
-    implementation(Compose.lifecycleViewModel)
-    debugImplementation(Compose.uiTooling)
-    androidTestImplementation(Compose.test)
-    testImplementation(TestLib.junit)
-    testImplementation(TestLib.androidJunit)
-    testImplementation(TestLib.espresso)
+    implementation(Hilt.android)
+    implementation(Hilt.navigation_fragment)
+    kapt(Hilt.android_compiler)
+    implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":FFmpegMobile")))
     implementation(project(mapOf("path" to ":AcodecMobile")))
     implementation(project(mapOf("path" to ":AudioRecordUtils")))

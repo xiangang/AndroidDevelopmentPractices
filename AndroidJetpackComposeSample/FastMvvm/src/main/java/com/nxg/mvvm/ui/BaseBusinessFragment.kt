@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
-import com.nxg.mvvm.navigation.NavigationCenter
-import com.nxg.mvvm.navigation.NavigationDestination
 
 var PERMISSIONS_REQUIRED = arrayOf(
     Manifest.permission.CAMERA,
@@ -30,7 +28,7 @@ open class BaseBusinessFragment : BaseViewModelFragment() {
             if (!permissionGranted) {
                 Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
             } else {
-                mBaseSharedAndroidViewModel.navigate(NavigationDestination.MAIN)
+               //跳转到主界面
             }
 
         }

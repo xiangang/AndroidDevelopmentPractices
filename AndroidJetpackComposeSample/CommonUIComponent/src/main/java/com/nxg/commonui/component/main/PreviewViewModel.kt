@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel : ViewModel() {
+class PreviewViewModel : ViewModel() {
 
     private val _uiComponentListStateFlow = MutableStateFlow(mutableListOf<UIComponent>())
     val uiComponentListStateFlow = _uiComponentListStateFlow.asStateFlow()

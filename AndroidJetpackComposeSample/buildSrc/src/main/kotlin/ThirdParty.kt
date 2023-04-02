@@ -235,3 +235,13 @@ object DI {
 }
 
 /*******************************依赖注入***********************************/
+
+
+object Log {
+    //https://github.com/MicroUtils/kotlin-logging
+    const val kotlinLogging = "io.github.microutils:kotlin-logging:2.0.1"
+    const val slf4jApi = "org.slf4j:slf4j-api:1.7.30"
+    const val slf4jSimple = "org.slf4j:slf4j-simple:1.7.29"
+    const val log4j = "log4j:log4j:1.2.17"
+    const val logbackAndroid = "com.github.tony19:logback-android:2.0.0"
+}

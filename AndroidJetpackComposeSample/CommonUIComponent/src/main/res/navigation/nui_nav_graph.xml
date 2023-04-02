@@ -2,12 +2,11 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/common_ui_component_graph"
-    app:startDestination="@id/commonUIShowFragment">
+    android:id="@+id/nui_nav_graph">
 
     <fragment
-        android:id="@+id/commonUIShowFragment"
-        android:name="com.nxg.commonui.component.main.MainFragment"
+        android:id="@+id/navigation_nui_entry_point_fragment"
+        android:name="com.nxg.commonui.component.main.PreviewFragment"
         android:label="NUI 1.0.0">
 
     </fragment>

@@ -6,12 +6,13 @@ import android.util.Log
 import com.blankj.utilcode.util.Utils
 import com.nxg.commonutils.LogUtil
 import com.nxg.mvvm.BaseViewModelApplication
+import com.nxg.mvvm.logger.SimpleLogger
 import dagger.hilt.android.HiltAndroidApp
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @HiltAndroidApp
-class App : BaseViewModelApplication() {
+class App : BaseViewModelApplication(), SimpleLogger {
 
     companion object {
         const val TAG = "AppApplication"
@@ -44,69 +45,56 @@ class App : BaseViewModelApplication() {
 
     override fun onLowMemory() {
         super.onLowMemory()
-        Log.i(
-            TAG,
-            "onLowMemory: "
-        )
+        logger.debug { "onLowMemory" }
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        Log.i(
-            TAG,
-            "onTrimMemory: "
-        )
+        logger.debug { "onTrimMemory" }
     }
 
     private val mActivityLifecycleCallbacks: ActivityLifecycleCallbacks =
         object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityCreated: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivityStarted(activity: Activity) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityStarted: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivityResumed(activity: Activity) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityResumed: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivityPaused(activity: Activity) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityPaused: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivityStopped(activity: Activity) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityStopped: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivitySaveInstanceState: " + activity::class.java.name
-                )
+                }
             }
 
             override fun onActivityDestroyed(activity: Activity) {
-                Log.i(
-                    TAG,
+                logger.debug {
                     "onActivityDestroyed: " + activity::class.java.name
-                )
+                }
             }
 
         }

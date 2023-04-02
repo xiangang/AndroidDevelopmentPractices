@@ -1,6 +1,5 @@
 package com.nxg.androidsample.main
 
-import android.util.Log
 import com.nxg.acodecmobile.views.RenderSurfaceView
 import com.nxg.audiorecord.AudioTrackHandler
 import com.nxg.ffmpeg_mobile.FFmpegMobile
@@ -21,7 +20,6 @@ class DecodeVideoThread(
             outputFilePath
         ) { width, height, data ->
             if (data != null) {
-                //Log.i(TAG, "DecodeVideoThread onBufferListener: width = $width, height = $height, yuvData size  = " + data.size)
                 renderSurfaceView.onYuvData(RenderSurfaceView.YuvData(width, height, data))
             }
         }
@@ -43,15 +41,6 @@ class DecodeAudioThread(
             outputFilePath
         ) { width, height, data ->
             if (data != null) {
-                Log.i(
-                    MainFragment.TAG,
-                    "DecodeAudioThread onBufferListener: width = $width, height = $height, pcmData = " + data.size
-
-                )
-                Log.i(
-                    MainFragment.TAG,
-                    "DecodeVideoThread onPlaying: pcmData = $data"
-                )
                 audioTrackHandler.onPlaying(data, 0, data.size)
             }
         }

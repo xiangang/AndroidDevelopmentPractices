@@ -31,7 +31,7 @@ import androidx.navigation.NavController
 import coil.compose.*
 import coil.request.ImageRequest
 import com.nxg.commonui.component.R
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.theme.*
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -42,7 +42,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun ImageCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     val list by viewModel.imageComponentListStateFlow.collectAsState()
     Scaffold(

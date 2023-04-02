@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ffmpeg_study_pause">暂停</string>
-    <string name="ffmpeg_study_stop">停止</string>
+    <string name="av_ffmpeg_study_play">播放</string>
+    <string name="av_ffmpeg_study_pause">暂停</string>
+    <string name="av_ffmpeg_study_stop">停止</string>
+    <string name="av_app_name">音视频</string>
+    <string name="av_back">返回</string>
+    <string name="av_h264_decode">H264解码</string>
 </resources>

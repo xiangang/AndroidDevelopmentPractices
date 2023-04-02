@@ -2,52 +2,54 @@
 
 package com.nxg.androidsample.main
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDirections
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import com.nxg.androidsample.main.MainFragment.Companion.TAG
 import com.nxg.androidsample.main.data.Banner
 import com.nxg.androidsample.main.data.GridMenu
 import com.nxg.androidsample.main.data.NavFunction
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorPrimary
 import com.nxg.commonui.theme.ColorText
-import com.nxg.mvvm.navigation.NavigationDestination
 
 @Composable
-fun MainCompose(
-    viewModel: MainViewModel,
-    navigation: (navigationDestination: NavigationDestination) -> Unit = { _: NavigationDestination -> }
+fun HomeCompose(
+    viewModel: HomeViewModel,
+    onClick: (NavDirections) -> Unit = {}
 ) {
-    MainNavFunctionList(viewModel, navigation)
+    HomeNavFunctionList(viewModel, onClick)
 }
 
 
 @Composable
-fun MainBanner(bannerList: List<Banner>) {
+fun HomeBanner(bannerList: List<Banner>) {
     val pagerState = rememberPagerState()
     HorizontalPager(
         modifier = Modifier.background(ColorPrimary.Primary),
         count = bannerList.size
     ) { page ->
-        MainBannerItem(bannerList[page])
+        HomeBannerItem(bannerList[page])
     }
     /*HorizontalPagerIndicator(
         pagerState = pagerState,
@@ -56,7 +58,7 @@ fun MainBanner(bannerList: List<Banner>) {
 }
 
 @Composable
-fun MainBannerItem(banner: Banner) {
+fun HomeBannerItem(banner: Banner) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,11 +79,10 @@ fun MainBannerItem(banner: Banner) {
     ExperimentalPagerApi::class
 )
 @Composable
-fun MainHorizontalGridBanner(gridMenuList: List<GridMenu>) {
+fun HomeHorizontalGridBanner(gridMenuList: List<GridMenu>) {
     val pagerState = rememberPagerState()
     val count =
         if (gridMenuList.size % 10 > 0) gridMenuList.size / 10 + 1 else gridMenuList.size / 10
-    Log.i(TAG, "MainHorizontalGridBanner: coutn $count")
     HorizontalPager(
         itemSpacing = 10.dp,
         modifier = Modifier.background(
@@ -89,7 +90,7 @@ fun MainHorizontalGridBanner(gridMenuList: List<GridMenu>) {
         ),
         count = if (gridMenuList.size % 10 > 0) gridMenuList.size / 10 + 1 else gridMenuList.size / 10
     ) { page ->
-        MainHorizontalGrid(page, gridMenuList)
+        HomeHorizontalGrid(page, gridMenuList)
     }
     /*HorizontalPagerIndicator(
         pagerState = pagerState,
@@ -98,7 +99,7 @@ fun MainHorizontalGridBanner(gridMenuList: List<GridMenu>) {
 }
 
 @Composable
-fun MainHorizontalGrid(pageIndex: Int, gridMenuList: List<GridMenu>) {
+fun HomeHorizontalGrid(pageIndex: Int, gridMenuList: List<GridMenu>) {
     val gridMenuListAtPage = gridMenuList.subList(
         pageIndex * 10,
         if ((pageIndex + 1) * 10 > gridMenuList.size) gridMenuList.size else (pageIndex + 1) * 10
@@ -121,39 +122,16 @@ fun MainHorizontalGrid(pageIndex: Int, gridMenuList: List<GridMenu>) {
                 GridItemSpan(10)
             }*/
         ) { gridMenu ->
-            MainHorizontalGridItem(
-                gridMenu,
-                onClick = { })
+            HomeHorizontalGridItem(
+                gridMenu
+            )
         }
     }
-    /* LazyHorizontalGrid(
-         rows = GridCells.Fixed(2),
-         horizontalArrangement = Arrangement.spacedBy(10.dp),
-         verticalArrangement = Arrangement.spacedBy(10.dp),
-         modifier = Modifier
-             .background(
-                 ColorBackground.Primary
-             )
-             .height(180.dp)
-             .wrapContentWidth()
-     ) {
-         items(
-             items = gridMenuListAtPage, span = {
-                 // LazyGridItemSpanScope:
-                 // maxLineSpan
-                 GridItemSpan(10)
-             }
-         ) { gridMenu ->
-             MainHorizontalGridItem(
-                 gridMenu,
-                 onClick = { })
-         }
-     }*/
 }
 
 
 @Composable
-fun MainHorizontalGridItem(gridMenu: GridMenu, onClick: () -> Unit = {}) {
+fun HomeHorizontalGridItem(gridMenu: GridMenu) {
     Column(
         Modifier
             .fillMaxSize()
@@ -183,9 +161,9 @@ fun MainHorizontalGridItem(gridMenu: GridMenu, onClick: () -> Unit = {}) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainNavFunctionList(
-    viewModel: MainViewModel,
-    navigation: (navigationDestination: NavigationDestination) -> Unit = { _: NavigationDestination -> }
+fun HomeNavFunctionList(
+    viewModel: HomeViewModel,
+    onClick: (NavDirections) -> Unit = {}
 ) {
     val navFunctionMap by viewModel.navFunctionMapStateFlow.collectAsState()
     val banner by viewModel.bannerStateFlow.collectAsState()
@@ -196,19 +174,19 @@ fun MainNavFunctionList(
             .fillMaxSize()
     ) {
         item {
-            MainBanner(banner)
+            HomeBanner(banner)
         }
         item {
-            MainHorizontalGridBanner(horizontalGridMenu)
+            HomeHorizontalGridBanner(horizontalGridMenu)
         }
         navFunctionMap.forEach { (headerName, listNavFunction) ->
             stickyHeader {
                 NavFunctionHeader(headerName)
             }
             item {
-                NavFunctionHeaderGird(
+                NavFunctionGird(
                     listNavFunction,
-                    navigation
+                    onClick
                 )
             }
         }
@@ -229,9 +207,9 @@ fun NavFunctionHeader(headerName: String) {
 }
 
 @Composable
-fun NavFunctionHeaderGird(
+fun NavFunctionGird(
     navFunctionList: List<NavFunction>,
-    navigation: (navigationDestination: NavigationDestination) -> Unit = { _: NavigationDestination -> }
+    onClick: (NavDirections) -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
@@ -249,7 +227,7 @@ fun NavFunctionHeaderGird(
             NavFunctionListItem(
                 navFunction,
                 onClick = {
-                    navigation(navFunction.navigationDestination)
+                    onClick(navFunction.direction)
                 }
             )
         }
@@ -283,43 +261,4 @@ fun NavFunctionListItem(navFunction: NavFunction, onClick: () -> Unit = {}) {
         }
 
     }
-    /*Card(
-        modifier = Modifier
-            .padding(10.dp, 10.dp, 10.dp, 0.dp)
-            .clickable(enabled = true, onClick = onClick)
-            .fillMaxWidth()
-            .wrapContentHeight(),
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-                .wrapContentHeight()
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(60.dp),
-                contentScale = ContentScale.FillBounds,
-                painter = painterResource(id = navFunction.functionIconResId),
-                contentDescription = null,
-            )
-            Column(
-                Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxHeight(),
-                    style = MaterialTheme.typography.subtitle1,
-                    text = navFunction.functionName
-                )
-                Text(
-                    modifier = Modifier.fillMaxHeight(),
-                    style = MaterialTheme.typography.subtitle1,
-                    text = navFunction.functionDesc
-                )
-            }
-        }
-
-    }*/
 }

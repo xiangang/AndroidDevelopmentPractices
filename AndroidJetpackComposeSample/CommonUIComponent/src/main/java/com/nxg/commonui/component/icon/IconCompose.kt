@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nxg.commonui.component.R
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorText
 
@@ -34,7 +34,7 @@ import com.nxg.commonui.theme.ColorText
 @Composable
 fun IconCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     val colorComponentList by viewModel.iconComponentListStateFlow.collectAsState()
     val grouped =

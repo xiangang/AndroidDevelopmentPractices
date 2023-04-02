@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.nxg.commonui.component.R
-import com.nxg.commonui.component.main.MainViewModel
+import com.nxg.commonui.component.main.PreviewViewModel
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorPrimary
 import com.nxg.commonui.theme.ColorText
@@ -40,7 +40,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 fun ColorCompose(
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: PreviewViewModel
 ) {
     val colorComponentList by viewModel.colorComponentListStateFlow.collectAsState()
     val grouped =
@@ -271,8 +271,8 @@ fun ColorComponentListItem(colorComponent: ColorComponent, onClick: () -> Unit =
 @Composable
 fun PreviewColorCompose() {
     val navHostController = rememberNavController()
-    val mainViewModel: MainViewModel = viewModel()
-    ColorCompose(navHostController, mainViewModel)
+    val previewViewModel: PreviewViewModel = viewModel()
+    ColorCompose(navHostController, previewViewModel)
 }
 
 @InternalCoroutinesApi
