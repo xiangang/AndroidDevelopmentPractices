@@ -1,10 +1,11 @@
 plugins {
+    kotlin("kapt")
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
-    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
 }
 
 
@@ -97,16 +98,14 @@ dependencies {
     implementation(Compose.uiTooling)
     implementation(ThirdParty.linkageRecyclerview)
     implementation(Hilt.android)
-    implementation(Hilt.lifecycle_viewmodel)
+    implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
-    kapt(Hilt.compiler)
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":FFmpegMobile")))
     implementation(project(mapOf("path" to ":RtmpMobile")))
     implementation(project(mapOf("path" to ":AcodecMobile")))
     implementation(project(mapOf("path" to ":AudioRecordUtils")))
     implementation(project(mapOf("path" to ":YuvUtil")))
-    //implementation(project(mapOf("path" to ":SocketIOMobile")))
     implementation(project(mapOf("path" to ":WebrtcMobile")))
     implementation(project(mapOf("path" to ":IM")))
     implementation(project(mapOf("path" to ":CommonUIComponent")))

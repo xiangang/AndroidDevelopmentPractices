@@ -52,7 +52,7 @@ object AndroidX {
 }
 
 object Compose {
-    const val version = "1.2.0-rc01"
+    const val version = "1.3.0"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val materialIcons = "androidx.compose.material:material-icons-extended:$version"
@@ -75,16 +75,14 @@ object Compose {
 }
 
 object Hilt {
-    private const val version = "2.40"
+    private const val version = "2.44"
     private const val hiltCompilerVersion = "1.0.0-beta01"
-    const val android = "com.google.dagger:hilt-android:$version"
     const val common = "androidx.hilt:hilt-common:1.0.0"
+    const val android = "com.google.dagger:hilt-android:$version"
     const val android_compiler = "com.google.dagger:hilt-android-compiler:$version"
     const val compiler = "androidx.hilt:hilt-compiler:$hiltCompilerVersion"
-    const val android_gradle_plugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
     const val navigation_fragment = "androidx.hilt:hilt-navigation-fragment:1.0.0"
     const val work = "androidx.hilt:hilt-work:1.0.0"
-    const val lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
 }
 
 

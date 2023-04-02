@@ -15,4 +15,5 @@ object Kotlin {
         const val core ="org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android ="org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
     }
+
 }

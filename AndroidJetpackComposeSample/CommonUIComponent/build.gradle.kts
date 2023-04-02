@@ -75,7 +75,7 @@ dependencies {
     implementation(Coil.coilSvg)
     implementation(ThirdParty.linkageRecyclerview)
     implementation(Hilt.android)
-    implementation(Hilt.lifecycle_viewmodel)
+    implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
-    kapt(Hilt.compiler)
+    implementation(project(mapOf("path" to ":CommonUI")))
 }
