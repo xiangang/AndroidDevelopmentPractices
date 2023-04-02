@@ -57,7 +57,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     implementation(Hilt.android)
-    implementation(Hilt.lifecycle_viewmodel)
+    implementation(Hilt.navigation_fragment)
     kapt (Hilt.android_compiler)
-    kapt (Hilt.compiler)
 }
