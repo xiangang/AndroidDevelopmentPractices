@@ -18,10 +18,6 @@ android {
                 abiFilters("armeabi-v7a")
             }
         }
-        ndk{
-            abiFilters.clear()
-            abiFilters +="armeabi-v7a"
-        }
     }
 
     buildTypes {
@@ -40,7 +36,7 @@ android {
         }
     }
     sourceSets {
-        getByName("main"){
+        getByName("main") {
             jniLibs { srcDir("/src/main/cpp/libs") }
         }
     }
@@ -60,5 +56,5 @@ dependencies {
     androidTestImplementation(TestLib.espresso)
     implementation(Hilt.android)
     implementation(Hilt.navigation_fragment)
-    kapt (Hilt.android_compiler)
+    kapt(Hilt.android_compiler)
 }
