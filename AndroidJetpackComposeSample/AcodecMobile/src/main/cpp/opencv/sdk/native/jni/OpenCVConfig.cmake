@@ -40,6 +40,7 @@ if(NOT DEFINED OpenCV_CONFIG_SUBDIR)
 endif()
 
 set(OpenCV_CONFIG_PATH "${CMAKE_CURRENT_LIST_DIR}${OpenCV_CONFIG_SUBDIR}")
+message("OpenCV_CONFIG_PATH is ${OpenCV_CONFIG_PATH}")
 if(EXISTS "${OpenCV_CONFIG_PATH}/OpenCVConfig.cmake")
   include("${OpenCV_CONFIG_PATH}/OpenCVConfig.cmake")
 else()

@@ -26,7 +26,7 @@ Java_com_nxg_acodecmobile_AvCodecMobile_renderYuvDataOnSurface(JNIEnv *env, jcla
                                                                jint width, jint height,
                                                                jbyteArray yuv_data,
                                                                jobject surface) {
-  /*  // yuv转rgba
+    // yuv转rgba
     jbyte *data = env->GetByteArrayElements(yuv_data, nullptr);
     cv::Mat yuvImg(height + height / 2, width, CV_8UC1, data);
     cv::Mat rgbImg;
@@ -59,5 +59,5 @@ Java_com_nxg_acodecmobile_AvCodecMobile_renderYuvDataOnSurface(JNIEnv *env, jcla
     ANativeWindow_release(window);
     env->ReleaseByteArrayElements(yuv_data, data, 0);
     yuvImg.release();
-    rgbImg.release();*/
+    rgbImg.release();
 }

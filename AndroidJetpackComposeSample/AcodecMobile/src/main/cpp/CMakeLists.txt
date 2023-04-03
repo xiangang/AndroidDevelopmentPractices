@@ -19,14 +19,14 @@ set(CMAKE_BUILD_TYPE DEBUG)
 # CMAKE_C_FLAGS 表示会将 C 参数传给编译器
 # 参数设置 : 传递 CMAKE_CXX_FLAGS C+= 参数给编译器时 , 在该参数后面指定库的路径
 #   CMAKE_SOURCE_DIR 指的是当前的文件地址
-#   -L 参数指定动态库的查找路径
+#   -L 参数指定动态库的查找路径find_package
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -fexceptions -fopenmp -static-openmp")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -fexceptions -L${CMAKE_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}")
 
 set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/opencv/sdk/native/jni)
 find_package(OpenCV 4.5.4 REQUIRED core features2d highgui imgproc photo video)
-set(OpenCV_FOUND 1)
-
+message("OpenCV_FOUND is ${OpenCV_FOUND}")
+message("OpenCV_LIBS is ${OpenCV_LIBS}")
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
