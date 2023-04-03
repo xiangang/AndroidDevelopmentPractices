@@ -66,7 +66,7 @@ else()
   # The missing components will be handled by this config.
   set(_OpenCV_HANDLE_COMPONENTS_MANUALLY TRUE)
 endif()
-
+message("_OpenCV_HANDLE_COMPONENTS_MANUALLY is ${_OpenCV_HANDLE_COMPONENTS_MANUALLY}")
 # Extract directory name from full path of the file currently being processed.
 # Note that CMake 2.8.3 introduced CMAKE_CURRENT_LIST_DIR. We reimplement it
 # for older versions of CMake to support these as well.
@@ -78,7 +78,10 @@ endif()
 # Get the absolute path with no ../.. relative marks, to eliminate implicit linker warnings
 get_filename_component(OpenCV_CONFIG_PATH "${CMAKE_CURRENT_LIST_DIR}" REALPATH)
 get_filename_component(OpenCV_INSTALL_PATH "${OpenCV_CONFIG_PATH}/../../../../" REALPATH)
-
+message("OpenCV_CONFIG_PATH is ${OpenCV_CONFIG_PATH}")
+message("CMAKE_CURRENT_LIST_DIR is ${CMAKE_CURRENT_LIST_DIR}")
+message("OpenCV_INSTALL_PATH is ${OpenCV_INSTALL_PATH}")
+message("ARGN is ${ARGN}")
 # Search packages for host system instead of packages for target system.
 # in case of cross compilation this macro should be defined by toolchain file
 if(NOT COMMAND find_host_package)
@@ -105,11 +108,13 @@ if(OpenCV_ANDROID_NATIVE_API_LEVEL GREATER ANDROID_NATIVE_API_LEVEL)
     message(WARNING "Minimum required by OpenCV API level is android-${OpenCV_ANDROID_NATIVE_API_LEVEL}")
   endif()
   set(OpenCV_FOUND 1)
+  message("OpenCV_ANDROID_NATIVE_API_LEVEL is ${OpenCV_ANDROID_NATIVE_API_LEVEL}")
+  message("OpenCV_FOUND is ${OpenCV_FOUND} return() ----------->")
   return()
 endif()
 
 
-
+message("Continue ----------->")
 
 
 # Some additional settings are required if OpenCV is built as static libs
