@@ -20,9 +20,12 @@ class DecodeVideoThread(
             inputFilePath,
             outputFilePath
         ) { width, height, data ->
-            if (data != null) {
-                //Log.i(TAG, "DecodeVideoThread onBufferListener: width = $width, height = $height, yuvData size  = " + data.size)
-                renderSurfaceView.onYuvData(RenderSurfaceView.YuvData(width, height, data))
+            Log.i("DecodeVideoThread", "run: isInterrupted $isInterrupted")
+            if (!isInterrupted) {
+                if (data != null) {
+                    //Log.i(TAG, "DecodeVideoThread onBufferListener: width = $width, height = $height, yuvData size  = " + data.size)
+                    renderSurfaceView.onYuvData(RenderSurfaceView.YuvData(width, height, data))
+                }
             }
         }
     }
@@ -42,16 +45,19 @@ class DecodeAudioThread(
             inputFilePath,
             outputFilePath
         ) { width, height, data ->
-            if (data != null) {
-                Log.i(
-                    "DecodeAudioThread",
-                    "DecodeAudioThread onBufferListener: width = $width, height = $height, pcmData = " + data.size
-                )
-                Log.i(
-                    "DecodeAudioThread",
-                    "DecodeVideoThread onPlaying: pcmData = $data"
-                )
-                audioTrackHandler.onPlaying(data, 0, data.size)
+            Log.i("DecodeAudioThread", "run: isInterrupted $isInterrupted")
+            if (!isInterrupted) {
+                if (data != null) {
+                    Log.i(
+                        "DecodeAudioThread",
+                        "DecodeAudioThread onBufferListener: width = $width, height = $height, pcmData = " + data.size
+                    )
+                    Log.i(
+                        "DecodeAudioThread",
+                        "DecodeVideoThread onPlaying: pcmData = $data"
+                    )
+                    audioTrackHandler.onPlaying(data, 0, data.size)
+                }
             }
         }
     }

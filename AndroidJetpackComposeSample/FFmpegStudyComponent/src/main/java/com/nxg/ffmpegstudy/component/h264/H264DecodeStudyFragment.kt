@@ -31,6 +31,9 @@ class H264DecodeStudyFragment : Fragment(), SimpleLogger {
     private val binding get() = _binding!!
 
     private lateinit var renderSurfaceView: RenderSurfaceView
+    private val audioTrackHandler by lazy {
+        AudioTrackHandler.Builder().build()
+    }
     private lateinit var surfaceHolder: SurfaceHolder
     private var decodeVideoThread: DecodeVideoThread? = null
     private var decodeAudioThread: DecodeAudioThread? = null
@@ -74,37 +77,71 @@ class H264DecodeStudyFragment : Fragment(), SimpleLogger {
             Environment.getExternalStorageDirectory().absolutePath + "/test_output.h264"
         val audioOutputFilePath =
             Environment.getExternalStorageDirectory().absolutePath + "/test_output_audio"
-        val audioTrackHandler = AudioTrackHandler.Builder().build()
+
         audioTrackHandler.prepare()
         audioTrackHandler.start()
         audioTrackHandler.play()
         binding.buttonStart.setOnClickListener {
-            if (!fileH264.exists() && !fileAAC.exists()) {
-                logger.debug { "both h264 aac not exists!" }
-                return@setOnClickListener
-            }
-            decodeAudioThread = DecodeAudioThread(
-                "FFmpegDecodeAudioThread",
-                decoderPtr,
-                aacFilePath,
-                audioOutputFilePath,
-                audioTrackHandler
-            )
-            decodeVideoThread = DecodeVideoThread(
-                "FFmpegDecodeVideoThread",
-                decoderPtr,
-                h264FilePath,
-                videoOutputFilePath,
-                renderSurfaceView
-            )
-            decodeAudioThread?.start()
-            decodeVideoThread?.start()
+            if (play(
+                    fileH264,
+                    fileAAC,
+                    decoderPtr,
+                    aacFilePath,
+                    audioOutputFilePath,
+                    h264FilePath,
+                    videoOutputFilePath
+                )
+            ) return@setOnClickListener
         }
 
         binding.buttonStop.setOnClickListener {
-            decodeVideoThread?.interrupt()
-            decodeAudioThread?.interrupt()
+            stop()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stop()
+    }
+
+    private fun play(
+        fileH264: File,
+        fileAAC: File,
+        decoderPtr: Long,
+        aacFilePath: String,
+        audioOutputFilePath: String,
+        h264FilePath: String,
+        videoOutputFilePath: String
+    ): Boolean {
+        if (!fileH264.exists() && !fileAAC.exists()) {
+            logger.debug { "both h264 aac not exists!" }
+            return true
+        }
+        decodeAudioThread = DecodeAudioThread(
+            "FFmpegDecodeAudioThread",
+            decoderPtr,
+            aacFilePath,
+            audioOutputFilePath,
+            audioTrackHandler
+        )
+        decodeVideoThread = DecodeVideoThread(
+            "FFmpegDecodeVideoThread",
+            decoderPtr,
+            h264FilePath,
+            videoOutputFilePath,
+            renderSurfaceView
+        )
+        decodeAudioThread?.start()
+        decodeVideoThread?.start()
+        return false
+    }
+
+    private fun stop() {
+        audioTrackHandler.stop()
+        audioTrackHandler.flush()
+        renderSurfaceView.release()
+        decodeVideoThread?.interrupt()
+        decodeAudioThread?.interrupt()
     }
 
 }
