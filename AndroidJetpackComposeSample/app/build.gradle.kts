@@ -100,6 +100,8 @@ dependencies {
     implementation(Hilt.android)
     implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
+    implementation(Log.kotlinLogging)
+    implementation(Log.logbackAndroid)
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":FFmpegMobile")))
     implementation(project(mapOf("path" to ":RtmpMobile")))

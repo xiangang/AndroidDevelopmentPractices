@@ -11,7 +11,9 @@
 
         <action
             android:id="@+id/action_permission_to_main"
-            app:destination="@id/navigation_app_main" />
+            app:destination="@id/navigation_app_main"
+            app:launchSingleTop="true" />
+
     </fragment>
 
     <fragment
@@ -30,6 +32,7 @@
     </fragment>
 
 
+    <include app:graph="@navigation/app_main_fragment_nav_graph" />
     <include app:graph="@navigation/av_nav_graph" />
     <include app:graph="@navigation/nui_nav_graph" />
 

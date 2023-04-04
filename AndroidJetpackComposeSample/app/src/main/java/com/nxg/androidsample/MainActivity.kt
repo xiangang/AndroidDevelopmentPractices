@@ -1,21 +1,21 @@
 package com.nxg.androidsample
 
-import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.nxg.androidsample.databinding.MainActivityBinding
 import com.nxg.commonui.utils.setAndroidNativeLightStatusBar
 import com.nxg.commonui.utils.transparentStatusBar
+import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : BaseViewModelActivity() {
+class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
     companion object {
         const val TAG = "MainActivity"
@@ -42,18 +42,22 @@ class MainActivity : BaseViewModelActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+        Log.i(TAG, "onCreate: navController $navController" )
         appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(
             navController,
             appBarConfiguration
         )
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         //lifecycle.addObserver(fragmentLifecycleObserver)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+////        return navController.navigateUp(appBarConfiguration)
+//        return false
+//    }
+
 
     override fun onDestroy() {
         super.onDestroy()

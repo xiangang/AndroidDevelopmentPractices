@@ -5,26 +5,18 @@
     app:startDestination="@id/navigation_home">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@id/navigation_home"
         android:name="com.nxg.androidsample.main.HomeFragment"
-        android:label="@string/menu_home">
-
-    </fragment>
+        android:label="@string/menu_home"/>
 
     <fragment
-        android:id="@+id/navigation_discovery"
+        android:id="@id/navigation_discovery"
         android:name="com.nxg.commonui.component.main.PreviewFragment"
-        android:label="@string/menu_discovery">
-
-    </fragment>
-
+        android:label="@string/menu_discovery"/>
 
     <fragment
-        android:id="@+id/navigation_mine"
-        android:name="com.nxg.commonui.component.main.PreviewFragment"
-        android:label="@string/menu_mine">
-
-    </fragment>
-
+        android:id="@id/navigation_mine"
+        android:name="com.nxg.ffmpegstudy.component.h264.H264DecodeStudyFragment"
+        android:label="@string/menu_mine"/>
 
 </navigation>
