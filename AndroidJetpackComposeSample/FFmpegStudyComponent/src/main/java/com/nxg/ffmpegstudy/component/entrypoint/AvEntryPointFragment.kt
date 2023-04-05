@@ -132,6 +132,28 @@ class AvEntryPointFragment : BaseViewModelFragment() {
                             Text(text = "H264解码")
                         }
                     }
+
+                    item {
+                        Button(
+                            onClick = {
+                                findMainActivityNavController().navigate(
+                                    AvEntryPointFragmentDirections.avActionEntryPointToH264DecodeStudyCompose()
+                                )
+                            },
+                            shape = MaterialTheme.shapes.small,
+                            contentPadding = PaddingValues(
+                                start = 10.dp,
+                                top = 10.dp,
+                                end = 10.dp,
+                                bottom = 10.dp
+                            ), colors = ButtonDefaults.buttonColors(
+                                backgroundColor = ColorPrimary.Primary,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(text = "H264解码(Compose)")
+                        }
+                    }
                 }
             }
         }

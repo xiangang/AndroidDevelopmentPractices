@@ -44,6 +44,11 @@ android {
 }
 
 dependencies {
+    testApi(TestLib.junit)
+    testApi(TestLib.espresso)
+    testApi(Compose.uiTooling)
+    androidTestApi(Compose.test)
+    debugImplementation(Compose.uiTooling)
     implementation(Hilt.android)
     implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
