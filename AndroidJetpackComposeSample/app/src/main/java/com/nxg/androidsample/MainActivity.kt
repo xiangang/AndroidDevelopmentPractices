@@ -2,6 +2,7 @@ package com.nxg.androidsample
 
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -46,20 +47,34 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        Log.i(TAG, "onCreate: navController $navController")
         appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(
             navController,
             appBarConfiguration
         )
+        lifecycleScope.launchWhenResumed {
+            binding.toolbar.navigationIcon = null
+        }
+        val defaultNavigationIcon = binding.toolbar.navigationIcon
+        /*navController.addOnDestinationChangedListener { _, destination, _ ->
+            logger.debug { "addOnDestinationChangedListener: $destination" }
+            when (destination.id) {
+                R.id.navigation_app_main -> {
+                    binding.toolbar.navigationIcon = null
+                }
+                else -> {
+                    binding.toolbar.navigationIcon = defaultNavigationIcon
+                }
+            }
+        }*/
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
-        //lifecycle.addObserver(fragmentLifecycleObserver)
+        lifecycle.addObserver(fragmentLifecycleObserver)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        //lifecycle.removeObserver(fragmentLifecycleObserver)
+        lifecycle.removeObserver(fragmentLifecycleObserver)
     }
 
 }

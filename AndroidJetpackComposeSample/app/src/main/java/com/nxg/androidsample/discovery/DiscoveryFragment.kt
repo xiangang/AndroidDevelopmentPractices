@@ -1,31 +1,36 @@
-package com.nxg.androidsample.main
+package com.nxg.androidsample.discovery
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavDirections
+import com.nxg.androidsample.main.NavFunctionGird
+import com.nxg.androidsample.main.NavFunctionHeader
 import com.nxg.commonui.component.R
 import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
+import com.nxg.commonui.theme.ColorBackground
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
-import kotlinx.coroutines.launch
 
+class DiscoveryFragment : BaseViewModelFragment() {
 
-/**
- * 首页
- */
-class HomeFragment : BaseViewModelFragment() {
-
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel: DiscoveryViewModel by activityViewModels()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreateView(
@@ -33,7 +38,6 @@ class HomeFragment : BaseViewModelFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         return ComposeView(requireContext()).apply {
             setContent {
                 AndroidJetpackComposeSampleTheme {
@@ -44,7 +48,7 @@ class HomeFragment : BaseViewModelFragment() {
                             )
                         }
                     ) {
-                        HomeCompose(
+                        DiscoveryCompose(
                             viewModel,
                             ::navigation
                         )
@@ -55,18 +59,35 @@ class HomeFragment : BaseViewModelFragment() {
         }
     }
 
-    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            viewModel.bannerStateFlow.collect {
-
-            }
-        }
-    }
 
     private fun navigation(navDirection: NavDirections) {
         findMainActivityNavController().navigate(navDirection)
     }
 
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DiscoveryCompose(
+    viewModel: DiscoveryViewModel,
+    onClick: (NavDirections) -> Unit = {}
+) {
+    val navFunctionMap by viewModel.navFunctionMapStateFlow.collectAsState()
+    LazyColumn(
+        modifier = Modifier
+            .background(ColorBackground.Primary)
+            .fillMaxSize()
+    ) {
+        navFunctionMap.forEach { (headerName, listNavFunction) ->
+            stickyHeader {
+                NavFunctionHeader(headerName)
+            }
+            item {
+                NavFunctionGird(
+                    listNavFunction,
+                    onClick
+                )
+            }
+        }
+    }
 }

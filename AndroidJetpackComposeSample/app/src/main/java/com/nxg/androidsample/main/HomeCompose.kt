@@ -2,7 +2,6 @@
 
 package com.nxg.androidsample.main
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -159,13 +158,11 @@ fun HomeHorizontalGridItem(gridMenu: GridMenu) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeNavFunctionList(
     viewModel: HomeViewModel,
     onClick: (NavDirections) -> Unit = {}
 ) {
-    val navFunctionMap by viewModel.navFunctionMapStateFlow.collectAsState()
     val banner by viewModel.bannerStateFlow.collectAsState()
     val horizontalGridMenu by viewModel.horizontalGridMenuStateFlow.collectAsState()
     LazyColumn(
@@ -178,17 +175,6 @@ fun HomeNavFunctionList(
         }
         item {
             HomeHorizontalGridBanner(horizontalGridMenu)
-        }
-        navFunctionMap.forEach { (headerName, listNavFunction) ->
-            stickyHeader {
-                NavFunctionHeader(headerName)
-            }
-            item {
-                NavFunctionGird(
-                    listNavFunction,
-                    onClick
-                )
-            }
         }
     }
 }

@@ -12,7 +12,6 @@ class FragmentLifecycleObserver(private val supportFragmentManager: FragmentMana
         AppFragmentLifecycleCallbacks()
 
     override fun onCreate(owner: LifecycleOwner) {
-
         supportFragmentManager.registerFragmentLifecycleCallbacks(
             mFragmentLifecycleCallbacks,
             true
