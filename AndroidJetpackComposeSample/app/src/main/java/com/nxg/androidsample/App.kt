@@ -2,9 +2,7 @@ package com.nxg.androidsample
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import com.blankj.utilcode.util.Utils
-import com.nxg.commonutils.LogUtil
 import com.nxg.mvvm.BaseViewModelApplication
 import com.nxg.mvvm.logger.SimpleLogger
 import dagger.hilt.android.HiltAndroidApp
@@ -38,7 +36,6 @@ class App : BaseViewModelApplication(), SimpleLogger {
         super.onCreate()
         INSTANCE = this
         Utils.init(this)
-        LogUtil.enable = BuildConfig.DEBUG
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
 

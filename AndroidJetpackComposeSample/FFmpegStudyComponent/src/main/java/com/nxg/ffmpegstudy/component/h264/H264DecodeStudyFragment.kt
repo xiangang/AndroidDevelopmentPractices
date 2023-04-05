@@ -11,9 +11,8 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.nxg.acodecmobile.views.RenderSurfaceView
+import com.nxg.opencv.views.RenderSurfaceView
 import com.nxg.audiorecord.AudioTrackHandler
-import com.nxg.audiorecord.LogUtil
 import com.nxg.ffmpeg_mobile.FFmpegMobile
 import com.nxg.ffmpegstudy.component.databinding.AvH264DecodeStudyFragmentBinding
 import com.nxg.mvvm.logger.SimpleLogger

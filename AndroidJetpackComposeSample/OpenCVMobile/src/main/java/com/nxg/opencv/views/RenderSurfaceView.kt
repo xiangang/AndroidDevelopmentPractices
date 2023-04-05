@@ -1,13 +1,11 @@
-package com.nxg.acodecmobile.views
+package com.nxg.opencv.views
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.core.util.Pools
-import com.nxg.acodecmobile.views.RenderSurfaceView.YuvData
-import com.nxg.acodecmobile.views.RenderSurfaceView.RenderThread
-import com.nxg.acodecmobile.AvCodecMobile
+import com.nxg.opencv.OpenCVMobile
 import java.util.concurrent.LinkedBlockingDeque
 
 class RenderSurfaceView : SurfaceView, SurfaceHolder.Callback {
@@ -74,7 +72,7 @@ class RenderSurfaceView : SurfaceView, SurfaceHolder.Callback {
                 try {
                     val yuvData = dataDeque.take()
                     if (yuvData != null) {
-                        AvCodecMobile.renderYuvDataOnSurface(
+                        OpenCVMobile.renderYuvDataOnSurface(
                             yuvData.width,
                             yuvData.height,
                             yuvData.data,

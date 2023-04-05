@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".main.MainFragment">
 
-    <com.nxg.acodecmobile.views.RenderSurfaceView
+    <com.nxg.opencv.views.RenderSurfaceView
         android:id="@+id/render_surface_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"

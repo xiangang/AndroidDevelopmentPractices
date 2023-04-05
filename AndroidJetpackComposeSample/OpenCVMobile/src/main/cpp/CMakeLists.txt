@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.18.1)
 
 # Declares and names the project.
 
-project("acodecmobile")
+project("opencv_mobile")
 
 include_directories(include)
 
@@ -37,13 +37,13 @@ message("OpenCV_LIBS is ${OpenCV_LIBS}")
 #       ② 参数 2 ( SHARED ) : 设置引入的函数库类型 : ① 静态库 STATIC ② 动态库 SHARED
 #       ③ 参数 3 ( IMPORTED ) : 表示引入第三方静态库 , 导入静态库 , 相当于预编译静态库
 add_library( # Sets the name of the library.
-        acodecmobile
+        opencv_mobile
 
         # Sets the library as a shared library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        acodecmobile.cpp)
+        opencv_mobile.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -66,7 +66,7 @@ find_library( # Sets the name of the path variable.
 #       参数 1 : 本构建脚本要生成的动态库目 标
 #       参数 2 ~ ... : 后面是之前预编译的动态库或静态库 , 或引入的动态库
 target_link_libraries( # Specifies the target library.
-        acodecmobile
+        opencv_mobile
         ${OpenCV_LIBS}
         # Links the target library to the log library
         # included in the NDK.

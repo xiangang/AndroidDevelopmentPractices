@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.nxg.androidsample.databinding.MainActivityBinding
+import com.nxg.commonui.utils.isDarkMode
 import com.nxg.commonui.utils.setAndroidNativeLightStatusBar
 import com.nxg.commonui.utils.transparentStatusBar
 import com.nxg.mvvm.logger.SimpleLogger
@@ -29,8 +30,11 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        transparentStatusBar(getColor(com.nxg.commonui.R.color.common_ui_primary))
-        setAndroidNativeLightStatusBar(true)
+        if (isDarkMode()) {
+            setAndroidNativeLightStatusBar(false)
+        } else {
+            transparentStatusBar(getColor(com.nxg.commonui.R.color.common_ui_primary))
+        }
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -42,7 +46,7 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        Log.i(TAG, "onCreate: navController $navController" )
+        Log.i(TAG, "onCreate: navController $navController")
         appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(
             navController,
@@ -52,12 +56,6 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         //lifecycle.addObserver(fragmentLifecycleObserver)
     }
-
-//    override fun onSupportNavigateUp(): Boolean {
-////        return navController.navigateUp(appBarConfiguration)
-//        return false
-//    }
-
 
     override fun onDestroy() {
         super.onDestroy()

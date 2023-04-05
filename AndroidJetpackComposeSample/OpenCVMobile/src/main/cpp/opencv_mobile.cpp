@@ -14,18 +14,10 @@
 using namespace cv;
 
 extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_nxg_acodecmobile_AvCodecMobile_stringFromJNI(JNIEnv *env, jclass clazz) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
-
-extern "C"
 JNIEXPORT void JNICALL
-Java_com_nxg_acodecmobile_AvCodecMobile_renderYuvDataOnSurface(JNIEnv *env, jclass clazz,
-                                                               jint width, jint height,
-                                                               jbyteArray yuv_data,
-                                                               jobject surface) {
+Java_com_nxg_opencv_OpenCVMobile_renderYuvDataOnSurface(JNIEnv *env, jclass clazz, jint width,
+                                                        jint height, jbyteArray yuv_data,
+                                                        jobject surface) {
     // yuv转rgba
     jbyte *data = env->GetByteArrayElements(yuv_data, nullptr);
     cv::Mat yuvImg(height + height / 2, width, CV_8UC1, data);

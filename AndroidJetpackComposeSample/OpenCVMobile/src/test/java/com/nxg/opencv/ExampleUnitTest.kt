@@ -1,4 +1,4 @@
-package com.nxg.acodecmobile
+package com.nxg.opencv
 
 import org.junit.Test
 
