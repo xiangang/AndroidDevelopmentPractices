@@ -1,5 +1,6 @@
 package com.nxg.androidsample
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
@@ -55,18 +56,22 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         lifecycleScope.launchWhenResumed {
             binding.toolbar.navigationIcon = null
         }
-        val defaultNavigationIcon = binding.toolbar.navigationIcon
-        /*navController.addOnDestinationChangedListener { _, destination, _ ->
+        var defaultNavigationIcon: Drawable? = null
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             logger.debug { "addOnDestinationChangedListener: $destination" }
             when (destination.id) {
                 R.id.navigation_app_main -> {
+                    defaultNavigationIcon = defaultNavigationIcon ?: binding.toolbar.navigationIcon
+                    logger.debug { "addOnDestinationChangedListener: defaultNavigationIcon $defaultNavigationIcon" }
                     binding.toolbar.navigationIcon = null
                 }
                 else -> {
-                    binding.toolbar.navigationIcon = defaultNavigationIcon
+                    defaultNavigationIcon?.let {
+                        binding.toolbar.navigationIcon = defaultNavigationIcon
+                    }
                 }
             }
-        }*/
+        }
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         lifecycle.addObserver(fragmentLifecycleObserver)

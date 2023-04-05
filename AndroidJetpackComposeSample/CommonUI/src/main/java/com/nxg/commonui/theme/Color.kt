@@ -18,7 +18,6 @@ object ColorHex {
     const val WarnDisabled = 0xfff9d39b
     const val WarnLight = 0xfffdf6ec
 
-
     const val Error = 0xfff56c6c
     const val ErrorDark = 0xffe45656
     const val ErrorDisabled = 0xfff7b2b2
@@ -95,6 +94,16 @@ object ColorBackground {
     val A0F1EA = Color(0xffa0f1ea)
     val EEBD89 = Color(0xffeebd89)
     val D13ABD = Color(0xffd13abd)
+}
+
+object DarkColor {
+    val primary: Color = ColorPrimary.Dark
+    val primaryVariant: Color = ColorPrimary.Dark
+    val secondary: Color = ColorPrimary.Primary
+    val secondaryVariant: Color = secondary
+    val background: Color = Color(0xFF121212)
+    val surface: Color = Color(0xFF121212)
+    val error: Color = ColorError.Dark
 }
 
 
