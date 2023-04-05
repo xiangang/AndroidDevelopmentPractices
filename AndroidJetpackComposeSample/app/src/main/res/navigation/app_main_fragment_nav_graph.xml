@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@id/navigation_discovery"
-        android:name="com.nxg.commonui.component.main.PreviewFragment"
+        android:name="com.nxg.androidsample.discovery.DiscoveryFragment"
         android:label="@string/menu_discovery"/>
 
     <fragment
