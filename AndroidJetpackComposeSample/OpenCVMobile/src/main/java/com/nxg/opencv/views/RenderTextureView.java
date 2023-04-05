@@ -1,4 +1,4 @@
-package com.nxg.acodecmobile.views;
+package com.nxg.opencv.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

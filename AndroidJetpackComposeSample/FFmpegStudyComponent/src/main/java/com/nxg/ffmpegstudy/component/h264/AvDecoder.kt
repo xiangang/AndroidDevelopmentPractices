@@ -1,7 +1,7 @@
 package com.nxg.ffmpegstudy.component.h264
 
 import android.util.Log
-import com.nxg.acodecmobile.views.RenderSurfaceView
+import com.nxg.opencv.views.RenderSurfaceView
 import com.nxg.audiorecord.AudioTrackHandler
 import com.nxg.ffmpeg_mobile.FFmpegMobile
 

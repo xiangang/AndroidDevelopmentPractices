@@ -49,6 +49,6 @@ dependencies {
     kapt(Hilt.android_compiler)
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":FFmpegMobile")))
-    implementation(project(mapOf("path" to ":AcodecMobile")))
+    implementation(project(mapOf("path" to ":OpenCVMobile")))
     implementation(project(mapOf("path" to ":AudioRecordUtils")))
 }

@@ -1,7 +1,9 @@
 package com.nxg.mvvm.logger
 
+
 import mu.KLoggable
 import mu.KLogger
+
 
 interface SimpleLogger : KLoggable {
 

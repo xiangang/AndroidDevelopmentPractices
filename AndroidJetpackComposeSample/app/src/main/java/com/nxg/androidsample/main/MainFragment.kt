@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.nxg.androidsample.MainActivity
 import com.nxg.androidsample.R
 import com.nxg.androidsample.databinding.MainFragmentBinding
 import com.nxg.mvvm.ktx.viewBinding
 import com.nxg.mvvm.logger.SimpleLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -27,7 +29,8 @@ class MainFragment : Fragment(R.layout.main_fragment), SimpleLogger {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.main_fragment_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        Log.i("MainFragment", "onViewCreated: navController $navController")
+        LoggerFactory.getLogger("MainFragmentLogger")
+        logger.info { "onViewCreated: navController $navController" }
         navView.setupWithNavController(navController)
     }
 }

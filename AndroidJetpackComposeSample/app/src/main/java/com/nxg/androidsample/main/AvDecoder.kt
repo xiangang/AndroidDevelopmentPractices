@@ -1,6 +1,6 @@
 package com.nxg.androidsample.main
 
-import com.nxg.acodecmobile.views.RenderSurfaceView
+import com.nxg.opencv.views.RenderSurfaceView
 import com.nxg.audiorecord.AudioTrackHandler
 import com.nxg.ffmpeg_mobile.FFmpegMobile
 
