@@ -14,6 +14,11 @@
         <action
             android:id="@+id/av_action_entry_point_to_h264_decode_study"
             app:destination="@id/navigation_av_h264_decode_study_fragment" />
+
+        <action
+            android:id="@+id/av_action_entry_point_to_h264_decode_study_compose"
+            app:destination="@id/navigation_av_h264_decode_study_compose_fragment" />
+
     </fragment>
 
     <fragment
@@ -22,5 +27,10 @@
         android:label="@string/av_h264_decode"
         tools:layout="@layout/av_h264_decode_study_fragment" />
 
+    <fragment
+        android:id="@+id/navigation_av_h264_decode_study_compose_fragment"
+        android:name="com.nxg.ffmpegstudy.component.h264.H264DecodeStudyComposeFragment"
+        android:label="@string/av_h264_decode"
+        tools:layout="@layout/av_h264_decode_study_fragment" />
 
 </navigation>
