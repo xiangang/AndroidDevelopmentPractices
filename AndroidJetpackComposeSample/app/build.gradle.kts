@@ -25,9 +25,7 @@ android {
             useSupportLibrary = true
         }
         ndk {
-            //不配置则默认构建并打包所有可用的ABI
-            //same with gradle-> abiFilters 'x86_64','armeabi-v7a','arm64-v8a'
-            abiFilters.addAll(arrayListOf("x86_64", "armeabi-v7a", "arm64-v8a"))
+            abiFilters.addAll(arrayListOf("armeabi-v7a", "arm64-v8a"))
         }
     }
 

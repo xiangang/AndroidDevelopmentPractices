@@ -96,13 +96,6 @@ set_target_properties(avfilter
         PROPERTIES IMPORTED_LOCATION
         ${JNI_LIBS_DIR}/${ANDROID_ABI}/libavfilter.so)
 
-add_library(avdevice
-        SHARED
-        IMPORTED)
-set_target_properties(avdevice
-        PROPERTIES IMPORTED_LOCATION
-        ${JNI_LIBS_DIR}/${ANDROID_ABI}/libavdevice.so)
-
 add_library(avresample
         SHARED
         IMPORTED)
@@ -115,7 +108,6 @@ target_link_libraries( # Specifies the target library.
         # 这里需要注意下,下面这些ffmpeg的so库编译是有先后顺序的
         # 下面的顺序是没问题的,如果想验证编译顺序,可以自己变换顺序试试.
         avcodec
-        avdevice
         avfilter
         avformat
         avutil
