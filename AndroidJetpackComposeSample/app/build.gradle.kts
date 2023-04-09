@@ -104,7 +104,7 @@ dependencies {
     implementation(project(mapOf("path" to ":OpenCVMobile")))
     implementation(project(mapOf("path" to ":AudioRecordUtils")))
     implementation(project(mapOf("path" to ":YuvUtil")))
-    //implementation(project(mapOf("path" to ":WebrtcMobile")))
+    implementation(project(mapOf("path" to ":WebrtcMobile")))
     implementation(project(mapOf("path" to ":IM")))
     implementation(project(mapOf("path" to ":CommonUIComponent")))
     implementation(project(mapOf("path" to ":FFmpegStudyComponent")))

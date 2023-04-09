@@ -44,10 +44,10 @@ android {
 
 dependencies {
     testApi(TestLib.junit)
+    androidTestImplementation(TestLib.androidJunit)
     testApi(TestLib.espresso)
-    testApi(Compose.uiTooling)
     androidTestApi(Compose.test)
-    debugImplementation(Compose.uiTooling)
+    debugApi(Compose.uiTooling)
     api(AndroidX.appcompat)
     api(AndroidX.constraintlayout)
     api(AndroidX.cardview)

@@ -56,29 +56,6 @@ class HomeViewModel(application: Application) : BaseSharedAndroidViewModel(appli
 
 
     init {
-        val navFunctionList = mutableListOf<NavFunction>()
-        navFunctionList.add(
-            NavFunction(
-                "UI",
-                "Jetpack Compose",
-                R.drawable.ic_dolphin,
-                "",
-                MainFragmentDirections.actionNavigationHomeToNuiNavGraph(),
-            )
-        )
-        navFunctionList.add(
-            NavFunction(
-                "音视频",
-                "FFmpeg",
-                R.drawable.ic_dog,
-                "",
-                MainFragmentDirections.actionNavigationHomeToAvNavGraph(),
-            )
-        )
-
-        val grouped = navFunctionList.groupBy { it.functionGroupName }
-        onNavFunctionMapStateFlow(grouped)
-
         val bannerList = mutableListOf(
             Banner(
                 "1",

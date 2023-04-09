@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.nxg.webrtcmobile.R
+import com.nxg.webrtcmobile.h264.AudioCallViewModel
 
 class AudioCallFragment : Fragment() {
 

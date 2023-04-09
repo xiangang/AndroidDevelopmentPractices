@@ -556,58 +556,6 @@ int Decoder::decodeAudio(const char *inputFileName, const char *outputFileName) 
     data = inbuf;
     data_size = fread(inbuf, 1, AUDIO_INBUF_SIZE, f);
 
-//    while (av_read_frame(pFormatContext, pkt) >= 0) {//持续读帧
-//        // 只解码音频流
-//        if (pkt->stream_index == audioIndex) {
-//            if (!decoded_frame) {
-//                if (!(decoded_frame = av_frame_alloc())) {
-//                    LOGE("decodeAudio: Could not allocate audio frame\n");
-//                    break;
-//                }
-//            }
-//            //发送数据包到解码器
-//            avcodec_send_packet(av_codec_ctx, pkt);
-//            //清理
-//            av_packet_unref(pkt);
-//            // 这里为什么要使用一个for循环呢？
-//            // 因为avcodec_send_packet和avcodec_receive_frame并不是一对一的关系的
-//            // 一个avcodec_send_packet可能会出发多个avcodec_receive_frame
-//            for (;;) {
-//                // 接受解码的数据
-//                ret = avcodec_receive_frame(av_codec_ctx, decoded_frame);
-//                if (ret != 0) {
-//                    break;
-//                } else {
-//
-//                    //音频重采样
-//                    int len = swr_convert(swrCtr, &resampleOutBuffer,
-//                                          decoded_frame->nb_samples,
-//                                          (const uint8_t **) decoded_frame->data,
-//                                          decoded_frame->nb_samples);
-//
-//                    jbyteArray jPcmDataArray = env->NewByteArray(dataSize);
-//                    // native 创建 av_codec_ctx 数组
-//                    jbyte *jPcmData = env->GetByteArrayElements(jPcmDataArray, NULL);
-//
-//                    //内存拷贝
-//                    memcpy(jPcmData, resampleOutBuffer, dataSize);
-//
-//                    // 同步刷新到 jbyteArray ，并释放 C/C++ 数组
-//                    env->ReleaseByteArrayElements(jPcmDataArray, jPcmData, 0);
-//
-//                    LOGE("音频解码成功%d  dataSize:%d ", len, dataSize);
-//
-//                    // 写入播放数据
-//                    env->CallIntMethod(jAudioTrack, jAudioTrackWriteMid, jPcmDataArray, 0,
-//                                       dataSize);
-//
-//                    // 解除 jPcmDataArray 的持有，让 javaGC 回收
-//                    env->DeleteLocalRef(jPcmDataArray);
-//                }
-//            }
-//        }
-//    }
-
     while (data_size > 0) {
         if (!decoded_frame) {
             if (!(decoded_frame = av_frame_alloc())) {

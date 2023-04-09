@@ -198,7 +198,7 @@ fun NavFunctionGird(
     onClick: (NavDirections) -> Unit = {}
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
+        columns = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
