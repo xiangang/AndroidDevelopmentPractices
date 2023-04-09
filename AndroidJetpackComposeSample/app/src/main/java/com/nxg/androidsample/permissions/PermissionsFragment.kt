@@ -59,14 +59,14 @@ class PermissionsFragment : BaseBusinessFragment() {
         Log.i(TAG, "onCreateView: ")
         return PermissionFragmentBinding.inflate(inflater, container, false).also {
             if (checkSelfPermissions(requireContext())) {
-                navigation2MainFragment()
+                doWhenPermissionGranted()
             } else {
                 activityResultLauncher.launch(PERMISSIONS_REQUIRED)
             }
         }.root
     }
 
-    override fun navigation2MainFragment() {
+    override fun doWhenPermissionGranted() {
         //跳转到主界面
         findMainActivityNavController().navigate(
             PermissionsFragmentDirections.actionPermissionToMain()

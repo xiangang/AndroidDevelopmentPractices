@@ -1,24 +1,27 @@
 plugins {
+    kotlin("kapt")
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
+    id("androidx.navigation.safeargs")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
-    compileSdk = 31
-
+    compileSdk = BuildConfig.compileSdk
     defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = BuildConfig.minSdkVersion
+        targetSdk = BuildConfig.targetSdkVersion
+        testInstrumentationRunner = BuildConfig.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
                 cppFlags("")
+                abiFilters("armeabi-v7a", "arm64-v8a")
             }
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -35,29 +38,31 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = Compose.version
     }
 }
 
 dependencies {
-    implementation(AndroidX.appcompat)
-    implementation(AndroidX.constraintlayout)
-    implementation(AndroidX.cardview)
-    implementation(AndroidX.recyclerView)
-    implementation(AndroidX.coreKtx)
-    implementation(AndroidX.activityKtx)
-    implementation(AndroidX.fragmentKtx)
-    implementation(Google.material)
-    implementation(Lifecycle.liveDataKtx)
-    implementation(Lifecycle.viewModelKtx)
-    testImplementation(TestLib.junit)
-    testImplementation(TestLib.androidJunit)
-    testImplementation(TestLib.espresso)
-    implementation("org.webrtc:google-webrtc:1.0.28513")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation(Hilt.android)
+    implementation(Hilt.navigation_fragment)
+    kapt(Hilt.android_compiler)
+    implementation(project(mapOf("path" to ":FastMvvm")))
+    //implementation("org.webrtc:google-webrtc:1.0.32006")
+    implementation(files("libs/google-webrtc-1.0.32006.aar"))
+    implementation("com.github.shenbengit:WebRTCExtension:1.0.1")
     implementation("org.java-websocket:Java-WebSocket:1.4.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("io.socket:socket.io-client:2.0.1") {

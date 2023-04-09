@@ -74,12 +74,12 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
-        lifecycle.addObserver(fragmentLifecycleObserver)
+        //lifecycle.addObserver(fragmentLifecycleObserver)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycle.removeObserver(fragmentLifecycleObserver)
+        //lifecycle.removeObserver(fragmentLifecycleObserver)
     }
 
 }

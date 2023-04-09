@@ -36,52 +36,52 @@ android {
 dependencies {
 
     //JetPack navigation
-    implementation(NavigationLib.fragmentKtx)
-    implementation(NavigationLib.uiKtx)
-    implementation(NavigationLib.dynamic)
+    api(NavigationLib.fragmentKtx)
+    api(NavigationLib.uiKtx)
+    api(NavigationLib.dynamic)
 
     //JetPack lifecycle
-    implementation(Lifecycle.liveDataKtx)
-    implementation(Lifecycle.viewModelKtx)
-    implementation(Lifecycle.viewModelSavedState)
-    implementation(Lifecycle.commonJava8)
-    implementation(Lifecycle.service)
-    implementation(Lifecycle.runtimeKtx)
+    api(Lifecycle.liveDataKtx)
+    api(Lifecycle.viewModelKtx)
+    api(Lifecycle.viewModelSavedState)
+    api(Lifecycle.commonJava8)
+    api(Lifecycle.service)
+    api(Lifecycle.runtimeKtx)
 
     //JetPack Room
-    implementation(Room.runtime)
+    api(Room.runtime)
     kapt(Room.compiler)
-    implementation(Room.ktx)
-    implementation(Room.rxjava3)
-    implementation(Room.guava)
+    api(Room.ktx)
+    api(Room.rxjava3)
+    api(Room.guava)
 
     //viewPager
-    implementation(ViewPager.viewpager2)
-    implementation(ViewPager.viewpager)
+    api(ViewPager.viewpager2)
+    api(ViewPager.viewpager)
 
     //okhttp
-    implementation(OkHttp.okhttp)
-    implementation(OkHttp.urlConnection)
-    implementation(OkHttp.loggingInterceptor)
+    api(OkHttp.okhttp)
+    api(OkHttp.urlConnection)
+    api(OkHttp.loggingInterceptor)
 
-    //okhttp
-    implementation(Retrofit.retrofit)
-    implementation(Retrofit.convertGson)
+    //retrofit
+    api(Retrofit.retrofit)
+    api(Retrofit.convertGson)
 
     //glide
-    implementation(Glide.glide)
-    implementation(Glide.compiler)
+    api(Glide.glide)
+    api(Glide.compiler)
 
     //coil
-    implementation(Coil.coil)
+    api(Coil.coil)
 
     //ThirdParty
-    implementation(ThirdParty.brvah)
-    implementation(ThirdParty.javapoet)
-    implementation(ThirdParty.utilCodex)
+    api(ThirdParty.brvah)
+    api(ThirdParty.javapoet)
+    api(ThirdParty.utilCodex)
 
     // Dagger & Hilt
-    implementation(Hilt.android)
+    api(Hilt.android)
     kapt (Hilt.android_compiler)
     kapt (Hilt.compiler)
 
