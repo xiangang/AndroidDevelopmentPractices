@@ -1,6 +1,7 @@
 package com.nxg.webrtcmobile.srs
 
 import com.google.gson.GsonBuilder
+import com.nxg.mvvm.http.HttpsCerUtils
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +44,7 @@ object SrsHttpManger : SimpleLogger {
             retryOnConnectionFailure(true)
             addInterceptor(httpLoggingInterceptor)//添加日志拦截器
         }
+        HttpsCerUtils.setTrustAllCertificate(builder)
         builder.build()
     }
 
@@ -51,7 +53,7 @@ object SrsHttpManger : SimpleLogger {
      */
     private val srsRetrofit: Retrofit by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         val gson = GsonBuilder().serializeNulls().disableHtmlEscaping().create()
-        val baseUrl = SrsConstant.SRS_SERVER_HTTP
+        val baseUrl = SrsConstant.SRS_SERVER_HTTPS
         logger.debug { "srsRetrofit baseUrl = $baseUrl" }
         Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
