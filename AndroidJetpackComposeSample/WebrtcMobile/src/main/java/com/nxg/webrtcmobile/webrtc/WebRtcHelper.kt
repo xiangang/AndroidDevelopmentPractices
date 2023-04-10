@@ -39,12 +39,9 @@ class WebRtcHelper private constructor() :
 
     private lateinit var peerConnectionFactory: PeerConnectionFactory
     private lateinit var peerConnection: PeerConnection
-    private lateinit var videoSink: VideoSink
+    private lateinit var surfaceViewRenderer: SurfaceViewRenderer
+    private var videoSink: VideoSink? = null
     private var cameraVideoCapturer: VideoCapturer? = null
-    private lateinit var audioSource: AudioSource
-    private lateinit var videoSource: VideoSource
-    private lateinit var audioTrack: AudioTrack
-    private lateinit var videoTrack: VideoTrack
     private var surfaceTextureHelper: SurfaceTextureHelper? = null
     private var play: AtomicBoolean = AtomicBoolean(false)
     private var streamurl: String = ""
@@ -73,6 +70,7 @@ class WebRtcHelper private constructor() :
         ): WebRtcHelper {
             return WebRtcHelper().apply {
                 this.play.set(play)
+                this.surfaceViewRenderer = surfaceViewRenderer
                 //加载并初始化WebRTC，在创建 PeerConnectionFactory之前必须至少调用一次
                 PeerConnectionFactory.initialize(
                     InitializationOptions.builder(context)
@@ -90,8 +88,15 @@ class WebRtcHelper private constructor() :
                     peerConnection = it.createPeerConnection(getConfig(), this)!!
                 }
 
-                //设置仅接收音视频
+                //创建视频渲染帮助类
+                surfaceTextureHelper =
+                    SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
+                //配置视频数据来自surfaceViewRenderer
+                videoSink = surfaceViewRenderer
+
+                //播放模式
                 if (this.play.get()) {
+                    //设置仅接收音视频
                     peerConnection.addTransceiver(
                         MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO,
                         RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY)
@@ -113,53 +118,51 @@ class WebRtcHelper private constructor() :
                     //设置回声消除
                     WebRtcAudioUtils.setWebRtcBasedAcousticEchoCanceler(true)
                     WebRtcAudioUtils.setWebRtcBasedNoiseSuppressor(true)
-                    //音频Source
-                    audioSource = peerConnectionFactory.createAudioSource(createAudioConstraints())
-                    //创建音频轨
-                    audioTrack = peerConnectionFactory.createAudioTrack(
-                        AUDIO_TRACK_ID,
-                        audioSource
-                    )
-                    audioTrack.setEnabled(true)
-                    //添加音频轨
-                    peerConnection.addTrack(audioTrack)
+                    //创建音频源
+                    peerConnectionFactory.createAudioSource(createAudioConstraints())
+                        .let { audioSource ->
+                            //创建音频轨
+                            peerConnectionFactory.createAudioTrack(
+                                AUDIO_TRACK_ID,
+                                audioSource
+                            ).also { audioTrack ->
+                                audioTrack.setEnabled(true)
+                                //添加音频轨
+                                peerConnection.addTrack(audioTrack)
+                            }
+                        }
 
-                    //创建视频渲染帮助类
-                    surfaceTextureHelper =
-                        SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
-                    //配置视频数据来自surfaceViewRenderer
-                    videoSink = surfaceViewRenderer
-                    //创建视频Source
-                    videoSource = peerConnectionFactory.createVideoSource(false)
-                    //创建视频轨
-                    videoTrack = peerConnectionFactory.createVideoTrack(
-                        VIDEO_TRACK_ID,
-                        videoSource
-                    )
-                    videoTrack.setEnabled(true)
-                    //创建视频捕获器
-                    cameraVideoCapturer = createVideoCapturer(context)?.apply {
-                        //初始化，capturerObserver观察到相机捕获的数据后渲染通过surfaceTextureHelper渲染
-                        initialize(
-                            surfaceTextureHelper,//相机捕获到的视频数据渲染到surfaceTextureHelper
-                            context,
-                            videoSource.capturerObserver//视频数据捕获观察者
-                        )
-                        //根据指定的宽高和帧率开始捕获视频
-                        startCapture(
-                            VIDEO_RESOLUTION_WIDTH,
-                            VIDEO_RESOLUTION_HEIGHT,
-                            FPS
-                        )
-                    }
-                    //添加videoSink（surfaceViewRenderer）到视频轨，用于WebRTC推推流
-                    videoTrack.addSink(videoSink)
-                    //添加视频轨
-                    peerConnection.addTrack(videoTrack)
-
+                    //创建视频源
+                    peerConnectionFactory.createVideoSource(false)
+                        .also { videoSource ->
+                            //创建视频轨
+                            peerConnectionFactory.createVideoTrack(
+                                VIDEO_TRACK_ID,
+                                videoSource
+                            ).also { videoTrack ->
+                                videoTrack.setEnabled(true)
+                                //创建视频捕获器
+                                cameraVideoCapturer = createVideoCapturer(context)?.apply {
+                                    //初始化，capturerObserver观察到相机捕获的数据后渲染通过surfaceTextureHelper渲染
+                                    initialize(
+                                        surfaceTextureHelper,//相机捕获到的视频数据渲染到surfaceTextureHelper
+                                        context,
+                                        videoSource.capturerObserver//视频数据捕获观察者
+                                    )
+                                    //根据指定的宽高和帧率开始捕获视频
+                                    startCapture(
+                                        VIDEO_RESOLUTION_WIDTH,
+                                        VIDEO_RESOLUTION_HEIGHT,
+                                        FPS
+                                    )
+                                }
+                                //添加videoSink（surfaceViewRenderer）到视频轨，用于WebRTC推推流
+                                videoTrack.addSink(videoSink)
+                                //添加视频轨
+                                peerConnection.addTrack(videoTrack)
+                            }
+                        }
                 }
-
-
             }
         }
 
@@ -296,6 +299,7 @@ class WebRtcHelper private constructor() :
      */
     fun dispose() {
         //cameraVideoCapturer?.dispose()
+        //surfaceViewRenderer.clearImage()
         surfaceTextureHelper?.dispose()
         peerConnection.dispose()
         peerConnectionFactory.dispose()
@@ -338,7 +342,7 @@ class WebRtcHelper private constructor() :
         logger.debug { "doRequest: $streamurl, ${play.get()}" }
         val srsRequestBean = SrsRequestBean()
         srsRequestBean.api =
-            if (play.get()) "${SrsConstant.SRS_SERVER_HTTP}/rtc/v1/play" else "${SrsConstant.SRS_SERVER_HTTP}/rtc/v1/publish"
+            if (play.get()) "${SrsConstant.SRS_SERVER_HTTPS}/rtc/v1/play" else "${SrsConstant.SRS_SERVER_HTTP}/rtc/v1/publish"
         srsRequestBean.streamurl = streamurl
         srsRequestBean.sdp = sdp
         logger.debug { "doRequest: $srsRequestBean" }
@@ -439,12 +443,22 @@ class WebRtcHelper private constructor() :
     override fun onAddTrack(receiver: RtpReceiver, mediaStreams: Array<out MediaStream>) {
         logger.debug { "onAddTrack: ${play.get()}, $receiver, $mediaStreams" }
         //如果是play，则远程的媒体流轨添加videoSink(surfaceViewRenderer),进行画面渲染
-        if (play.get()) {
+        videoSink?.takeIf { play.get() }?.let {
             val remoteMediaStreamTrack: MediaStreamTrack? = receiver.track()
             if (remoteMediaStreamTrack is VideoTrack) {
-                remoteMediaStreamTrack.addSink(videoSink)
+                remoteMediaStreamTrack.setEnabled(true)
+                logger.debug { "remoteMediaStreamTrack.addSink($it)" }
+                remoteMediaStreamTrack.addSink(ProxyVideoSink(surfaceViewRenderer))
             }
         }
     }
 
+    inner class ProxyVideoSink(private var target: VideoSink) : VideoSink {
+        override fun onFrame(videoFrame: VideoFrame) {
+            logger.debug {
+                "ProxyVideoSink onFrame width ${videoFrame.buffer.width}， height ${videoFrame.buffer.width}"
+                target.onFrame(videoFrame)
+            }
+        }
+    }
 }
