@@ -37,7 +37,7 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
     }
     private var webRtcHelperLocal: WebRtcHelper? = null
     private var webRtcHelperRemote: WebRtcHelper? = null
-    private var streamUrlLocal = "webrtc://${SrsConstant.SRS_SERVER_IP}/live/livestream"
+    private var streamUrlLocal = "webrtc://${SrsConstant.SRS_SERVER_IP}/live/livestream2"
     private var streamUrlRemote = "webrtc://${SrsConstant.SRS_SERVER_IP}/live/livestream"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,7 +79,7 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
         }*/
 
         lifecycleScope.launchWhenCreated {
-            /*webRtcHelperLocal =
+            webRtcHelperLocal =
                 webRtcHelperLocal ?: WebRtcHelper.create(
                     requireContext(),
                     eglBase,
@@ -89,13 +89,14 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
                     //替换为实际的流地址
                     logger.debug { "publish: $streamUrlLocal" }
                     publish(streamUrlLocal)
-                }*/
+                }
             webRtcHelperRemote = webRtcHelperRemote ?: WebRtcHelper.create(
                 requireContext(),
                 eglBase,
                 binding.renderRemote
             ).apply {
                 //替换为实际的流地址
+                logger.debug { "play: $streamUrlRemote" }
                 play(streamUrlRemote)
             }
 
