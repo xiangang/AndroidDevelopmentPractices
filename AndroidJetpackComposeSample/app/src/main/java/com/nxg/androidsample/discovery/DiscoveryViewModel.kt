@@ -52,10 +52,20 @@ class DiscoveryViewModel(application: Application) : BaseSharedAndroidViewModel(
         navFunctionList.add(
             NavFunction(
                 "音视频",
-                "WebRTC 拉流",
+                "WebRTC推拉流",
                 R.drawable.ic_dog,
                 "",
                 MainFragmentDirections.actionMainToLiveStreamingFragment(),
+            )
+        )
+
+        navFunctionList.add(
+            NavFunction(
+                "音视频",
+                "WebRTC视频通话",
+                R.drawable.ic_dog,
+                "",
+                MainFragmentDirections.actionMainToVideoCallFragment(),
             )
         )
 

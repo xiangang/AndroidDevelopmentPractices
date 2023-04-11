@@ -63,9 +63,5 @@ dependencies {
     //implementation("org.webrtc:google-webrtc:1.0.32006")
     implementation(files("libs/google-webrtc-1.0.32006.aar"))
     implementation("com.github.shenbengit:WebRTCExtension:1.0.1")
-    implementation("org.java-websocket:Java-WebSocket:1.4.0")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("io.socket:socket.io-client:2.1.0") {
-        exclude(group = "org.json", module = "json")
-    }
 }
