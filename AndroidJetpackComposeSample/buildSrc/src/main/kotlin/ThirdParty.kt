@@ -240,11 +240,23 @@ object DI {
 object Log {
     //https://github.com/MicroUtils/kotlin-logging
     const val kotlinLoggingWithAndroid = "io.github.oshai:kotlin-logging-jvm:4.0.0-beta-15"
+
     //https://github.com/oshai/kotlin-logging
     const val kotlinLogging = "io.github.microutils:kotlin-logging:3.0.5"
     const val slf4jApi = "org.slf4j:slf4j-api:2.0.7"
     const val slf4jSimple = "org.slf4j:slf4j-simple:2.0.7"
     const val log4j = "log4j:log4j:1.2.17"
+
     //https://github.com/tony19/logback-android
     const val logbackAndroid = "com.github.tony19:logback-android:3.0.0"
+}
+
+
+object Ktor {
+    object Client {
+        private const val version = "2.2.4"
+        const val core = "io.ktor:ktor-client-core:$version"
+        const val cio = "io.ktor:ktor-client-cio:$version"
+        const val websockets = "io.ktor:ktor-client-websockets:$version"
+    }
 }
