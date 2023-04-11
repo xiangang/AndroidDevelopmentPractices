@@ -13,7 +13,6 @@ import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.webrtcmobile.R
 import com.nxg.webrtcmobile.databinding.LiveStreamingFragmentBinding
 import com.nxg.webrtcmobile.srs.SrsConstant
-import com.nxg.webrtcmobile.srs.SrsSignalingObserver
 import com.nxg.webrtcmobile.srs.SrsSignalingOkHttpObserver
 import com.nxg.webrtcmobile.webrtc.WebRtcHelper
 import org.webrtc.EglBase
@@ -33,12 +32,8 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
     }
 
     private val binding by viewBinding(LiveStreamingFragmentBinding::bind)
-    private val viewModel: LiveStreamingViewModel by viewModels()
     private val eglBase: EglBase by lazy {
         EglBase.create()
-    }
-    private val srsSignalingObserver: SrsSignalingOkHttpObserver by lazy {
-        SrsSignalingOkHttpObserver()
     }
     private var webRtcHelperLocal: WebRtcHelper? = null
     private var webRtcHelperRemote: WebRtcHelper? = null
@@ -106,13 +101,10 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
             }
 
         }
-
-        lifecycle.addObserver(srsSignalingObserver)
     }
 
     override fun onDestroyView() {
         logger.debug { "onDestroyView" }
-        lifecycle.removeObserver(srsSignalingObserver)
         binding.renderRemote.release()
         binding.renderLocal.release()
         webRtcHelperLocal?.dispose()

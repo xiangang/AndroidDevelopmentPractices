@@ -37,12 +37,21 @@
             android:id="@+id/action_main_to_live_streaming_fragment"
             app:destination="@id/live_streaming_fragment" />
 
+        <action
+            android:id="@+id/action_main_to_video_call_fragment"
+            app:destination="@id/video_call_fragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/live_streaming_fragment"
         android:name="com.nxg.webrtcmobile.livestreaming.LiveStreamingFragment"
         android:label="LiveStreamingFragment" />
+
+    <fragment
+        android:id="@+id/video_call_fragment"
+        android:name="com.nxg.webrtcmobile.videocall.VideoCallFragment"
+        android:label="VideoCallFragment" />
 
 
 </navigation>

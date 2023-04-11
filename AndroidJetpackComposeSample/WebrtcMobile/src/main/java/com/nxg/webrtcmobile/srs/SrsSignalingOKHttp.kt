@@ -2,12 +2,29 @@ package com.nxg.webrtcmobile.srs
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.blankj.utilcode.util.GsonUtils
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.*
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+
+/**
+ * 信令
+ */
+interface ISignalingCallBack {
+
+    /**
+     * 推流
+     */
+    fun onPublish(streamUrl: String)
+
+    /**
+     * 推流
+     */
+    fun onPlay(streamUrl: String)
+}
 
 
 class SrsSignalingOkHttpObserver : DefaultLifecycleObserver, SimpleLogger {
@@ -22,6 +39,9 @@ class SrsSignalingOkHttpObserver : DefaultLifecycleObserver, SimpleLogger {
         .build()
 
     private var webSocket: WebSocket? = null
+
+    var signalingCallBack: ISignalingCallBack? = null
+
 
     private fun join() {
         webSocket?.send("{\"tid\":\"${System.currentTimeMillis()}\",\"msg\":{\"action\":\"join\",\"room\":\"$roomName\",\"display\":\"$displayName\"}}")
@@ -40,11 +60,18 @@ class SrsSignalingOkHttpObserver : DefaultLifecycleObserver, SimpleLogger {
                     super.onOpen(webSocket, response)
                     logger.debug { "onOpen $response" }
                     join()
+                    signalingCallBack?.onPublish("webrtc://${SrsConstant.SRS_SERVER_IP}/$roomName/$displayName")
+                    publish()
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     super.onMessage(webSocket, text)
                     logger.debug { "onMessage $text" }
+                    val srsSignalingBean =
+                        GsonUtils.getGson().fromJson(text, SrsSignalingBean::class.java)
+                    srsSignalingBean.msg?.peer?.publishing?.takeIf { it }?.let {
+                        signalingCallBack?.onPlay("webrtc://${SrsConstant.SRS_SERVER_IP}/$roomName/${srsSignalingBean.msg?.peer?.display}")
+                    }
                 }
 
                 override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {

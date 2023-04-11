@@ -54,3 +54,37 @@ data class SrsResponseBean(
     val server: String?,
     val sessionid: String?
 )
+
+class SrsSignalingBean {
+    var tid: String? = null
+    var msg: Msg? = null
+}
+
+
+class Self {
+    var display: String? = null
+    var publishing = false
+}
+
+
+class Participants {
+    var display: String? = null
+    var publishing = false
+}
+
+
+class Peer {
+    var display: String? = null
+    var publishing = false
+}
+
+class Msg {
+    var action: String? = null
+    var event: String? = null
+    var room: String? = null
+    var self: Self? = null
+    var peer: Peer? = null
+    var participants: List<Participants>? = null
+}
+
+
