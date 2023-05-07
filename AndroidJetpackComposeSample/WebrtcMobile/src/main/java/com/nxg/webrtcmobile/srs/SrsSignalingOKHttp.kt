@@ -101,6 +101,7 @@ class SrsSignalingOkHttpObserver : DefaultLifecycleObserver, SimpleLogger {
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
+        webSocket?.close(1000, "leave room")
         webSocket?.cancel()
     }
 }

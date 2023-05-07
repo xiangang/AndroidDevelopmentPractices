@@ -36,7 +36,7 @@ class DiscoveryViewModel(application: Application) : BaseSharedAndroidViewModel(
                 "Jetpack Compose",
                 R.drawable.ic_dolphin,
                 "",
-                MainFragmentDirections.actionMainToNuiNavGraph(),
+                MainFragmentDirections.actionMainFragmentToNuiNavGraph(),
             )
         )
         navFunctionList.add(
@@ -45,7 +45,7 @@ class DiscoveryViewModel(application: Application) : BaseSharedAndroidViewModel(
                 "FFmpeg",
                 R.drawable.ic_dog,
                 "",
-                MainFragmentDirections.actionMainToAvNavGraph(),
+                MainFragmentDirections.actionMainFragmentToAvNavGraph(),
             )
         )
 
@@ -55,7 +55,7 @@ class DiscoveryViewModel(application: Application) : BaseSharedAndroidViewModel(
                 "WebRTC推拉流",
                 R.drawable.ic_dog,
                 "",
-                MainFragmentDirections.actionMainToLiveStreamingFragment(),
+                MainFragmentDirections.actionMainFragmentToLiveStreamingFragment(),
             )
         )
 
@@ -65,7 +65,7 @@ class DiscoveryViewModel(application: Application) : BaseSharedAndroidViewModel(
                 "WebRTC视频通话",
                 R.drawable.ic_dog,
                 "",
-                MainFragmentDirections.actionMainToVideoCallFragment(),
+                MainFragmentDirections.actionMainFragmentToVideoCallFragment(),
             )
         )
 

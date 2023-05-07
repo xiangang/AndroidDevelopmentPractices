@@ -2,54 +2,79 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/app_nav_graph"
-    app:startDestination="@id/navigation_app_permission">
+    app:startDestination="@id/loginFragment">
 
-    <include app:graph="@navigation/app_main_fragment_nav_graph" />
+    <include app:graph="@navigation/app_nav_graph_main_fragment" />
     <include app:graph="@navigation/av_nav_graph" />
     <include app:graph="@navigation/nui_nav_graph" />
 
     <fragment
-        android:id="@+id/navigation_app_permission"
+        android:id="@+id/permissionsFragment"
         android:name="com.nxg.androidsample.permissions.PermissionsFragment"
         android:label="@string/app_name">
 
         <action
-            android:id="@+id/action_permission_to_main"
-            app:destination="@id/navigation_app_main"
+            android:id="@+id/action_permissionsFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
             app:launchSingleTop="true" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_app_main"
-        android:name="com.nxg.androidsample.main.MainFragment"
-        android:label="@string/app_name">
-
+        android:id="@+id/loginFragment"
+        android:name="com.nxg.user.component.login.ui.login.LoginFragment"
+        android:label="LoginFragment" >
         <action
-            android:id="@+id/action_main_to_av_nav_graph"
-            app:destination="@id/av_nav_graph" />
-
-        <action
-            android:id="@+id/action_main_to_nui_nav_graph"
-            app:destination="@id/nui_nav_graph" />
-
-        <action
-            android:id="@+id/action_main_to_live_streaming_fragment"
-            app:destination="@id/live_streaming_fragment" />
-
-        <action
-            android:id="@+id/action_main_to_video_call_fragment"
-            app:destination="@id/video_call_fragment" />
+            android:id="@+id/action_loginFragment_to_navigation_app_main"
+            app:destination="@id/mainFragment" />
 
     </fragment>
 
+
     <fragment
-        android:id="@+id/live_streaming_fragment"
+        android:id="@+id/userInfoFragment"
+        android:name="com.nxg.user.component.userinfo.UserInfoFragment"
+        android:label="UserInfoFragment">
+
+        <action
+            android:id="@+id/action_userInfoFragment_to_app_main_fragment_nav_graph"
+            app:destination="@id/mainFragment"
+            app:launchSingleTop="true" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.nxg.androidsample.main.MainFragment"
+        android:label="@string/app_name">
+
+        <deepLink
+            app:uri="android-app://com.nxg.app/mainFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_av_nav_graph"
+            app:destination="@id/av_nav_graph" />
+        <action
+            android:id="@+id/action_mainFragment_to_nui_nav_graph"
+            app:destination="@id/nui_nav_graph" />
+        <action
+            android:id="@+id/action_mainFragment_to_liveStreamingFragment"
+            app:destination="@id/liveStreamingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_videoCallFragment"
+            app:destination="@id/videoCallFragment" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/liveStreamingFragment"
         android:name="com.nxg.webrtcmobile.livestreaming.LiveStreamingFragment"
         android:label="LiveStreamingFragment" />
 
     <fragment
-        android:id="@+id/video_call_fragment"
+        android:id="@+id/videoCallFragment"
         android:name="com.nxg.webrtcmobile.videocall.VideoCallFragment"
         android:label="VideoCallFragment" />
 

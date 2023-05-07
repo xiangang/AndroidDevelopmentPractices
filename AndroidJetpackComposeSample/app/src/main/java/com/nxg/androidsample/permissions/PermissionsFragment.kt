@@ -69,7 +69,7 @@ class PermissionsFragment : BaseBusinessFragment() {
     override fun doWhenPermissionGranted() {
         //跳转到主界面
         findMainActivityNavController().navigate(
-            PermissionsFragmentDirections.actionPermissionToMain()
+            PermissionsFragmentDirections.actionPermissionsFragmentToMainFragment()
         )
     }
 }

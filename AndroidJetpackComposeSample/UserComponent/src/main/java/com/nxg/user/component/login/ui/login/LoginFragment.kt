@@ -9,37 +9,29 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDeepLinkRequest
+import com.nxg.mvvm.ktx.findMainActivityNavController
+import com.nxg.mvvm.ktx.viewBinding
+import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.user.component.R
 import com.nxg.user.component.databinding.FragmentLoginBinding
+import com.nxg.user.component.databinding.UserInfoFragmentBinding
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
 
-    private lateinit var loginViewModel: LoginViewModel
-    private var _binding: FragmentLoginBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
-
+    private val loginViewModel: LoginViewModel by activityViewModels {
+        LoginViewModelFactory()
     }
+
+    private val binding by viewBinding(FragmentLoginBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
-
         val usernameEditText = binding.username
         val passwordEditText = binding.password
         val loginButton = binding.login
@@ -68,6 +60,10 @@ class LoginFragment : Fragment() {
                 }
                 loginResult.success?.let {
                     updateUiWithUser(it)
+                    val request = NavDeepLinkRequest.Builder
+                        .fromUri("android-app://com.nxg.app/mainFragment".toUri())
+                        .build()
+                    findMainActivityNavController().navigate(request)
                 }
             })
 
@@ -108,20 +104,15 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
+    private fun updateUiWithUser(loggedInUserView: LoggedInUserView) {
+        val welcome = getString(R.string.welcome) + loggedInUserView.loginData.user.username
         // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
+    private fun showLoginFailed(errorString: String) {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

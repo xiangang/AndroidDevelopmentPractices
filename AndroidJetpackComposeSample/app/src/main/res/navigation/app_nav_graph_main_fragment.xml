@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@id/navigation_mine"
-        android:name="com.nxg.ffmpegstudy.component.h264.H264DecodeStudyFragment"
+        android:name="com.nxg.user.component.userinfo.UserInfoFragment"
         android:label="@string/menu_mine"/>
 
 </navigation>

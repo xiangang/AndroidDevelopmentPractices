@@ -46,6 +46,7 @@ dependencies {
     testImplementation(TestLib.junit)
     testImplementation(TestLib.androidJunit)
     testImplementation(TestLib.espresso)
+    implementation(project(mapOf("path" to ":FastMvvm")))
     /*// 通讯录功能组件
     implementation("com.netease.yunxin.kit.contact:contactkit-ui:9.0.0")
     // 圈组功能组件
