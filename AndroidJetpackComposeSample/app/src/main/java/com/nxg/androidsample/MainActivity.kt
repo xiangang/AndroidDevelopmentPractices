@@ -2,7 +2,6 @@ package com.nxg.androidsample
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -60,7 +59,7 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             logger.debug { "addOnDestinationChangedListener: $destination" }
             when (destination.id) {
-                R.id.navigation_app_main -> {
+                R.id.mainFragment -> {
                     defaultNavigationIcon = defaultNavigationIcon ?: binding.toolbar.navigationIcon
                     logger.debug { "addOnDestinationChangedListener: defaultNavigationIcon $defaultNavigationIcon" }
                     binding.toolbar.navigationIcon = null

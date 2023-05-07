@@ -44,9 +44,9 @@ android {
 }
 
 dependencies {
-    testApi(TestLib.junit)
-    testApi(TestLib.espresso)
-    testApi(Compose.uiTooling)
+    testImplementation(TestLib.junit)
+    androidTestImplementation(TestLib.espresso)
+    androidTestImplementation(Compose.uiTooling)
     androidTestApi(Compose.test)
     debugImplementation(Compose.uiTooling)
     implementation(Hilt.android)

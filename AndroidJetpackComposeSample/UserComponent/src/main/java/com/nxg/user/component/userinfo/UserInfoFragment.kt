@@ -1,32 +1,41 @@
 package com.nxg.user.component.userinfo
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import com.nxg.mvvm.ktx.viewBinding
+import com.nxg.mvvm.logger.SimpleLogger
+import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.user.component.R
+import com.nxg.user.component.databinding.UserInfoFragmentBinding
+import com.nxg.user.component.login.ui.login.LoginViewModel
+import com.nxg.user.component.login.ui.login.LoginViewModelFactory
 
-class UserInfoFragment : Fragment() {
+class UserInfoFragment : BaseBusinessFragment(R.layout.user_info_fragment), SimpleLogger {
 
-    companion object {
-        fun newInstance() = UserInfoFragment()
+    private val viewModel: UserInfoViewModel by activityViewModels {
+        UserInfoViewModelFactory()
     }
 
-    private lateinit var viewModel: UserInfoViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.user_info_fragment, container, false)
+    private val loginViewModel: LoginViewModel by activityViewModels {
+        LoginViewModelFactory()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(UserInfoViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+    private val binding by viewBinding(UserInfoFragmentBinding::bind)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        loginViewModel.loginResult.observe(
+            viewLifecycleOwner
+        ) { loginResult ->
+            loginResult.success?.let {
+                logger.debug { "it.loginData.user ${it.loginData.user}" }
+                binding.tvUsername.text = it.loginData.user.username
+            }
+        }
+    }
 }
