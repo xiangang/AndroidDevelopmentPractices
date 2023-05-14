@@ -1,20 +1,19 @@
-package com.nxg.user.component.userinfo
+package com.nxg.user.component.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.nxg.im.core.module.auth.LoginDataSource
-import com.nxg.user.component.login.LoginRepository
 
 /**
- * ViewModel provider factory to instantiate UserInfoViewModel.
+ * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */
-class UserInfoViewModelFactory : ViewModelProvider.Factory {
+class LoginViewModelFactory : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserInfoViewModel::class.java)) {
-            return UserInfoViewModel(
+        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+            return LoginViewModel(
                 loginRepository = LoginRepository(
                     dataSource = LoginDataSource.instance
                 )

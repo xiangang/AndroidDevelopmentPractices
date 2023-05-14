@@ -25,11 +25,11 @@
             android:name=".ui.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AndroidJetpackComposeSample.NoActionBar.Launcher">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".test.TestLeakActivity"
@@ -39,7 +39,14 @@
             android:allowBackup="true"
             android:exported="true"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.AndroidJetpackComposeSample.NoActionBar.FullScreen" />
+            android:theme="@style/Theme.AndroidJetpackComposeSample.NoActionBar.FullScreen">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- FileProvider used to share media with other apps -->
         <provider
