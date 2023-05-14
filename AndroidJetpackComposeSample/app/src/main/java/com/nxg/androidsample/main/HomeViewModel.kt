@@ -1,19 +1,18 @@
 package com.nxg.androidsample.main
 
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nxg.androidsample.R
 import com.nxg.androidsample.main.data.Banner
 import com.nxg.androidsample.main.data.GridMenu
 import com.nxg.androidsample.main.data.NavFunction
-import com.nxg.mvvm.viewmodel.BaseSharedAndroidViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HomeViewModel(application: Application) : BaseSharedAndroidViewModel(application) {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _navFunctionMapStateFlow =
         MutableStateFlow(mapOf<String, List<NavFunction>>())

@@ -65,7 +65,7 @@ class SplashActivity : AppCompatActivity() {
 }
 
 @Composable
-fun Splash(countDownSec: Int = 1, startMainActivity: () -> Unit) {
+fun Splash(countDownSec: Int = 3, startMainActivity: () -> Unit) {
     var time by remember {
         mutableStateOf(countDownSec)
     }

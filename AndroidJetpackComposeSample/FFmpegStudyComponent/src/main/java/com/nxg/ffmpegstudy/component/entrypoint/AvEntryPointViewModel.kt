@@ -1,7 +1,7 @@
 package com.nxg.ffmpegstudy.component.entrypoint
 
 import android.app.Application
-import com.nxg.mvvm.viewmodel.BaseSharedAndroidViewModel
+import androidx.lifecycle.AndroidViewModel
 
-class AvEntryPointViewModel(application: Application) : BaseSharedAndroidViewModel(application) {
+class AvEntryPointViewModel(application: Application) : AndroidViewModel(application) {
 }
