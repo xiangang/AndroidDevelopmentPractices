@@ -64,7 +64,6 @@ class DiscoveryFragment : BaseViewModelFragment() {
         }
     }
 
-
     private fun navigation(navDirection: NavDirections) {
         findMainActivityNavController().navigate(navDirection)
     }

@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <uses-feature android:name="android.hardware.camera.any" />
 
     <application
@@ -40,6 +41,8 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AndroidJetpackComposeSample.NoActionBar.FullScreen">
+
+            <nav-graph android:value="@navigation/app_nav_graph" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

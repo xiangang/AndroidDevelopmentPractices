@@ -7,6 +7,7 @@
     <include app:graph="@navigation/app_nav_graph_main_fragment" />
     <include app:graph="@navigation/av_nav_graph" />
     <include app:graph="@navigation/nui_nav_graph" />
+    <include app:graph="@navigation/im_contact_nav_graph" />
 
 
     <fragment
@@ -72,15 +73,31 @@
         <action
             android:id="@+id/action_mainFragment_to_av_nav_graph"
             app:destination="@id/av_nav_graph" />
+
         <action
             android:id="@+id/action_mainFragment_to_nui_nav_graph"
             app:destination="@id/nui_nav_graph" />
+
         <action
             android:id="@+id/action_mainFragment_to_liveStreamingFragment"
             app:destination="@id/liveStreamingFragment" />
+
         <action
             android:id="@+id/action_mainFragment_to_videoCallFragment"
             app:destination="@id/videoCallFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_contactDetailFragment"
+            app:destination="@id/contactDetailFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/contactDetailFragment"
+        android:name="com.nxg.im.contact.ContactDetailFragment"
+        android:label="ContactDetailFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/contactDetailFragment" />
 
     </fragment>
 

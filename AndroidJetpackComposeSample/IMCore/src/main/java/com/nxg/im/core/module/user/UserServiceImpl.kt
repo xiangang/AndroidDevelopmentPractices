@@ -1,6 +1,5 @@
 package com.nxg.im.core.module.user
 
-import com.nxg.im.core.IMConstants
 import com.nxg.im.core.data.Result
 import com.nxg.im.core.exception.IMException
 import com.nxg.im.core.http.IMHttpManger
@@ -8,19 +7,13 @@ import com.nxg.im.core.module.auth.AuthServiceImpl
 import com.nxg.mvvm.logger.SimpleLogger
 import java.io.IOException
 
-class UserServiceImpl private constructor() : UserService, SimpleLogger {
-
-    companion object {
-        val instance by lazy {
-            UserServiceImpl()
-        }
-    }
+object UserServiceImpl : UserService, SimpleLogger {
 
     override suspend fun me(): Result<User> {
         try {
-            AuthServiceImpl.instance.loginData?.let {
+            AuthServiceImpl.getApiToken()?.let {
                 val apiResult =
-                    IMHttpManger.imApiService.me("${IMConstants.Api.Bearer} ${it.token}")
+                    IMHttpManger.imApiService.me(it)
                 logger.debug { "me: apiResult $apiResult" }
                 apiResult.data?.let {
                     return Result.Success(it)

@@ -10,7 +10,7 @@ object IMConstants {
     /**
      * IM服务http请求端口，默认8080
      */
-    private const val IM_SERVER_HTTP_PORT = "8080"
+    const val IM_SERVER_HTTP_PORT = "8080"
 
     /**
      * IM服务https请求端口，默认8081

@@ -8,6 +8,7 @@ plugins {
 }
 
 android {
+    resourcePrefix = "im_contact_"
     compileSdk = BuildConfig.compileSdk
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion

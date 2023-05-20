@@ -10,6 +10,11 @@
         android:label="@string/menu_home"/>
 
     <fragment
+        android:id="@id/navigation_contact"
+        android:name="com.nxg.im.contact.ContactFragment"
+        android:label="@string/menu_discovery"/>
+
+    <fragment
         android:id="@id/navigation_discovery"
         android:name="com.nxg.androidsample.discovery.DiscoveryFragment"
         android:label="@string/menu_discovery"/>

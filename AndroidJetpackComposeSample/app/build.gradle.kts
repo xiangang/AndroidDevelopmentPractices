@@ -44,25 +44,35 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         dataBinding = true
         viewBinding = true
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = Compose.version
     }
+
     packagingOptions {
         resources.excludes += "META-INF/gradle/incremental.annotation.processors"
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+
+    // Allow references to generated code
+//    kapt {
+//        correctErrorTypes = true
+//    }
 }
 
 dependencies {
@@ -106,6 +116,9 @@ dependencies {
     implementation(project(mapOf("path" to ":YuvUtil")))
     implementation(project(mapOf("path" to ":WebrtcMobile")))
     implementation(project(mapOf("path" to ":IMCore")))
+    implementation(project(mapOf("path" to ":IMChat")))
+    implementation(project(mapOf("path" to ":IMConversation")))
+    implementation(project(mapOf("path" to ":IMContact")))
     implementation(project(mapOf("path" to ":CommonUIComponent")))
     implementation(project(mapOf("path" to ":FFmpegStudyComponent")))
     implementation(project(mapOf("path" to ":SocketIOStudyComponent")))
