@@ -9,18 +9,12 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDeepLinkRequest
-import com.nxg.im.core.IMClient
-import com.nxg.im.core.module.auth.AuthService
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ktx.viewBinding
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.user.component.R
 import com.nxg.user.component.databinding.FragmentLoginBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
 

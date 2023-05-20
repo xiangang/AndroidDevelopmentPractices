@@ -3,14 +3,18 @@ package com.nxg.androidsample
 import android.app.Activity
 import android.os.Bundle
 import com.blankj.utilcode.util.Utils
+import com.nxg.im.core.IMClient
 import com.nxg.mvvm.BaseViewModelApplication
 import com.nxg.mvvm.logger.SimpleLogger
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @HiltAndroidApp
-class App : BaseViewModelApplication(), SimpleLogger {
+class App : BaseViewModelApplication(), SimpleLogger,
+    CoroutineScope by CoroutineScope(Dispatchers.Default) {
 
     companion object {
         const val TAG = "AppApplication"
@@ -36,6 +40,7 @@ class App : BaseViewModelApplication(), SimpleLogger {
         super.onCreate()
         INSTANCE = this
         Utils.init(this)
+        IMClient.init()
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
 

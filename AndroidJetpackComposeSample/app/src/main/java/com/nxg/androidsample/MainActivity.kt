@@ -2,10 +2,8 @@ package com.nxg.androidsample
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -13,15 +11,9 @@ import com.nxg.androidsample.databinding.MainActivityBinding
 import com.nxg.commonui.utils.isDarkMode
 import com.nxg.commonui.utils.setAndroidNativeLightStatusBar
 import com.nxg.commonui.utils.transparentStatusBar
-import com.nxg.im.core.IMClient
-import com.nxg.im.core.module.auth.AuthService
-import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
@@ -69,7 +61,6 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
             when (destination.id) {
                 R.id.mainFragment -> {
                     defaultNavigationIcon = defaultNavigationIcon ?: binding.toolbar.navigationIcon
-                    logger.debug { "addOnDestinationChangedListener: defaultNavigationIcon $defaultNavigationIcon" }
                     binding.toolbar.navigationIcon = null
                 }
                 else -> {

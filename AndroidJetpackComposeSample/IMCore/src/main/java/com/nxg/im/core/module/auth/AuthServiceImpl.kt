@@ -5,24 +5,22 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.Utils
+import com.nxg.im.core.IMConstants
 import com.nxg.im.core.IMConstants.Api.Me
 import com.nxg.im.core.IMConstants.Api.MediaTypeJson
 import com.nxg.im.core.IMConstants.Api.SecretSharedPrefs
 import com.nxg.im.core.IMConstants.Api.Token
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.data.Result
+import com.nxg.im.core.http.IMWebSocket
 import com.nxg.mvvm.logger.SimpleLogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
-class AuthServiceImpl private constructor(): AuthService, SimpleLogger {
-
-    companion object {
-        val instance by lazy {
-            AuthServiceImpl()
-        }
-    }
+object AuthServiceImpl : AuthService, SimpleLogger {
 
     private val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
     private val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
@@ -41,12 +39,17 @@ class AuthServiceImpl private constructor(): AuthService, SimpleLogger {
     init {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
+
+    }
+
+    suspend fun init() = withContext(Dispatchers.IO) {
         try {
             val loginDataJson = sharedPreferences.getString(Me, "")
             logger.debug { "loginDataJson: $loginDataJson" }
             if (loginDataJson != null && loginDataJson.isNotEmpty()) {
                 loginData = GsonUtils.fromJson(loginDataJson, LoginData::class.java)
             }
+            IMWebSocket.init()
         } catch (e: Exception) {
             logger.error(e.message)
         }
@@ -117,7 +120,13 @@ class AuthServiceImpl private constructor(): AuthService, SimpleLogger {
         editor.apply()
     }
 
-    override suspend fun getUserToken(): String? {
+    override suspend fun getApiToken(): String? {
+        return loginData?.token?.let {
+            "${IMConstants.Api.Bearer} $it"
+        } ?: let { null }
+    }
+
+    override suspend fun getWebSocketToken(): String? {
         return loginData?.token ?: let { null }
     }
 }

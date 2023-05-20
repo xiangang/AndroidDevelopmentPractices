@@ -41,12 +41,14 @@ import coil.request.ImageRequest
 import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
 import com.nxg.commonui.theme.ColorText
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.module.auth.AuthService
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -54,31 +56,38 @@ import kotlinx.coroutines.launch
  */
 class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
 
-    private var isLoggedIn = false
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         lifecycleScope.launch(Dispatchers.IO) {
-            isLoggedIn = IMClient.instance.getService<AuthService>()?.isLoggedIn() == true
-            logger.debug { "onCreate: isLoggedIn $isLoggedIn" }
+            IMClient.getService<AuthService>()?.getApiToken()?.let {
+                val request = NavDeepLinkRequest.Builder
+                    .fromUri("android-app://com.nxg.app/mainFragment".toUri())
+                    .build()
+                try {
+                    IMHttpManger.imApiService.me(it)
+                    withContext(Dispatchers.Main) {
+                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToMainFragment())
+                    }
+                } catch (e: Exception) {
+                    logger.debug { "me: ${e.message}" }
+                    withContext(Dispatchers.Main) {
+                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                    }
+                }
+
+            } ?: withContext(Dispatchers.Main) {
+                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+            }
         }
         return ComposeView(requireContext()).apply {
             setContent {
                 AndroidJetpackComposeSampleTheme {
                     Surface(color = MaterialTheme.colors.background) {
                         Splash {
-                            if (isLoggedIn) {
-                                logger.debug { "onCreate: logged in " }
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/mainFragment".toUri())
-                                    .build()
-                                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToMainFragment())
-                            } else {
-                                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
-                            }
+
                         }
                     }
                 }

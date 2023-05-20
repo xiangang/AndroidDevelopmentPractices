@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_contact_nav_graph"
+    app:startDestination="@id/im_contact_contact_detail_fragment">
+
+    <fragment
+        android:id="@+id/im_contact_contact_detail_fragment"
+        android:name="com.nxg.im.contact.ContactDetailFragment"
+        android:label="ContactDetailFragment">
+
+        <argument
+            android:name="uuid"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+
+</navigation>
