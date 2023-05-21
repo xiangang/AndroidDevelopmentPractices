@@ -6,22 +6,22 @@
 
     <fragment
         android:id="@id/navigation_home"
-        android:name="com.nxg.androidsample.main.HomeFragment"
-        android:label="@string/menu_home"/>
+        android:name="com.nxg.im.conversation.ConversationListFragment"
+        android:label="@string/menu_chat" />
 
     <fragment
         android:id="@id/navigation_contact"
         android:name="com.nxg.im.contact.ContactFragment"
-        android:label="@string/menu_discovery"/>
+        android:label="@string/menu_contact" />
 
     <fragment
         android:id="@id/navigation_discovery"
         android:name="com.nxg.androidsample.discovery.DiscoveryFragment"
-        android:label="@string/menu_discovery"/>
+        android:label="@string/menu_discovery" />
 
     <fragment
         android:id="@id/navigation_mine"
         android:name="com.nxg.user.component.userinfo.UserInfoFragment"
-        android:label="@string/menu_mine"/>
+        android:label="@string/menu_mine" />
 
 </navigation>

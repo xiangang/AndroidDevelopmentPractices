@@ -96,17 +96,21 @@ fun ContactListCompose(
                 is Contact.ContactVerifyMsg -> {
 
                 }
+
                 is Contact.ContactBackList -> {
 
                 }
+
                 is Contact.ContactGroupChat -> {
 
                 }
+
                 is Contact.ContactFriendListHeader -> {
                     stickyHeader {
 
                     }
                 }
+
                 is Contact.ContactFriendList -> {
                     contact.data.forEach {
                         item {
@@ -141,7 +145,7 @@ fun ContactItemCompose(
         .padding(10.dp, 10.dp, 10.dp, 0.dp), verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
             modifier = Modifier
-                .size(60.dp)
+                .size(50.dp)
                 .clip(
                     MaterialTheme.shapes.small.copy(
                         topStart = cornerSize,
