@@ -90,6 +90,11 @@
             android:id="@+id/action_mainFragment_to_contactDetailFragment"
             app:destination="@id/contactDetailFragment" />
 
+        <action
+            android:id="@+id/action_mainFragment_to_conversationChatFragment"
+            app:destination="@id/conversationChatFragment" />
+
+
     </fragment>
 
     <fragment
@@ -98,6 +103,15 @@
         android:label="ContactDetailFragment">
 
         <deepLink app:uri="android-app://com.nxg.app/contactDetailFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/conversationChatFragment"
+        android:name="com.nxg.im.chat.conversation.ConversationChatFragment"
+        android:label="ConversationChatFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/conversationChatFragment" />
 
     </fragment>
 

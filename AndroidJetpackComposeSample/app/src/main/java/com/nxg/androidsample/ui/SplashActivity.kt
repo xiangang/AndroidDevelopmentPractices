@@ -47,7 +47,7 @@ import com.nxg.commonutils.onStart
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_AndroidJetpackComposeSample_NoActionBar_Splash)
+        //setTheme(R.style.Theme_AndroidJetpackComposeSample_NoActionBar_Splash)
         transparentStatusBar()
         hideSystemBars()
         setContent {

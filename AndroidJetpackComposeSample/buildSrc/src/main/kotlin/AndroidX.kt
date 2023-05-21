@@ -11,10 +11,10 @@ object AndroidX {
      * 如果想使用其中某个库的更新版本，可以单独引用，比如下面的vectordrawable
      * 提示：对于声明式依赖，同一个库的不同版本，gradle会自动使用最新版本来进行依赖替换、编译
      */
-    const val appcompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
+    const val appcompat = "androidx.appcompat:appcompat:1.6.1"
 
     //core包+ktx扩展函数
-    const val coreKtx = "androidx.core:core-ktx:1.7.0-alpha01"
+    const val coreKtx = "androidx.core:core-ktx:1.10.1"
 
     //activity+ktx扩展函数
     const val activityKtx = "androidx.activity:activity-ktx:1.3.1"
@@ -52,26 +52,36 @@ object AndroidX {
 }
 
 object Compose {
-    const val version = "1.3.0"
+    const val version = "1.3.1"
     const val ui = "androidx.compose.ui:ui:$version"
+    const val unit = "androidx.compose.ui:ui-unit:$version"
+    const val util = "androidx.compose.ui:ui-util:$version"
+    const val viewbinding = "androidx.compose.ui:ui-viewbinding:$version"
+    const val googlefonts = "androidx.compose.ui:ui-text-google-fonts:$version"
     const val material = "androidx.compose.material:material:$version"
     const val materialIcons = "androidx.compose.material:material-icons-extended:$version"
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
-    const val material3 = "androidx.compose.material3:material3:1.0.0-alpha02"
+    const val material3 = "androidx.compose.material3:material3:1.1.0"
     const val animation = "androidx.compose.animation:animation:$version"
-    const val activity = "androidx.activity:activity-compose:1.4.0"
-    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
-    const val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta0"
+    const val activity = "androidx.activity:activity-compose:1.7.1"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    const val runtime = "androidx.compose.runtime:runtime:$version"
+    const val liveData = "androidx.compose.runtime:runtime-livedata:$version"
+    const val saveable = "androidx.compose.runtime:runtime-saveable:$version"
+    const val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     const val test = "androidx.compose.ui:ui-test-junit4:$version"
 
     //use debugImplementation
     const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
     const val splashscreen = "androidx.core:core-splashscreen:1.0.0-alpha01"
+
     //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
     private const val accompanistVersion = "0.24.13-rc"
     const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
-    const val accompanistPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
-    const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+    const val accompanistPagerIndicators =
+        "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
+    const val accompanistSystemUiController =
+        "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
 }
 
 object Hilt {
@@ -149,6 +159,7 @@ object Lifecycle {
 
     const val runtime = "androidx.lifecycle:lifecycle-runtime:$version"
     const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
+    const val runtimeCompose = "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
 }
 
 

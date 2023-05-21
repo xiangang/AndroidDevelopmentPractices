@@ -7,7 +7,7 @@ import androidx.lifecycle.*
 /**
  * 提供Application作用域的ViewModel
  */
-open class BaseViewModelApplication : Application(), ViewModelStoreOwner,
+abstract class BaseViewModelApplication : Application(), ViewModelStoreOwner,
     HasDefaultViewModelProviderFactory {
 
     companion object {
@@ -22,11 +22,9 @@ open class BaseViewModelApplication : Application(), ViewModelStoreOwner,
         ViewModelProvider.AndroidViewModelFactory.getInstance(this)
     }
 
-    override fun getViewModelStore(): ViewModelStore {
-        return mViewModelStore
-    }
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = mViewModelProviderFactory
+    override val viewModelStore: ViewModelStore
+        get() = mViewModelStore
 
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory {
-        return mViewModelProviderFactory
-    }
 }

@@ -14,6 +14,6 @@
         android:title="@string/menu_discovery" />
     <item
         android:id="@+id/navigation_mine"
-        android:icon="@drawable/ic_baseline_supervisor_account_24"
+        android:icon="@drawable/ic_baseline_person_24"
         android:title="@string/menu_mine" />
 </menu>
