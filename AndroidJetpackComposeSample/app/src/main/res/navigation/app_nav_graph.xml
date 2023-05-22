@@ -7,8 +7,6 @@
     <include app:graph="@navigation/app_nav_graph_main_fragment" />
     <include app:graph="@navigation/av_nav_graph" />
     <include app:graph="@navigation/nui_nav_graph" />
-    <include app:graph="@navigation/im_contact_nav_graph" />
-
 
     <fragment
         android:id="@+id/launchFragment"
@@ -18,12 +16,15 @@
         <action
             android:id="@+id/action_launchFragment_to_mainFragment"
             app:destination="@id/mainFragment"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mainFragment" />
 
         <action
             android:id="@+id/action_launchFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launchFragment"
+            app:popUpToInclusive="true" />
 
     </fragment>
 
@@ -41,8 +42,11 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.nxg.user.component.login.LoginFragment"
+        android:name="com.nxg.im.user.component.login.LoginFragment"
         android:label="LoginFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/loginFragment" />
+
         <action
             android:id="@+id/action_loginFragment_to_navigation_app_main"
             app:destination="@id/mainFragment" />
@@ -51,8 +55,8 @@
 
 
     <fragment
-        android:id="@+id/userInfoFragment"
-        android:name="com.nxg.user.component.userinfo.UserInfoFragment"
+        android:id="@+id/profileFragment"
+        android:name="com.nxg.im.user.component.profile.ProfileFragment"
         android:label="UserInfoFragment">
 
         <action

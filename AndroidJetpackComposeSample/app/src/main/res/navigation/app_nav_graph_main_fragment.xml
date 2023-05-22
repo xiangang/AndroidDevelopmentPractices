@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@id/navigation_mine"
-        android:name="com.nxg.user.component.userinfo.UserInfoFragment"
+        android:name="com.nxg.im.user.component.profile.ProfileFragment"
         android:label="@string/menu_mine" />
 
 </navigation>

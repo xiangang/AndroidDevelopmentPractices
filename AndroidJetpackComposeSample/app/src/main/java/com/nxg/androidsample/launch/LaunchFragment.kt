@@ -52,7 +52,7 @@ import kotlinx.coroutines.withContext
 
 
 /**
- * 首页
+ * 启动页
  */
 class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
 
