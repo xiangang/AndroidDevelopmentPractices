@@ -9,11 +9,11 @@ interface AuthService : IMService {
 
     suspend fun login(username: String, password: String): Result<LoginData>
 
-    suspend fun logout(token: String)
+    suspend fun logout()
 
     suspend fun isLoggedIn(): Boolean
 
-    suspend fun saveLoginData(loginData: LoginData)
+    suspend fun saveLoginData(loginData: LoginData? = null)
 
     suspend fun getLoginData(): LoginData?
 

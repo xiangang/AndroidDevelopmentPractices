@@ -88,25 +88,33 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         }
     }
 
-    override suspend fun logout(token: String) {
+    override suspend fun logout() {
         loginData?.let {
-            try {
-                val requestBody = GsonUtils.toJson(LoginOutForm(token))
+            loginData = null
+            saveLoginData(null)
+            saveUserToken("")
+            //TODO 暂时不需要通过服务器接口来登出
+            /*try {
+                val requestBody = GsonUtils.toJson(LoginOutForm(it.token))
                     .toRequestBody(MediaTypeJson.toMediaTypeOrNull())
                 val apiResult = IMHttpManger.imApiService.loginOut(requestBody)
                 logger.debug { "logout: apiResult $apiResult" }
             } catch (e: Throwable) {
                 e.printStackTrace()
-            }
+            }*/
         }
     }
 
     override suspend fun isLoggedIn(): Boolean = loginData != null
 
-    override suspend fun saveLoginData(loginData: LoginData) {
+    override suspend fun saveLoginData(loginData: LoginData?) {
         this.loginData = loginData
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putString(Me, GsonUtils.toJson(loginData))
+        loginData?.let {
+            editor.putString(Me, GsonUtils.toJson(it))
+        } ?: let {
+            editor.putString(Me, "")
+        }
         editor.apply()
     }
 

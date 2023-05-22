@@ -21,9 +21,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nxg.im.chat.MainViewModel
-import com.nxg.im.chat.components.JetchatDrawer
 import com.nxg.im.chat.databinding.ContentMainBinding
-import com.nxg.im.chat.theme.Grey10
+import com.nxg.im.commonui.components.JetchatDrawer
+import com.nxg.im.commonui.theme.Grey10
 import com.nxg.mvvm.logger.SimpleLogger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
