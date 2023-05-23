@@ -92,31 +92,14 @@ class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    Scaffold(
-                        topBar = {
-                            CenterAlignedTopAppBar(
-                                title = {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        androidx.compose.material3.Text(
-                                            text = "我的",
-                                            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                                        )
+                    val uiState by profileViewModel.uiState.collectAsState()
+                    uiState.user?.let {
+                        ProfileCompose(
+                            it,
+                            findMainActivityNavController()
+                        ) { navController, friend ->
 
-                                    }
-                                }
-                            )
                         }
-                    ) {
-                        val uiState by profileViewModel.uiState.collectAsState()
-                        uiState.user?.let {
-                            ProfileCompose(
-                                it,
-                                findMainActivityNavController()
-                            ) { navController, friend ->
-
-                            }
-                        }
-
                     }
                 }
             }

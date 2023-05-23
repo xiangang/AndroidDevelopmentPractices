@@ -63,13 +63,10 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
     ): View {
         lifecycleScope.launch(Dispatchers.IO) {
             IMClient.getService<AuthService>()?.getApiToken()?.let {
-                val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://com.nxg.app/mainFragment".toUri())
-                    .build()
                 try {
                     IMHttpManger.imApiService.me(it)
                     withContext(Dispatchers.Main) {
-                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToMainFragment())
+                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToIMShellFragment())
                     }
                 } catch (e: Exception) {
                     logger.debug { "me: ${e.message}" }

@@ -48,7 +48,6 @@ class ConversationListFragment : BaseViewModelFragment() {
         ConversationViewModelFactory()
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,72 +57,18 @@ class ConversationListFragment : BaseViewModelFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    Scaffold(
-                        topBar = {
-                            CenterAlignedTopAppBar(
-                                title = {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        androidx.compose.material3.Text(
-                                            text = "发现",
-                                            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                                        )
-
-                                    }
-                                },
-                                navigationIcon = {
-                                    JetchatIcon(
-                                        contentDescription = stringResource(id = R.string.navigation_drawer_open),
-                                        modifier = Modifier
-                                            .size(64.dp)
-                                            .clickable(onClick = {
-                                                //TODO
-                                            })
-                                            .padding(16.dp)
-                                    )
-                                },
-                                actions = {
-                                    // Search icon
-                                    Icon(
-                                        imageVector = Icons.Outlined.Search,
-                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier
-                                            .clickable(onClick = {
-                                                //TODO
-                                            })
-                                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                                            .height(24.dp),
-                                        contentDescription = stringResource(id = R.string.search)
-                                    )
-                                    // Info icon
-                                    Icon(
-                                        imageVector = Icons.Outlined.Add,
-                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier
-                                            .clickable(onClick = {
-                                                //TODO
-                                            })
-                                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                                            .height(24.dp),
-                                        contentDescription = stringResource(id = R.string.info)
-                                    )
-                                }
-                            )
-                        }
-                    ) {
-
-                        // Creates a CoroutineScope bound to the MoviesScreen's lifecycle
-                        val scope = rememberCoroutineScope()
-                        ConversationListCompose(
-                            conversationViewModel,
-                            findMainActivityNavController()
-                        ) { navController, conversation ->
-                            scope.launch {
-                                conversationViewModel.loadConversation(conversation)
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
-                                    .build()
-                                navController.navigate(request)
-                            }
+                    // Creates a CoroutineScope bound to the MoviesScreen's lifecycle
+                    val scope = rememberCoroutineScope()
+                    ConversationListCompose(
+                        conversationViewModel,
+                        findMainActivityNavController()
+                    ) { navController, conversation ->
+                        scope.launch {
+                            conversationViewModel.loadConversation(conversation)
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
+                                .build()
+                            navController.navigate(request)
                         }
                     }
                 }
