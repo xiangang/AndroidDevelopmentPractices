@@ -13,7 +13,12 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.*
@@ -31,6 +36,7 @@ import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.R
 import com.nxg.im.commonui.components.JetchatAppBarWithCenterTitle
+import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
@@ -52,15 +58,55 @@ class ConversationListFragment : BaseViewModelFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    val topBarState = rememberTopAppBarState()
-                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
                     Scaffold(
                         topBar = {
-                            JetchatAppBarWithCenterTitle(
-                                centerTitle = "聊天",
-                                centerSubTitle = stringResource(R.string.messages, 0),
-                                onNavIconPressed = {},
-                                scrollBehavior = scrollBehavior,
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        androidx.compose.material3.Text(
+                                            text = "发现",
+                                            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                                        )
+
+                                    }
+                                },
+                                navigationIcon = {
+                                    JetchatIcon(
+                                        contentDescription = stringResource(id = R.string.navigation_drawer_open),
+                                        modifier = Modifier
+                                            .size(64.dp)
+                                            .clickable(onClick = {
+                                                //TODO
+                                            })
+                                            .padding(16.dp)
+                                    )
+                                },
+                                actions = {
+                                    // Search icon
+                                    Icon(
+                                        imageVector = Icons.Outlined.Search,
+                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier
+                                            .clickable(onClick = {
+                                                //TODO
+                                            })
+                                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                                            .height(24.dp),
+                                        contentDescription = stringResource(id = R.string.search)
+                                    )
+                                    // Info icon
+                                    Icon(
+                                        imageVector = Icons.Outlined.Add,
+                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier
+                                            .clickable(onClick = {
+                                                //TODO
+                                            })
+                                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                                            .height(24.dp),
+                                        contentDescription = stringResource(id = R.string.info)
+                                    )
+                                }
                             )
                         }
                     ) {
