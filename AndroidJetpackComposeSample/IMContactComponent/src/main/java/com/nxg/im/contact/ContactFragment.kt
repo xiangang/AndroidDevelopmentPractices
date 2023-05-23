@@ -61,63 +61,18 @@ class ContactFragment : BaseViewModelFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    val topBarState = rememberTopAppBarState()
-                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
-                    Scaffold(
-                        topBar = {
-                            CenterAlignedTopAppBar(
-                                title = {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        androidx.compose.material3.Text(
-                                            text = "通讯录",
-                                            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                                        )
-
-                                    }
-                                },
-                                actions = {
-                                    // Search icon
-                                    Icon(
-                                        imageVector = Icons.Outlined.Search,
-                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier
-                                            .clickable(onClick = {
-                                                //TODO
-                                            })
-                                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                                            .height(24.dp),
-                                        contentDescription = stringResource(id = R.string.search)
-                                    )
-                                    // Info icon
-                                    Icon(
-                                        imageVector = Icons.Outlined.Add,
-                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier
-                                            .clickable(onClick = {
-                                                //TODO
-                                            })
-                                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                                            .height(24.dp),
-                                        contentDescription = stringResource(id = R.string.info)
-                                    )
-                                }
-                            )
-                        }
-                    ) {
-
-                        // Creates a CoroutineScope bound to the MoviesScreen's lifecycle
-                        val scope = rememberCoroutineScope()
-                        ContactListCompose(
-                            contactViewModel,
-                            findMainActivityNavController()
-                        ) { navController, friend ->
-                            scope.launch {
-                                contactViewModel.loadContactDetail(friend.user)
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
-                                    .build()
-                                navController.navigate(request)
-                            }
+                    // Creates a CoroutineScope bound to the MoviesScreen's lifecycle
+                    val scope = rememberCoroutineScope()
+                    ContactListCompose(
+                        contactViewModel,
+                        findMainActivityNavController()
+                    ) { navController, friend ->
+                        scope.launch {
+                            contactViewModel.loadContactDetail(friend.user)
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
+                                .build()
+                            navController.navigate(request)
                         }
                     }
                 }

@@ -26,6 +26,12 @@
             app:popUpTo="@id/launchFragment"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/action_launchFragment_to_IMShellFragment"
+            app:destination="@id/KtChatShellFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mainFragment" />
+
     </fragment>
 
     <fragment
@@ -50,6 +56,15 @@
         <action
             android:id="@+id/action_loginFragment_to_navigation_app_main"
             app:destination="@id/mainFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/KtChatShellFragment"
+        android:name="com.nxg.androidsample.main.KtChatShellFragment"
+        android:label="IMShellFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/KtChatShellFragment" />
 
     </fragment>
 
