@@ -120,6 +120,7 @@ dependencies {
     implementation(project(mapOf("path" to ":IMChatComponent")))
     implementation(project(mapOf("path" to ":IMConversationComponent")))
     implementation(project(mapOf("path" to ":IMContactComponent")))
+    implementation(project(mapOf("path" to ":IMDiscoverComponent")))
     implementation(project(mapOf("path" to ":CommonUIComponent")))
     implementation(project(mapOf("path" to ":FFmpegStudyComponent")))
     implementation(project(mapOf("path" to ":SocketIOStudyComponent")))

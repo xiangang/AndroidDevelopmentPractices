@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -118,9 +119,9 @@ fun JetchatAppBarWithCenterTitle(
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.search)
             )
-            // Info icon
+            // Add icon
             Icon(
-                imageVector = Icons.Outlined.Info,
+                imageVector = Icons.Outlined.Add,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .clickable(onClick = { functionalityNotAvailablePopupShown = true })

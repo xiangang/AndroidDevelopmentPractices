@@ -26,6 +26,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
@@ -50,7 +54,9 @@ import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorError
 import com.nxg.commonui.theme.ColorText
+import com.nxg.im.commonui.components.JetchatAppBar
 import com.nxg.im.commonui.components.JetchatAppBarWithCenterTitle
+import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.module.user.User
 import com.nxg.im.user.component.login.LoginViewModel
@@ -65,7 +71,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProfileFragment : BaseBusinessFragment(R.layout.user_info_fragment), SimpleLogger {
+class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
 
     private val profileViewModel: ProfileViewModel by activityViewModels {
         ProfileViewModelFactory()
@@ -86,15 +92,18 @@ class ProfileFragment : BaseBusinessFragment(R.layout.user_info_fragment), Simpl
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    val topBarState = rememberTopAppBarState()
-                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
                     Scaffold(
                         topBar = {
-                            JetchatAppBarWithCenterTitle(
-                                centerTitle = "我的",
-                                centerSubTitle = "",
-                                onNavIconPressed = {},
-                                scrollBehavior = scrollBehavior,
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        androidx.compose.material3.Text(
+                                            text = "我的",
+                                            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                                        )
+
+                                    }
+                                }
                             )
                         }
                     ) {
