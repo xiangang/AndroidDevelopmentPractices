@@ -28,7 +28,7 @@
 
         <action
             android:id="@+id/action_launchFragment_to_IMShellFragment"
-            app:destination="@id/KtChatShellFragment"
+            app:destination="@id/ktChatShellFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/mainFragment" />
 
@@ -60,7 +60,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/KtChatShellFragment"
+        android:id="@+id/ktChatShellFragment"
         android:name="com.nxg.androidsample.main.KtChatShellFragment"
         android:label="IMShellFragment">
 

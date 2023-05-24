@@ -32,6 +32,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.R
@@ -39,21 +40,23 @@ import com.nxg.im.commonui.components.JetchatAppBarWithCenterTitle
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.ktx.findMainActivityNavController
+import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.launch
 
-class ConversationListFragment : BaseViewModelFragment() {
+class ConversationListFragment : BaseViewModelFragment(), SimpleLogger {
 
     private val conversationViewModel: ConversationViewModel by activityViewModels {
         ConversationViewModelFactory()
     }
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        logger.debug { "findMainActivityNavController: " + findMainActivityNavController() }
+        logger.debug { "findNavController: " + findNavController() }
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
@@ -66,8 +69,9 @@ class ConversationListFragment : BaseViewModelFragment() {
                         scope.launch {
                             conversationViewModel.loadConversation(conversation)
                             val request = NavDeepLinkRequest.Builder
-                                .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
+                                .fromUri("android-app://com.nxg.app/conversationChatFragment".toUri())
                                 .build()
+                            logger.debug { "navController: $navController" }
                             navController.navigate(request)
                         }
                     }
@@ -113,6 +117,7 @@ fun ConversationItemCompose(
     val cornerSize by remember { mutableStateOf(CornerSize(4.dp)) }
     conversation.user?.let {
         Row(modifier = Modifier
+            .fillMaxWidth()
             .clickable {
                 onClick(navController, conversation)
             }

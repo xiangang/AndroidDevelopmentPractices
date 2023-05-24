@@ -7,7 +7,7 @@ import com.nxg.mvvm.viewmodel.ApplicationShareViewModel
 /**
  * 提供Application作用域的ViewModel
  */
-open class BaseViewModelFragment : BaseFragment{
+abstract class BaseViewModelFragment : BaseFragment{
 
     constructor() : super()
 
@@ -15,5 +15,7 @@ open class BaseViewModelFragment : BaseFragment{
 
     //作用域范围为Application的共享ShareViewModels
     val mApplicationShareViewModel: ApplicationShareViewModel by applicationViewModels()
+
+
 
 }
