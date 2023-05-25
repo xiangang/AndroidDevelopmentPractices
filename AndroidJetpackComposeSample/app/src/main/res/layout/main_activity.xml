@@ -7,29 +7,6 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Theme.KtChat.AppBarOverlay"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:popupTheme="@style/Theme.KtChat.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/app_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -39,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/app_nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

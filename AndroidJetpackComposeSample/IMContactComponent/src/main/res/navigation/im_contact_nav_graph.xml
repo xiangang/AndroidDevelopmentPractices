@@ -2,17 +2,15 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/im_contact_nav_graph"
-    app:startDestination="@id/im_contact_contact_detail_fragment">
+    app:startDestination="@id/contactDetailFragment">
 
     <fragment
-        android:id="@+id/im_contact_contact_detail_fragment"
+        android:id="@+id/contactDetailFragment"
         android:name="com.nxg.im.contact.ContactDetailFragment"
         android:label="ContactDetailFragment">
 
-        <argument
-            android:name="uuid"
-            android:defaultValue="0"
-            app:argType="integer" />
+        <deepLink app:uri="android-app://com.nxg.app/contactDetailFragment" />
+
     </fragment>
 
 

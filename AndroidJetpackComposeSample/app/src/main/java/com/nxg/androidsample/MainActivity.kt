@@ -26,8 +26,6 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
     private lateinit var binding: MainActivityBinding
     private lateinit var fragmentLifecycleObserver: FragmentLifecycleObserver
     private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +36,6 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         }
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
         /**
          * 使用 FragmentContainerView 创建 NavHostFragment，或通过 FragmentTransaction 手动将 NavHostFragment 添加到您的 activity 时，
          * 尝试通过 Navigation.findNavController(Activity, @IdRes int) 检索 activity 的 onCreate() 中的 NavController 将失败。
@@ -47,32 +44,19 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        binding.toolbar.setupWithNavController(
-            navController,
-            appBarConfiguration
-        )
-        lifecycleScope.launchWhenResumed {
-            binding.toolbar.navigationIcon = null
-        }
-        var defaultNavigationIcon: Drawable? = null
         navController.addOnDestinationChangedListener { _, destination, _ ->
             logger.debug { "addOnDestinationChangedListener: $destination" }
             when (destination.id) {
-                R.id.mainFragment -> {
-                    defaultNavigationIcon = defaultNavigationIcon ?: binding.toolbar.navigationIcon
-                    binding.toolbar.navigationIcon = null
-                }
-                else -> {
-                    defaultNavigationIcon?.let {
-                        binding.toolbar.navigationIcon = defaultNavigationIcon
-                    }
-                }
+
             }
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         //lifecycle.addObserver(fragmentLifecycleObserver)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navController.popBackStack(R.id.ktChatShellFragment, false)
     }
 
     override fun onDestroy() {

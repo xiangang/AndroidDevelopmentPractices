@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_user_nav_graph">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.nxg.im.user.component.login.LoginFragment"
+        android:label="LoginFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/loginFragment" />
+
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.nxg.im.user.component.profile.ProfileFragment"
+        android:label="UserInfoFragment">
+        
+        <deepLink app:uri="android-app://com.nxg.app/profileFragment" />
+
+
+    </fragment>
+
+</navigation>

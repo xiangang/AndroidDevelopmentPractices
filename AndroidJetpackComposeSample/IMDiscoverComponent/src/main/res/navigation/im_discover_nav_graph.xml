@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_discover_nav_graph"
+    app:startDestination="@id/discoverFragment">
+
+    <fragment
+        android:id="@+id/discoverFragment"
+        android:name="com.nxg.im.discover.DiscoverFragment"
+        android:label="DiscoverFragment" />
+
+</navigation>

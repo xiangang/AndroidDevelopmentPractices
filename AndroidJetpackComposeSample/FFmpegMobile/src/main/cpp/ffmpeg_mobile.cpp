@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <assert.h>
 #include "common.h"
 #include "decode_av.h"
 #include <pthread.h>

@@ -12,6 +12,7 @@
 
 #include <jni.h>
 #include <string>
+#include <assert.h>
 #include "io.h"
 #include "RtmpClient.h"
 
