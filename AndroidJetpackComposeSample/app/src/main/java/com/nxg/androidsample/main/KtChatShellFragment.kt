@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +31,7 @@ import com.nxg.androidsample.R
 import com.nxg.androidsample.databinding.MainFragmentBinding
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.discover.DiscoverViewModel
 import com.nxg.mvvm.ui.BaseViewModelFragment
 
 class KtChatShellFragment : BaseViewModelFragment() {

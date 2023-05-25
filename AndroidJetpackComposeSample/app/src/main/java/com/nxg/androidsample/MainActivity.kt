@@ -1,10 +1,9 @@
 package com.nxg.androidsample
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -14,7 +13,6 @@ import com.nxg.commonui.utils.setAndroidNativeLightStatusBar
 import com.nxg.commonui.utils.transparentStatusBar
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelActivity
-import com.nxg.mvvm.ui.OnBackPressedListener
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -57,52 +55,24 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         lifecycleScope.launchWhenResumed {
             binding.toolbar.navigationIcon = null
         }
+        var defaultNavigationIcon: Drawable? = null
         navController.addOnDestinationChangedListener { _, destination, _ ->
             logger.debug { "addOnDestinationChangedListener: $destination" }
             when (destination.id) {
-                R.id.ktChatShellFragment -> {
-                    /* val navGraph: NavGraph = navController.graph
-                     // 修改startDestination为目标Fragment的id
-                     navGraph.setStartDestination(R.id.ktChatShellFragment)
-                     // 重新设定NavGraph
-                     navController.graph = navGraph*/
+                R.id.mainFragment -> {
+                    defaultNavigationIcon = defaultNavigationIcon ?: binding.toolbar.navigationIcon
+                    binding.toolbar.navigationIcon = null
                 }
-
                 else -> {
+                    defaultNavigationIcon?.let {
+                        binding.toolbar.navigationIcon = defaultNavigationIcon
+                    }
                 }
             }
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         //lifecycle.addObserver(fragmentLifecycleObserver)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        super.onBackPressed()
-        logger.debug { "onBackPressed " + findNavController() }
-        logger.debug { "onBackPressed " + findNavController().currentDestination?.id }
-        logger.debug { "onBackPressed " + findNavController().currentDestination?.navigatorName }
-        val fragment: Fragment? =
-            supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment)
-        logger.debug { "onBackPressed fragment " + fragment?.javaClass?.name }
-        if (fragment != null && fragment is OnBackPressedListener) {
-            (fragment as OnBackPressedListener).onBackPressed()
-        }
-        findNavController().popBackStack()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return findNavController().navigateUp() || super.onSupportNavigateUp()
-    }
-
-    /**
-     * See https://issuetracker.google.com/142847973
-     */
-    private fun findNavController(): NavController {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
-        return navHostFragment.navController
     }
 
     override fun onDestroy() {

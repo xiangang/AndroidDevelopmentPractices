@@ -51,6 +51,8 @@ class ContactFragment : BaseViewModelFragment() {
         ContactViewModelFactory()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +61,7 @@ class ContactFragment : BaseViewModelFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
+                    // Creates a CoroutineScope bound to the MoviesScreen's lifecycle
                     val scope = rememberCoroutineScope()
                     ContactListCompose(
                         contactViewModel,
