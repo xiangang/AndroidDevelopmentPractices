@@ -56,7 +56,7 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        navController.popBackStack(R.id.ktChatShellFragment, false)
+        navController.popBackStack()
     }
 
     override fun onDestroy() {

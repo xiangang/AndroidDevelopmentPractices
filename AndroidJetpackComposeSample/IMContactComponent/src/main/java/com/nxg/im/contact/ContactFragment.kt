@@ -124,6 +124,7 @@ fun ContactItemCompose(
 ) {
     val cornerSize by remember { mutableStateOf(CornerSize(4.dp)) }
     Row(modifier = Modifier
+        .fillMaxWidth()
         .clickable {
             onClick(navController, friend)
         }

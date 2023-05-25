@@ -26,12 +26,16 @@ import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material.icons.filled.VideoCameraBack
 import androidx.compose.material.icons.filled.VideoChat
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -46,11 +50,14 @@ import coil.compose.AsyncImage
 import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorText
+import com.nxg.im.commonui.components.JetchatIcon
+import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.module.user.User
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.InternalCoroutinesApi
 
+@OptIn(ExperimentalMaterial3Api::class)
 class ContactDetailFragment : BaseViewModelFragment() {
 
     private val contactViewModel: ContactViewModel by activityViewModels {
@@ -66,11 +73,50 @@ class ContactDetailFragment : BaseViewModelFragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                AndroidJetpackComposeSampleTheme {
+                JetchatTheme {
                     Scaffold(
                         topBar = {
-                            TopAppBar(
-                                title = { Text("通讯录") },
+                            val uiState by contactViewModel.uiState.collectAsState()
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        uiState.contactDetail?.user?.nickname?.let {
+                                            androidx.compose.material3.Text(
+                                                text = it,
+                                                style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                                            )
+                                        }
+
+                                    }
+                                },
+                                navigationIcon = {
+                                    // Search icon
+                                    androidx.compose.material3.Icon(
+                                        imageVector = Icons.Outlined.ArrowBack,
+                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier
+                                            .clickable(onClick = {
+                                                findMainActivityNavController().popBackStack()
+                                            })
+                                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                                            .height(24.dp),
+                                        contentDescription = stringResource(id = R.string.search)
+                                    )
+                                },
+                                actions = {
+                                    // Info icon
+                                    androidx.compose.material3.Icon(
+                                        imageVector = Icons.Outlined.Info,
+                                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier
+                                            .clickable(onClick = {
+                                                //TODO
+                                            })
+                                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                                            .height(24.dp),
+                                        contentDescription = stringResource(id = R.string.info)
+                                    )
+                                }
                             )
                         }
                     ) {

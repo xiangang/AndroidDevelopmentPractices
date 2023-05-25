@@ -33,7 +33,7 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel() {
                             User(
                                 id = i,
                                 uuid = 51691563050860544,
-                                username = "i",
+                                username = "$i",
                                 password = "",
                                 nickname = "机器人${i}号",
                                 email = "342005702@qq.com",
