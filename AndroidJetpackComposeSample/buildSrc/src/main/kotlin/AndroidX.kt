@@ -17,10 +17,10 @@ object AndroidX {
     const val coreKtx = "androidx.core:core-ktx:1.10.1"
 
     //activity+ktx扩展函数
-    const val activityKtx = "androidx.activity:activity-ktx:1.3.1"
+    const val activityKtx = "androidx.activity:activity-ktx:1.5.1"
 
     //fragment+ktx扩展函数
-    const val fragmentKtx = "androidx.fragment:fragment-ktx:1.4.0-alpha04"
+    const val fragmentKtx = "androidx.fragment:fragment-ktx:1.5.1"
 
     //约束布局
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.0"
@@ -52,6 +52,7 @@ object AndroidX {
 }
 
 object Compose {
+    const val bom = "androidx.compose:compose-bom:2022.10.00"
     const val version = "1.3.1"
     const val ui = "androidx.compose.ui:ui:$version"
     const val unit = "androidx.compose.ui:ui-unit:$version"
@@ -128,7 +129,7 @@ object Paging {
 }
 
 object Lifecycle {
-    private const val version = "2.4.0-alpha03"
+    private const val version = "2.5.1"
 
     @Deprecated("lifecycle-extensions 已弃用，截至到目前最后一个版本2.2.0，ViewModelProviders.of()被废弃了，使用ViewModelProvider(ViewModelStoreOwner)")
     const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
@@ -165,7 +166,7 @@ object Lifecycle {
 
 object NavigationLib {
     //这个版本支持多返回栈了
-    private const val version = "2.4.2"
+    private const val version = "2.5.3"
 
     //const val fragment = "androidx.navigation:navigation-fragment:$version"
     const val fragmentKtx = "androidx.navigation:navigation-fragment-ktx:$version"

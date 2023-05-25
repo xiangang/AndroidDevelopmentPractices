@@ -25,8 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.nxg.androidsample.databinding.PermissionFragmentBinding
-import com.nxg.mvvm.ktx.findMainActivityNavController
-
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.mvvm.ui.PERMISSIONS_REQUIRED
 
@@ -68,8 +66,8 @@ class PermissionsFragment : BaseBusinessFragment() {
 
     override fun doWhenPermissionGranted() {
         //跳转到主界面
-        findMainActivityNavController().navigate(
+       /* findMainActivityNavController().navigate(
             PermissionsFragmentDirections.actionPermissionsFragmentToMainFragment()
-        )
+        )*/
     }
 }

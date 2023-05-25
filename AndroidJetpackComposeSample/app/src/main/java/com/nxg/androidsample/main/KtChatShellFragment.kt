@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -23,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -31,10 +31,17 @@ import com.nxg.androidsample.R
 import com.nxg.androidsample.databinding.MainFragmentBinding
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
-import com.nxg.im.discover.DiscoverViewModel
+import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 
-class KtChatShellFragment : BaseViewModelFragment() {
+sealed class Screen(val route: String, @StringRes val resourceId: Int) {
+    object Conservation : Screen("conversation", R.string.menu_chat)
+    object Contact : Screen("Contact", R.string.menu_contact)
+    object Discover : Screen("discover", R.string.menu_discovery)
+    object Profile : Screen("profile", R.string.menu_mine)
+}
+
+class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
     private val ktChatViewModel: KtChatViewModel by activityViewModels()
 
@@ -103,6 +110,13 @@ class KtChatShellFragment : BaseViewModelFragment() {
                     ) {
                         AndroidViewBinding(MainFragmentBinding::inflate) {
                             val navView: BottomNavigationView = this.mainFragmentBottomNav
+                            logger.debug { "R.id.main_fragment_nav_host_fragment = " + R.id.main_fragment_nav_host_fragment }
+                            logger.debug {
+                                "R.id.main_fragment_nav_host_fragment = 0x" + Integer.toHexString(
+                                    R.id.main_fragment_nav_host_fragment
+                                )
+                            }
+
                             val navHostFragment =
                                 childFragmentManager.findFragmentById(R.id.main_fragment_nav_host_fragment) as NavHostFragment
                             navView.setupWithNavController(navHostFragment.navController)

@@ -62,7 +62,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         savedInstanceState: Bundle?
     ): View {
         lifecycleScope.launch(Dispatchers.IO) {
-            IMClient.getService<AuthService>()?.getApiToken()?.let {
+            /*IMClient.getService<AuthService>()?.getApiToken()?.let {
                 try {
                     IMHttpManger.imApiService.me(it)
                     withContext(Dispatchers.Main) {
@@ -77,6 +77,9 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
 
             } ?: withContext(Dispatchers.Main) {
                 findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+            }*/
+            withContext(Dispatchers.Main) {
+                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToKtChatShellFragment())
             }
         }
         return ComposeView(requireContext()).apply {

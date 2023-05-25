@@ -3,8 +3,6 @@ package com.nxg.androidsample.discovery
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nxg.androidsample.R
-import com.nxg.androidsample.main.MainFragmentDirections
 import com.nxg.androidsample.main.data.NavFunction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +26,7 @@ class DiscoveryViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         val navFunctionList = mutableListOf<NavFunction>()
-        navFunctionList.add(
+        /*navFunctionList.add(
             NavFunction(
                 "UI",
                 "Jetpack Compose",
@@ -68,7 +66,7 @@ class DiscoveryViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         val grouped = navFunctionList.groupBy { it.functionGroupName }
-        onNavFunctionMapStateFlow(grouped)
+        onNavFunctionMapStateFlow(grouped)*/
     }
 
 }

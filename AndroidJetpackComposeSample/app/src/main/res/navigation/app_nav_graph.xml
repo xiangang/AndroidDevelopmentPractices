@@ -7,17 +7,15 @@
     <include app:graph="@navigation/app_nav_graph_main_fragment" />
     <include app:graph="@navigation/av_nav_graph" />
     <include app:graph="@navigation/nui_nav_graph" />
+    <include app:graph="@navigation/im_conversation_nav_graph" />
+    <include app:graph="@navigation/im_contact_nav_graph" />
+    <include app:graph="@navigation/im_discover_nav_graph" />
+    <include app:graph="@navigation/im_user_nav_graph" />
 
     <fragment
         android:id="@+id/launchFragment"
         android:name="com.nxg.androidsample.launch.LaunchFragment"
         android:label="LaunchFragment">
-
-        <action
-            android:id="@+id/action_launchFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/mainFragment" />
 
         <action
             android:id="@+id/action_launchFragment_to_loginFragment"
@@ -27,123 +25,21 @@
             app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/action_launchFragment_to_IMShellFragment"
-            app:destination="@id/KtChatShellFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/mainFragment" />
+            android:id="@+id/action_launchFragment_to_KtChatShellFragment"
+            app:destination="@id/ktChatShellFragment"
+            app:launchSingleTop="true"/>
 
     </fragment>
 
-    <fragment
-        android:id="@+id/permissionsFragment"
-        android:name="com.nxg.androidsample.permissions.PermissionsFragment"
-        android:label="@string/app_name">
-
-        <action
-            android:id="@+id/action_permissionsFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:launchSingleTop="true" />
-
-    </fragment>
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.nxg.im.user.component.login.LoginFragment"
-        android:label="LoginFragment">
-
-        <deepLink app:uri="android-app://com.nxg.app/loginFragment" />
-
-        <action
-            android:id="@+id/action_loginFragment_to_navigation_app_main"
-            app:destination="@id/mainFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/KtChatShellFragment"
+        android:id="@+id/ktChatShellFragment"
         android:name="com.nxg.androidsample.main.KtChatShellFragment"
-        android:label="IMShellFragment">
+        android:label="KtChatShellFragment">
 
         <deepLink app:uri="android-app://com.nxg.app/KtChatShellFragment" />
 
     </fragment>
-
-
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.nxg.im.user.component.profile.ProfileFragment"
-        android:label="UserInfoFragment">
-
-        <action
-            android:id="@+id/action_userInfoFragment_to_app_main_fragment_nav_graph"
-            app:destination="@id/mainFragment"
-            app:launchSingleTop="true" />
-
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.nxg.androidsample.main.MainFragment"
-        android:label="@string/app_name">
-
-        <deepLink app:uri="android-app://com.nxg.app/mainFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_av_nav_graph"
-            app:destination="@id/av_nav_graph" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_nui_nav_graph"
-            app:destination="@id/nui_nav_graph" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_liveStreamingFragment"
-            app:destination="@id/liveStreamingFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_videoCallFragment"
-            app:destination="@id/videoCallFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_contactDetailFragment"
-            app:destination="@id/contactDetailFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_conversationChatFragment"
-            app:destination="@id/conversationChatFragment" />
-
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/contactDetailFragment"
-        android:name="com.nxg.im.contact.ContactDetailFragment"
-        android:label="ContactDetailFragment">
-
-        <deepLink app:uri="android-app://com.nxg.app/contactDetailFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/conversationChatFragment"
-        android:name="com.nxg.im.chat.conversation.ConversationChatFragment"
-        android:label="ConversationChatFragment">
-
-        <deepLink app:uri="android-app://com.nxg.app/conversationChatFragment" />
-
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/liveStreamingFragment"
-        android:name="com.nxg.webrtcmobile.livestreaming.LiveStreamingFragment"
-        android:label="LiveStreamingFragment" />
-
-    <fragment
-        android:id="@+id/videoCallFragment"
-        android:name="com.nxg.webrtcmobile.videocall.VideoCallFragment"
-        android:label="VideoCallFragment" />
 
 
 </navigation>

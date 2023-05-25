@@ -26,46 +26,30 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 val contactList = mutableListOf<Contact>()
-                val friendList = mutableListOf(
-                    Friend(
-                        User(
-                            id = 1,
-                            uuid = 51691563050860544,
-                            username = "nxg",
-                            password = "",
-                            nickname = "失落轨迹",
-                            email = "342005702@qq.com",
-                            phone = "15607837955",
-                            avatar = "https://randomuser.me/api/portraits/men/1.jpg",
-                            address = "",
-                            province = "",
-                            city = "",
-                            country = "",
-                            status = 0,
-                            createTime = "",
-                            updateTime = ""
-                        )
-                    ),
-                    Friend(
-                        User(
-                            id = 2,
-                            uuid = 51691563610275840,
-                            username = "xiangang",
-                            password = "",
-                            nickname = "Annon",
-                            email = "342005702@qq.com",
-                            phone = "15607837955",
-                            avatar = "https://randomuser.me/api/portraits/men/2.jpg",
-                            address = "",
-                            province = "",
-                            city = "",
-                            country = "",
-                            status = 0,
-                            createTime = "",
-                            updateTime = ""
+                val friendList = mutableListOf<Friend>()
+                for (i in 1..100) {
+                    friendList.add(
+                        Friend(
+                            User(
+                                id = i,
+                                uuid = 51691563050860544,
+                                username = "i",
+                                password = "",
+                                nickname = "机器人${i}号",
+                                email = "342005702@qq.com",
+                                phone = "15607837955",
+                                avatar = "https://randomuser.me/api/portraits/men/$i.jpg",
+                                address = "",
+                                province = "",
+                                city = "",
+                                country = "",
+                                status = 0,
+                                createTime = "",
+                                updateTime = ""
+                            )
                         )
                     )
-                )
+                }
                 contactList.addAll(
                     listOf(
                         Contact.ContactFriendList(friendList)
