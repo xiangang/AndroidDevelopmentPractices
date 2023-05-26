@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@id/navigation_contact"
-        android:name="com.nxg.im.contact.ContactFragment"
+        android:name="com.nxg.im.contact.ContactListFragment"
         android:label="@string/menu_contact" />
 
     <fragment

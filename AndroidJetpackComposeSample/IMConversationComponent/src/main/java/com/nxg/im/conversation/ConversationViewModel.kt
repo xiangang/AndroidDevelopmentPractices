@@ -28,27 +28,30 @@ class ConversationViewModel(val conversationRepository: ConversationRepository) 
     init {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
-                val conversations = mutableListOf(
-                    Conversation(
-                        1, 0, User(
-                            id = 1,
-                            uuid = 51691563050860544,
-                            username = "nxg",
-                            password = "",
-                            nickname = "失落轨迹",
-                            email = "342005702@qq.com",
-                            phone = "15607837955",
-                            avatar = "https://randomuser.me/api/portraits/men/1.jpg",
-                            address = "",
-                            province = "",
-                            city = "",
-                            country = "",
-                            status = 0,
-                            createTime = "",
-                            updateTime = ""
+                val conversations = mutableListOf<Conversation>()
+                for (i in 1..100) {
+                    conversations.add(
+                        Conversation(
+                            1, 0, User(
+                                id = 1,
+                                uuid = 51691563050860544,
+                                username = "机器人${i}号",
+                                password = "",
+                                nickname = "机器人${i}号",
+                                email = "342005702@qq.com",
+                                phone = "15607837955",
+                                avatar = "https://randomuser.me/api/portraits/men/$i.jpg",
+                                address = "",
+                                province = "",
+                                city = "",
+                                country = "",
+                                status = 0,
+                                createTime = "",
+                                updateTime = ""
+                            )
                         )
                     )
-                )
+                }
                 _uiState.emit(_uiState.value.copy(conversations = conversations))
             }
         }

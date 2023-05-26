@@ -34,13 +34,6 @@ import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 
-sealed class Screen(val route: String, @StringRes val resourceId: Int) {
-    object Conservation : Screen("conversation", R.string.menu_chat)
-    object Contact : Screen("Contact", R.string.menu_contact)
-    object Discover : Screen("discover", R.string.menu_discovery)
-    object Profile : Screen("profile", R.string.menu_mine)
-}
-
 class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
     private val ktChatViewModel: KtChatViewModel by activityViewModels()
@@ -110,34 +103,10 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                     ) {
                         AndroidViewBinding(MainFragmentBinding::inflate) {
                             val navView: BottomNavigationView = this.mainFragmentBottomNav
-                            logger.debug { "R.id.main_fragment_nav_host_fragment = " + R.id.main_fragment_nav_host_fragment }
-                            logger.debug {
-                                "R.id.main_fragment_nav_host_fragment = 0x" + Integer.toHexString(
-                                    R.id.main_fragment_nav_host_fragment
-                                )
-                            }
-
                             val navHostFragment =
-                                childFragmentManager.findFragmentById(R.id.main_fragment_nav_host_fragment) as NavHostFragment
+                                childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
                             navView.setupWithNavController(navHostFragment.navController)
                             navHostFragment.navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                                when (destination.id) {
-                                    R.id.navigation_home -> {
-
-                                    }
-
-                                    R.id.navigation_contact -> {
-
-                                    }
-
-                                    R.id.navigation_discovery -> {
-
-                                    }
-
-                                    R.id.navigation_mine -> {
-
-                                    }
-                                }
                                 ktChatViewModel.changeTitle(destination.label.toString())
                             }
                         }
@@ -152,7 +121,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
      */
     private fun findNavController(): NavController {
         val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.main_fragment_nav_host_fragment) as NavHostFragment
+            childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
     }
 }

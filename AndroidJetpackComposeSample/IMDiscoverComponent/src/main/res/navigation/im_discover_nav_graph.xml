@@ -7,6 +7,6 @@
     <fragment
         android:id="@+id/discoverFragment"
         android:name="com.nxg.im.discover.DiscoverFragment"
-        android:label="DiscoverFragment" />
+        android:label="发现" />
 
 </navigation>

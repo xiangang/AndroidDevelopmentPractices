@@ -4,10 +4,8 @@
     android:id="@+id/app_nav_graph"
     app:startDestination="@id/launchFragment">
 
-    <include app:graph="@navigation/app_nav_graph_main_fragment" />
-    <include app:graph="@navigation/av_nav_graph" />
-    <include app:graph="@navigation/nui_nav_graph" />
     <include app:graph="@navigation/im_conversation_nav_graph" />
+    <include app:graph="@navigation/im_chat_nav_graph" />
     <include app:graph="@navigation/im_contact_nav_graph" />
     <include app:graph="@navigation/im_discover_nav_graph" />
     <include app:graph="@navigation/im_user_nav_graph" />
@@ -18,16 +16,17 @@
         android:label="LaunchFragment">
 
         <action
-            android:id="@+id/action_launchFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/launchFragment"
-            app:popUpToInclusive="true" />
-
-        <action
             android:id="@+id/action_launchFragment_to_KtChatShellFragment"
             app:destination="@id/ktChatShellFragment"
             app:launchSingleTop="true"/>
+
+        <action
+            android:id="@+id/action_launchFragment_to_im_user_nav_graph"
+            app:destination="@id/im_user_nav_graph" />
+
+        <action
+            android:id="@+id/action_launchFragment_to_im_conversation_nav_graph"
+            app:destination="@id/im_conversation_nav_graph" />
 
     </fragment>
 
@@ -37,7 +36,7 @@
         android:name="com.nxg.androidsample.main.KtChatShellFragment"
         android:label="KtChatShellFragment">
 
-        <deepLink app:uri="android-app://com.nxg.app/KtChatShellFragment" />
+        <deepLink app:uri="android-app://com.nxg.app/ktChatShellFragment" />
 
     </fragment>
 

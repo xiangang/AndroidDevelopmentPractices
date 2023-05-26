@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_conversation_nav_graph"
+    app:startDestination="@id/conversationListFragment">
+
+    <fragment
+        android:id="@+id/conversationListFragment"
+        android:name="com.nxg.im.conversation.ConversationListFragment"
+        android:label="聊天">
+
+        <deepLink app:uri="android-app://com.nxg.app/conversationListFragment" />
+
+    </fragment>
+
+</navigation>

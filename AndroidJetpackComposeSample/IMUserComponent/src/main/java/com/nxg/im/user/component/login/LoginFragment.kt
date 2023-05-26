@@ -57,7 +57,7 @@ class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
                 loginResult.success?.let {
                     updateUiWithUser(it)
                     val request = NavDeepLinkRequest.Builder
-                        .fromUri("android-app://com.nxg.app/KtChatShellFragment".toUri())
+                        .fromUri("android-app://com.nxg.app/conversationListFragment".toUri())
                         .build()
                     findMainActivityNavController().navigate(request)
                 }

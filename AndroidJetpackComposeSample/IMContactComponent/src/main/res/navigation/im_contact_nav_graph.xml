@@ -2,12 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/im_contact_nav_graph"
-    app:startDestination="@id/contactDetailFragment">
+    app:startDestination="@id/contactListFragment">
+
+    <fragment
+        android:id="@+id/contactListFragment"
+        android:name="com.nxg.im.contact.ContactListFragment"
+        android:label="联系人">
+
+        <deepLink app:uri="android-app://com.nxg.app/contactListFragment" />
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/contactDetailFragment"
         android:name="com.nxg.im.contact.ContactDetailFragment"
-        android:label="ContactDetailFragment">
+        android:label="联系人详情">
 
         <deepLink app:uri="android-app://com.nxg.app/contactDetailFragment" />
 

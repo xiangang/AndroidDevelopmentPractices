@@ -19,21 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
-    companion object {
-        const val TAG = "MainActivity"
-    }
-
     private lateinit var binding: MainActivityBinding
     private lateinit var fragmentLifecycleObserver: FragmentLifecycleObserver
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (isDarkMode()) {
-            setAndroidNativeLightStatusBar(false)
-        } else {
-            transparentStatusBar(getColor(com.nxg.commonui.R.color.common_ui_primary))
-        }
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         /**
@@ -46,12 +37,9 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         navController = navHostFragment.navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
             logger.debug { "addOnDestinationChangedListener: $destination" }
-            when (destination.id) {
-
-            }
         }
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
-        //lifecycle.addObserver(fragmentLifecycleObserver)
+        lifecycle.addObserver(fragmentLifecycleObserver)
     }
 
     override fun onBackPressed() {
@@ -61,7 +49,7 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
     override fun onDestroy() {
         super.onDestroy()
-        //lifecycle.removeObserver(fragmentLifecycleObserver)
+        lifecycle.removeObserver(fragmentLifecycleObserver)
     }
 
 }

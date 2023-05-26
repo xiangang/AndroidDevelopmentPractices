@@ -24,7 +24,7 @@ class MainFragment : Fragment(R.layout.main_fragment), SimpleLogger {
         super.onViewCreated(view, savedInstanceState)
         val navView: BottomNavigationView = binding.mainFragmentBottomNav
         val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.main_fragment_nav_host_fragment) as NavHostFragment
+            childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         LoggerFactory.getLogger("MainFragmentLogger")
         logger.info { "onViewCreated: navController $navController" }

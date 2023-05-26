@@ -8,7 +8,7 @@
     tools:context=".main.MainFragment">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_fragment_nav_host_fragment"
+        android:id="@+id/app_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,7 +25,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/app_main_fragment_menu_bottom_nav" />
+        app:menu="@menu/app_menu_bottom_nav_main_fragment" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

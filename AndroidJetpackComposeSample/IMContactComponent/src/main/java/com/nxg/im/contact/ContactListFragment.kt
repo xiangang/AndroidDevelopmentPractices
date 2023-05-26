@@ -29,7 +29,7 @@ import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.launch
 
-class ContactFragment : BaseViewModelFragment() {
+class ContactListFragment : BaseViewModelFragment() {
 
     private val contactViewModel: ContactViewModel by activityViewModels {
         ContactViewModelFactory()
@@ -131,7 +131,7 @@ fun ContactItemCompose(
         .padding(10.dp, 10.dp, 10.dp, 0.dp), verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
             modifier = Modifier
-                .size(50.dp)
+                .size(40.dp)
                 .clip(
                     MaterialTheme.shapes.small.copy(
                         topStart = cornerSize,

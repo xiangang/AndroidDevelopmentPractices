@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
@@ -62,24 +63,21 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         savedInstanceState: Bundle?
     ): View {
         lifecycleScope.launch(Dispatchers.IO) {
-            /*IMClient.getService<AuthService>()?.getApiToken()?.let {
+            IMClient.getService<AuthService>()?.getApiToken()?.let {
                 try {
                     IMHttpManger.imApiService.me(it)
                     withContext(Dispatchers.Main) {
-                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToIMShellFragment())
+                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToKtChatShellFragment())
                     }
                 } catch (e: Exception) {
                     logger.debug { "me: ${e.message}" }
                     withContext(Dispatchers.Main) {
-                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToImUserNavGraph())
                     }
                 }
 
             } ?: withContext(Dispatchers.Main) {
-                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
-            }*/
-            withContext(Dispatchers.Main) {
-                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToKtChatShellFragment())
+                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToImUserNavGraph())
             }
         }
         return ComposeView(requireContext()).apply {
