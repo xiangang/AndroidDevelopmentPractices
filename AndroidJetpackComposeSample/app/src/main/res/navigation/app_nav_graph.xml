@@ -38,7 +38,6 @@
             app:popUpTo="@id/launch_fragment"
             app:popUpToInclusive="true" />
 
-
         <action
             android:id="@+id/action_launch_fragment_to_login_fragment"
             app:destination="@id/login_fragment"

@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 
 data class ConversationChat(val id: Long, val type: Int, val messages: List<Message>)
- 
+
 data class ConversationChatUiState(
     val conversationChat: ConversationChat? = null
 )

@@ -36,7 +36,7 @@ object IMWebSocket : SimpleLogger {
                     AuthServiceImpl.getWebSocketToken()?.let {
                         webSocket = IMHttpManger.imSignalingOkHttpClient.newWebSocket(
                             request = Request.Builder()
-                                .url("ws://${IMConstants.IM_SERVER_IP}:${IMConstants.IM_SERVER_HTTP_PORT}/signaling")
+                                .url("ws://${IMConstants.IM_SERVER_IP}:${IMConstants.IM_SERVER_HTTP_PORT}/chat")
                                 .addHeader("Authorization", it)
                                 .build(),
                             object : WebSocketListener() {
