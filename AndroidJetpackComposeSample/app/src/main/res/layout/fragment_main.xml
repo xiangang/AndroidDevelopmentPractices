@@ -8,24 +8,25 @@
     tools:context=".main.MainFragment">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/app_nav_host_fragment"
+        android:id="@+id/app_nav_host_main_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/main_fragment_bottom_nav"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/app_bottom_nav_main_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/app_nav_graph" />
+        app:navGraph="@navigation/app_nav_graph_main_fragment" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/main_fragment_bottom_nav"
+        android:id="@+id/app_bottom_nav_main_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/app_menu_bottom_nav" />
+        app:menu="@menu/app_menu_bottom_nav_main_fragment" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

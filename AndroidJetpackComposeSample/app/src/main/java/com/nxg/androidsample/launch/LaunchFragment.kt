@@ -1,19 +1,23 @@
 package com.nxg.androidsample.launch
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TargetBasedAnimation
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -33,18 +37,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDeepLinkRequest
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nxg.commonui.theme.ColorText
+import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.module.auth.AuthService
-import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.Dispatchers
@@ -62,30 +66,55 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        lifecycleScope.launch(Dispatchers.IO) {
-            IMClient.getService<AuthService>()?.getApiToken()?.let {
-                try {
-                    IMHttpManger.imApiService.me(it)
-                    withContext(Dispatchers.Main) {
-                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToKtChatShellFragment())
-                    }
-                } catch (e: Exception) {
-                    logger.debug { "me: ${e.message}" }
-                    withContext(Dispatchers.Main) {
-                        findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToImUserNavGraph())
-                    }
-                }
-
-            } ?: withContext(Dispatchers.Main) {
-                findMainActivityNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToImUserNavGraph())
-            }
-        }
         return ComposeView(requireContext()).apply {
             setContent {
-                AndroidJetpackComposeSampleTheme {
-                    Surface(color = MaterialTheme.colors.background) {
-                        Splash {
+                JetchatTheme {
+                    // Remember a SystemUiController
+                    val systemUiController = rememberSystemUiController()
+                    val useDarkIcons = !isSystemInDarkTheme()
+                    requireActivity().apply {
+                        // 设置全屏
+                        /*window.setFlags(
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN
+                        )*/
+                        //隐藏状态栏、导航栏、标题栏
+                        WindowCompat.getInsetsController(window, window.decorView)
+                            .hide(WindowInsetsCompat.Type.systemBars())
+                    }
+                    DisposableEffect(systemUiController, useDarkIcons) {
+                        // Update all of the system bar colors to be transparent, and use
+                        // dark icons if we're in light theme
+                        systemUiController.setSystemBarsColor(
+                            color = if (!useDarkIcons) Color.Black else Color.White,
+                            darkIcons = useDarkIcons
+                        )
 
+                        // setStatusBarColor() and setNavigationBarColor() also exist
+
+                        onDispose {}
+                    }
+                    Surface(color = if (!useDarkIcons) Color.Black else Color.White) {
+                        val scope = rememberCoroutineScope()
+                        Splash {
+                            scope.launch(Dispatchers.IO) {
+                                IMClient.getService<AuthService>()?.getApiToken()?.let {
+                                    try {
+                                        IMHttpManger.imApiService.me(it)
+                                        withContext(Dispatchers.Main) {
+                                            findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToMainFragment())
+                                        }
+                                    } catch (e: Exception) {
+                                        logger.debug { "me: ${e.message}" }
+                                        withContext(Dispatchers.Main) {
+                                            findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                                        }
+                                    }
+
+                                } ?: withContext(Dispatchers.Main) {
+                                    findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                                }
+                            }
                         }
                     }
                 }
@@ -93,8 +122,20 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().apply {
+            //取消全屏
+            //window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            //显示状态栏、导航栏、标题栏
+            WindowCompat.getInsetsController(requireActivity().window, window.decorView)
+                .show(WindowInsetsCompat.Type.systemBars())
+        }
+
+    }
+
     @Composable
-    fun Splash(countDownSec: Int = 1, navigationTo: () -> Unit) {
+    fun Splash(countDownSec: Int = 3, navigationTo: () -> Unit) {
         var time by remember {
             mutableStateOf(countDownSec)
         }
@@ -121,7 +162,6 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         }
         Box(
             modifier = Modifier
-                .background(Color.White)
                 .fillMaxSize()
         ) {
             val painter = rememberAsyncImagePainter(
@@ -129,20 +169,21 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                     .data(com.nxg.androidsample.R.drawable.ic_compose_landing_roadmap)
                     .build()
             )
-            Image(
-                painter = painterResource(com.nxg.androidsample.R.drawable.splash_ad_01),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize()
+            AnimatedVisibility(visible = (time < 3), enter = fadeIn()) {
+                Image(
+                    painter = painterResource(com.nxg.androidsample.R.drawable.splash_default),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
 
-            )
-            /*Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
-
-            )*/
+                )
+                /*Image(
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                )*/
+            }
             Row(
                 modifier = Modifier
                     .background(Color.Transparent)
@@ -154,7 +195,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                     modifier = Modifier
                         .width(110.dp)
                         .wrapContentHeight()
-                        .padding(20.dp, 60.dp, 20.dp, 20.dp)
+                        .padding(20.dp, 20.dp, 20.dp, 20.dp)
                         .background(Color.Black.copy(0.6f), shape = RoundedCornerShape(10))
                         .clickable {
                             time = -1
@@ -175,55 +216,58 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                 }
             }
 
-            Column(modifier = Modifier.fillMaxSize()) {
-                Spacer(Modifier.weight(1f))
-                Row(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .fillMaxWidth()
-                        .padding(0.dp, 20.dp, 0.dp, 0.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        painterResource(com.nxg.androidsample.R.drawable.ic_rocket),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.size(30.dp)
-                    )
+            AnimatedVisibility(visible = (time < 2), enter = fadeIn()) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Spacer(Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .padding(0.dp, 20.dp, 0.dp, 0.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painterResource(com.nxg.androidsample.R.drawable.ic_rocket),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.size(30.dp)
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp),
+                            text = buildAnnotatedString {
+                                append("好用的")
+                                withStyle(
+                                    style = SpanStyle(
+                                        fontWeight = FontWeight.Light,
+                                        color = ColorText.Primary
+                                    )
+                                ) {
+                                    append("Compose UI Kit")
+                                }
+                            },
+                            style = TextStyle(color = ColorText.Primary, fontSize = 16.sp)
+                        )
+                    }
                     Text(
                         modifier = Modifier
-                            .padding(0.dp, 0.dp),
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .padding(0.dp, 20.dp, 0.dp, 10.dp),
+                        textAlign = TextAlign.Center,
                         text = buildAnnotatedString {
-                            append("好用的")
-                            withStyle(
-                                style = SpanStyle(
-                                    fontWeight = FontWeight.Light,
-                                    color = ColorText.Primary
-                                )
-                            ) {
-                                append("Compose UI Kit")
-                            }
+                            append("@copyright 2022-2030")
                         },
-                        style = TextStyle(color = ColorText.Primary, fontSize = 16.sp)
+                        style = TextStyle(
+                            color = ColorText.Primary,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Light,
+                        )
                     )
                 }
-                Text(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .fillMaxWidth()
-                        .padding(0.dp, 20.dp, 0.dp, 10.dp),
-                    textAlign = TextAlign.Center,
-                    text = buildAnnotatedString {
-                        append("@copyright 2022-2030")
-                    },
-                    style = TextStyle(
-                        color = ColorText.Primary,
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                )
             }
+
         }
 
     }

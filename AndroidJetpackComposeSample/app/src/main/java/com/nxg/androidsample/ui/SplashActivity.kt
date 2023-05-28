@@ -101,7 +101,7 @@ fun Splash(countDownSec: Int = 3, startMainActivity: () -> Unit) {
                 .build()
         )
         Image(
-            painter = painterResource(R.drawable.splash_ad_01),
+            painter = painterResource(R.drawable.splash_default),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxSize()

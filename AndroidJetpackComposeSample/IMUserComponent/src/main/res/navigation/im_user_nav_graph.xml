@@ -2,23 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/im_user_nav_graph"
-    app:startDestination="@id/profileFragment">
+    app:startDestination="@id/profile_fragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.nxg.im.user.component.login.LoginFragment"
-        android:label="登录">
-
-        <deepLink app:uri="android-app://com.nxg.app/loginFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/profile_fragment"
         android:name="com.nxg.im.user.component.profile.ProfileFragment"
         android:label="我的">
 
-        <deepLink app:uri="android-app://com.nxg.app/profileFragment" />
+        <deepLink app:uri="android-app://com.nxg.app/profile_fragment" />
 
     </fragment>
 

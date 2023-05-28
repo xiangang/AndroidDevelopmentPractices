@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -15,7 +17,8 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -23,14 +26,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavGraph
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nxg.androidsample.R
-import com.nxg.androidsample.databinding.MainFragmentBinding
+import com.nxg.androidsample.databinding.FragmentMainBinding
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 
@@ -45,6 +49,11 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val destinationCountOnBackStack = findMainActivityNavController().backQueue.count { entry ->
+            logger.debug { "onCreateView: entry.destination ${entry.destination.displayName}" }
+            entry.destination !is NavGraph
+        }
+        logger.debug { "onCreateView: destinationCountOnBackStack $destinationCountOnBackStack" }
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
@@ -101,27 +110,19 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                             )
                         }
                     ) {
-                        AndroidViewBinding(MainFragmentBinding::inflate) {
-                            val navView: BottomNavigationView = this.mainFragmentBottomNav
-                            val navHostFragment =
-                                childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
-                            navView.setupWithNavController(navHostFragment.navController)
-                            navHostFragment.navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                                ktChatViewModel.changeTitle(destination.label.toString())
+                        AndroidViewBinding(FragmentMainBinding::inflate) {
+                            val navView: BottomNavigationView = this.appBottomNavMainFragment
+                            val navController = findNavController()
+                            navController.let {
+                                navView.setupWithNavController(navController)
+                                navController.addOnDestinationChangedListener { controller, destination, arguments ->
+                                    ktChatViewModel.changeTitle(destination.label.toString())
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * See https://issuetracker.google.com/142847973
-     */
-    private fun findNavController(): NavController {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
-        return navHostFragment.navController
     }
 }

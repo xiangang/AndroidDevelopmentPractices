@@ -50,8 +50,9 @@ class ContactListFragment : BaseViewModelFragment() {
                     ) { navController, friend ->
                         scope.launch {
                             contactViewModel.loadContactDetail(friend.user)
+                            //从壳跳转到联系人详情页
                             val request = NavDeepLinkRequest.Builder
-                                .fromUri("android-app://com.nxg.app/contactDetailFragment".toUri())
+                                .fromUri("android-app://com.nxg.app/contact_detail_fragment".toUri())
                                 .build()
                             navController.navigate(request)
                         }
@@ -109,10 +110,7 @@ fun ContactListCompose(
 
                 }
             }
-
-
         }
-
     }
 }
 
@@ -128,7 +126,7 @@ fun ContactItemCompose(
         .clickable {
             onClick(navController, friend)
         }
-        .padding(10.dp, 10.dp, 10.dp, 0.dp), verticalAlignment = Alignment.CenterVertically) {
+        .padding(10.dp, 5.dp, 10.dp, 5.dp), verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
             modifier = Modifier
                 .size(40.dp)

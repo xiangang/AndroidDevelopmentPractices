@@ -121,7 +121,7 @@ class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
                             loginViewModel.logout()
                             withContext(Dispatchers.Main) {
                                 val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/loginFragment".toUri())
+                                    .fromUri("android-app://com.nxg.app/login_fragment".toUri())
                                     .build()
                                 navController.popBackStack()
                                 navController.navigate(request)

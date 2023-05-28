@@ -22,6 +22,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme
@@ -47,13 +48,13 @@ class ConversationListFragment : BaseViewModelFragment() {
                     ConversationListCompose(
                         conversationViewModel,
                         findMainActivityNavController()
-                    ) { navController, conversation ->
+                    ) { _, conversation ->
                         scope.launch {
                             conversationViewModel.loadConversation(conversation)
                             val request = NavDeepLinkRequest.Builder
-                                .fromUri("android-app://com.nxg.app/conversationChatFragment".toUri())
+                                .fromUri("android-app://com.nxg.app/conversation_chat_fragment".toUri())
                                 .build()
-                            navController.navigate(request)
+                            findMainActivityNavController().navigate(request)
                         }
                     }
                 }

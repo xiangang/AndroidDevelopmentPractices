@@ -1,33 +1,41 @@
 package com.nxg.androidsample.main
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nxg.androidsample.R
-import com.nxg.androidsample.databinding.MainFragmentBinding
-import com.nxg.mvvm.ktx.viewBinding
+import com.nxg.androidsample.databinding.FragmentMainBinding
 import com.nxg.mvvm.logger.SimpleLogger
-import org.slf4j.LoggerFactory
 
 
 /**
  * 主界面
  */
-class MainFragment : Fragment(R.layout.main_fragment), SimpleLogger {
+class MainFragment : Fragment(), SimpleLogger {
 
-    private val binding by viewBinding(MainFragmentBinding::bind)
+    private var _binding: FragmentMainBinding? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val navView: BottomNavigationView = binding.mainFragmentBottomNav
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        val navViewNested: BottomNavigationView = binding.appBottomNavMainFragment
         val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
+            childFragmentManager.findFragmentById(R.id.app_nav_host_main_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        LoggerFactory.getLogger("MainFragmentLogger")
-        logger.info { "onViewCreated: navController $navController" }
-        navView.setupWithNavController(navController)
+        navViewNested.setupWithNavController(navController)
+        return root
     }
 }

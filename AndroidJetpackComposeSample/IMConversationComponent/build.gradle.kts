@@ -8,6 +8,7 @@ plugins {
 }
 
 android {
+    resourcePrefix = "im_conv_"
     compileSdk = BuildConfig.compileSdk
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion

@@ -56,10 +56,6 @@ class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
                 }
                 loginResult.success?.let {
                     updateUiWithUser(it)
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("android-app://com.nxg.app/conversationListFragment".toUri())
-                        .build()
-                    findMainActivityNavController().navigate(request)
                 }
             })
 
@@ -103,7 +99,7 @@ class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
     private fun updateUiWithUser(loggedInUserView: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + loggedInUserView.loginData.user.username
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, welcome, Toast.LENGTH_SHORT).show()
     }
 
     private fun showLoginFailed(errorString: String) {

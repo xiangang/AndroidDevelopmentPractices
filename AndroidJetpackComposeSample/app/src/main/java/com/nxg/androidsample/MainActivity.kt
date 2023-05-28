@@ -1,16 +1,13 @@
 package com.nxg.androidsample
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
-import com.nxg.androidsample.databinding.MainActivityBinding
-import com.nxg.commonui.utils.isDarkMode
-import com.nxg.commonui.utils.setAndroidNativeLightStatusBar
-import com.nxg.commonui.utils.transparentStatusBar
+import com.nxg.androidsample.databinding.ActivityMainBinding
+import com.nxg.im.user.component.login.LoginViewModel
+import com.nxg.im.user.component.login.LoginViewModelFactory
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,32 +16,28 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
-    private lateinit var binding: MainActivityBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var fragmentLifecycleObserver: FragmentLifecycleObserver
-    private lateinit var navController: NavController
+
+
+    private val loginViewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = MainActivityBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        /**
-         * 使用 FragmentContainerView 创建 NavHostFragment，或通过 FragmentTransaction 手动将 NavHostFragment 添加到您的 activity 时，
-         * 尝试通过 Navigation.findNavController(Activity, @IdRes int) 检索 activity 的 onCreate() 中的 NavController 将失败。
-         * 您应改为直接从 NavHostFragment 检索 NavController。
-         */
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            logger.debug { "addOnDestinationChangedListener: $destination" }
-        }
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
         lifecycle.addObserver(fragmentLifecycleObserver)
-    }
+        loginViewModel.loginResult.observe(this,
+            Observer { loginResult ->
+                loginResult ?: return@Observer
+                loginResult.success?.let {
+                    findNavController().navigate(R.id.main_fragment)
+                }
+            })
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        navController.popBackStack()
     }
 
     override fun onDestroy() {
@@ -52,6 +45,14 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
         lifecycle.removeObserver(fragmentLifecycleObserver)
     }
 
+    /**
+     * See https://issuetracker.google.com/142847973
+     */
+    private fun findNavController(): NavController {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
+        return navHostFragment.navController
+    }
 }
 
 

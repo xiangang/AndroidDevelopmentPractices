@@ -8,6 +8,7 @@ plugins {
 }
 
 android {
+    resourcePrefix = "im_chat_"
     compileSdk = BuildConfig.compileSdk
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion

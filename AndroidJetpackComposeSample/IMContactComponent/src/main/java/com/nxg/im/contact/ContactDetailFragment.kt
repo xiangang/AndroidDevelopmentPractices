@@ -5,52 +5,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.VideoCall
-import androidx.compose.material.icons.filled.VideoCameraBack
-import androidx.compose.material.icons.filled.VideoChat
 import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavDirections
-import androidx.navigation.fragment.navArgs
-import androidx.room.util.TableInfo
 import coil.compose.AsyncImage
-import com.nxg.commonui.theme.AndroidJetpackComposeSampleTheme
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorText
-import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.module.user.User
 import com.nxg.mvvm.ktx.findMainActivityNavController
@@ -63,7 +45,6 @@ class ContactDetailFragment : BaseViewModelFragment() {
     private val contactViewModel: ContactViewModel by activityViewModels {
         ContactViewModelFactory()
     }
-
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreateView(
@@ -96,7 +77,7 @@ class ContactDetailFragment : BaseViewModelFragment() {
                                         tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier
                                             .clickable(onClick = {
-                                                findMainActivityNavController().popBackStack()
+                                                findMainActivityNavController().navigateUp()
                                             })
                                             .padding(horizontal = 12.dp, vertical = 16.dp)
                                             .height(24.dp),
@@ -218,7 +199,7 @@ fun ContactUserInfoCompose(
                 .height(48.dp),
             onClick = {
                 val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://com.nxg.app/conversationChatFragment".toUri())
+                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment".toUri())
                     .build()
                 navController?.navigate(request)
             },

@@ -24,7 +24,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.nxg.androidsample.databinding.PermissionFragmentBinding
+import com.nxg.androidsample.databinding.FragmentPermissionBinding
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import com.nxg.mvvm.ui.PERMISSIONS_REQUIRED
 
@@ -55,7 +55,7 @@ class PermissionsFragment : BaseBusinessFragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.i(TAG, "onCreateView: ")
-        return PermissionFragmentBinding.inflate(inflater, container, false).also {
+        return FragmentPermissionBinding.inflate(inflater, container, false).also {
             if (checkSelfPermissions(requireContext())) {
                 doWhenPermissionGranted()
             } else {

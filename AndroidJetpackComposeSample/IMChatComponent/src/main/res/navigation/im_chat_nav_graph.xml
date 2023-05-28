@@ -2,14 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/im_chat_nav_graph"
-    app:startDestination="@id/conversationChatFragment">
+    app:startDestination="@id/conversation_chat_fragment">
 
     <fragment
-        android:id="@+id/conversationChatFragment"
+        android:id="@+id/conversation_chat_fragment"
         android:name="com.nxg.im.chat.conversation.ConversationChatFragment"
         android:label="聊天">
 
-        <deepLink app:uri="android-app://com.nxg.app/conversationChatFragment" />
+        <deepLink app:uri="android-app://com.nxg.app/conversation_chat_fragment" />
 
     </fragment>
 
