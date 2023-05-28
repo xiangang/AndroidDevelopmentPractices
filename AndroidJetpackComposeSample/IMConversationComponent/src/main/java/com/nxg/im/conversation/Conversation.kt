@@ -8,5 +8,6 @@ data class Conversation(
     val id: Long,
     val type: Int,
     val user: User? = null,
-    val group: Group? = null
+    val group: Group? = null,
+    val lastMessage: String = "",
 )

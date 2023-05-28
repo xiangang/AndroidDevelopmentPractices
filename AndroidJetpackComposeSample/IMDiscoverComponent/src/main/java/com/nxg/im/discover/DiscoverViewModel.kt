@@ -1,5 +1,8 @@
 package com.nxg.im.discover
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nxg.mvvm.logger.SimpleLogger
@@ -8,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-data class Discovery(val icon: Int, val name: String)
+data class Discovery(val icon: ImageVector, val name: String)
 
 data class DiscoveryUiState(val discoveryList: List<Discovery>)
 
@@ -23,7 +26,15 @@ class DiscoverViewModel() : ViewModel(), SimpleLogger {
     init {
 
         viewModelScope.launch {
-            logger.debug { "init" }
+            _uiState.emit(
+                _uiState.value.copy(
+                    discoveryList = listOf(
+                        Discovery(Icons.Rounded.Camera, "朋友圈"),
+                        Discovery(Icons.Rounded.ShoppingBag, "购物"),
+                        Discovery(Icons.Rounded.Mail, "邮箱"),
+                    )
+                )
+            )
 
         }
     }

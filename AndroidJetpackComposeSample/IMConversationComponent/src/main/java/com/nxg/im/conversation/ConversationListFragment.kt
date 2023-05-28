@@ -121,6 +121,7 @@ fun ConversationItemCompose(
             Spacer(modifier = Modifier.size(10.dp))
             Column() {
                 Text(conversation.user.nickname)
+                Text(conversation.lastMessage)
             }
         }
     }

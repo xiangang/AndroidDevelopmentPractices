@@ -142,7 +142,7 @@ fun ContactItemCompose(
             contentDescription = friend.user.nickname
         )
         Spacer(modifier = Modifier.size(10.dp))
-        Column() {
+        Column {
             Text(friend.user.nickname)
         }
     }

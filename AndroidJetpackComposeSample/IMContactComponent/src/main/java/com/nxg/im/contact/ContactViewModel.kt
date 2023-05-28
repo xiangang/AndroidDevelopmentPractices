@@ -27,11 +27,32 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel() {
             withContext(Dispatchers.Default) {
                 val contactList = mutableListOf<Contact>()
                 val friendList = mutableListOf<Friend>()
-                for (i in 1..100) {
+                friendList.add(
+                    Friend(
+                        User(
+                            id = 1,
+                            uuid = 51691563050860544,
+                            username = "nxg",
+                            password = "",
+                            nickname = "福田大飞机",
+                            email = "342005702@qq.com",
+                            phone = "15607837955",
+                            avatar = "https://img1.baidu.com/it/u=2702325053,1055770562&fm=253&fmt=auto&app=138&f=JPEG",
+                            address = "",
+                            province = "",
+                            city = "",
+                            country = "",
+                            status = 0,
+                            createTime = "",
+                            updateTime = ""
+                        )
+                    )
+                )
+                for (i in 2..100) {
                     friendList.add(
                         Friend(
                             User(
-                                id = i,
+                                id = i+1,
                                 uuid = 51691563050860544,
                                 username = "$i",
                                 password = "",

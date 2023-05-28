@@ -29,11 +29,32 @@ class ConversationViewModel(val conversationRepository: ConversationRepository) 
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 val conversations = mutableListOf<Conversation>()
-                for (i in 1..100) {
+                conversations.add(
+                    Conversation(
+                        1, 0, User(
+                            id = 1,
+                            uuid = 51691563050860544,
+                            username = "nxg",
+                            password = "",
+                            nickname = "福田大飞机",
+                            email = "342005702@qq.com",
+                            phone = "15607837955",
+                            avatar = "https://img1.baidu.com/it/u=2702325053,1055770562&fm=253&fmt=auto&app=138&f=JPEG",
+                            address = "",
+                            province = "",
+                            city = "",
+                            country = "",
+                            status = 0,
+                            createTime = "",
+                            updateTime = ""
+                        )
+                    )
+                )
+                for (i in 2..100) {
                     conversations.add(
                         Conversation(
-                            1, 0, User(
-                                id = 1,
+                            i.toLong(), 0, User(
+                                id = i,
                                 uuid = 51691563050860544,
                                 username = "机器人${i}号",
                                 password = "",
