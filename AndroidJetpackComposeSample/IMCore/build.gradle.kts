@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -12,6 +14,15 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true"
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -42,6 +53,13 @@ dependencies {
     implementation(AndroidX.fragmentKtx)
     implementation(Lifecycle.liveDataKtx)
     implementation(Lifecycle.viewModelKtx)
+    implementation(Room.runtime)
+    kapt(Room.compiler) {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    implementation(Room.compiler)
+    implementation(Kotlin.Coroutines.core)
+    implementation(Kotlin.Coroutines.json)
     implementation(Google.material)
     testImplementation(TestLib.junit)
     testImplementation(TestLib.androidJunit)

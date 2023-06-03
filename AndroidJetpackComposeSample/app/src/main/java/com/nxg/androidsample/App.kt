@@ -40,7 +40,7 @@ class App : BaseViewModelApplication(), SimpleLogger,
         super.onCreate()
         INSTANCE = this
         Utils.init(this)
-        IMClient.init()
+        IMClient.init(this)
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
 

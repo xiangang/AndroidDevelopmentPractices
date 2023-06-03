@@ -34,7 +34,6 @@ import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorText
 import com.nxg.im.commonui.theme.JetchatTheme
-import com.nxg.im.core.module.user.User
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -61,7 +60,7 @@ class ContactDetailFragment : BaseViewModelFragment() {
                             CenterAlignedTopAppBar(
                                 title = {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        uiState.contactDetail?.user?.nickname?.let {
+                                        uiState.contactDetail?.friend?.user?.nickname?.let {
                                             androidx.compose.material3.Text(
                                                 text = it,
                                                 style = androidx.compose.material3.MaterialTheme.typography.titleMedium
@@ -129,27 +128,7 @@ fun ContactDetailCompose(
 @Preview
 @Composable
 fun PreviewContactUserInfoCompose() {
-    ContactUserInfoCompose(
-        ContactDetail(
-            User(
-                id = 1,
-                uuid = 51691563050860544,
-                username = "nxg",
-                password = "",
-                nickname = "失落轨迹",
-                email = "342005702@qq.com",
-                phone = "15607837955",
-                avatar = "https://randomuser.me/api/portraits/men/1.jpg",
-                address = "",
-                province = "",
-                city = "",
-                country = "",
-                status = 0,
-                createTime = "",
-                updateTime = ""
-            )
-        )
-    )
+
 }
 
 
@@ -183,13 +162,13 @@ fun ContactUserInfoCompose(
                             bottomStart = cornerSize
                         )
                     ),
-                model = contactDetail.user.avatar,
-                contentDescription = contactDetail.user.nickname
+                model = contactDetail.friend.user.avatar,
+                contentDescription = contactDetail.friend.user.nickname
             )
             Spacer(modifier = Modifier.size(10.dp))
             Column {
-                Text("用户名：${contactDetail.user.username}")
-                Text("昵称：${contactDetail.user.nickname}")
+                Text("用户名：${contactDetail.friend.user.username}")
+                Text("昵称：${contactDetail.friend.user.nickname}")
             }
         }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -199,7 +178,7 @@ fun ContactUserInfoCompose(
                 .height(48.dp),
             onClick = {
                 val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment".toUri())
+                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/0?chatId=${contactDetail.friend.user.uuid}".toUri())
                     .build()
                 navController?.navigate(request)
             },

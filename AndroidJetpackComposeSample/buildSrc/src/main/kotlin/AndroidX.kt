@@ -196,7 +196,7 @@ object NavigationLib {
 
 
 object Room {
-    private const val version = "2.4.0-alpha01"
+    private const val version = "2.5.0"
 
     const val runtime = "androidx.room:room-runtime:$version"
 

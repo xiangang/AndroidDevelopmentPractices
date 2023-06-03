@@ -1,6 +1,6 @@
 package com.nxg.im.contact
 
-import com.nxg.im.core.module.user.User
+import com.nxg.im.core.data.Friend
 
 sealed class Contact {
 
@@ -15,7 +15,6 @@ sealed class Contact {
     data class ContactFriendList(val data: List<Friend>) : Contact()
 }
 
-data class Friend(val user: User)
 
 class VerifyMsg
 
@@ -23,4 +22,4 @@ class BackList
 
 class GroupChat
 
-data class ContactDetail(val user: User)
+data class ContactDetail(val friend: Friend)

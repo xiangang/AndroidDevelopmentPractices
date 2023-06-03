@@ -5,6 +5,8 @@ import com.nxg.im.core.data.Result
 
 interface AuthService : IMService {
 
+    suspend fun init()
+
     suspend fun register(username: String, password: String): Result<RegisterData>
 
     suspend fun login(username: String, password: String): Result<LoginData>
@@ -13,7 +15,7 @@ interface AuthService : IMService {
 
     suspend fun isLoggedIn(): Boolean
 
-    suspend fun saveLoginData(loginData: LoginData? = null)
+    suspend  fun saveLoginData(loginData: LoginData? = null)
 
     suspend fun getLoginData(): LoginData?
 

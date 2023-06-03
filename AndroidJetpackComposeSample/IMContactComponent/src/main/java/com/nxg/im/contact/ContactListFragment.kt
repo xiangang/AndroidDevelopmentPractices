@@ -25,6 +25,7 @@ import androidx.navigation.NavDeepLinkRequest
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.core.data.Friend
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.launch
@@ -41,6 +42,7 @@ class ContactListFragment : BaseViewModelFragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            contactViewModel.getMyFriends()
             setContent {
                 JetchatTheme {
                     val scope = rememberCoroutineScope()
@@ -49,7 +51,7 @@ class ContactListFragment : BaseViewModelFragment() {
                         findMainActivityNavController()
                     ) { navController, friend ->
                         scope.launch {
-                            contactViewModel.loadContactDetail(friend.user)
+                            contactViewModel.loadContactDetail(friend)
                             //从壳跳转到联系人详情页
                             val request = NavDeepLinkRequest.Builder
                                 .fromUri("android-app://com.nxg.app/contact_detail_fragment".toUri())

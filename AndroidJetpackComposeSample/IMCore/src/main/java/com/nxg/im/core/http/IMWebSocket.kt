@@ -1,8 +1,8 @@
 package com.nxg.im.core.http
 
+import com.nxg.im.core.IMClient
 import com.nxg.im.core.IMConstants
 import com.nxg.im.core.dispatcher.IMCoroutineScope
-import com.nxg.im.core.module.auth.AuthServiceImpl
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ object IMWebSocket : SimpleLogger {
         IMCoroutineScope.launch {
             while (true) {
                 if (!connected) {
-                    AuthServiceImpl.getWebSocketToken()?.let {
+                    IMClient.authService.getWebSocketToken()?.let {
                         webSocket = IMHttpManger.imSignalingOkHttpClient.newWebSocket(
                             request = Request.Builder()
                                 .url("ws://${IMConstants.IM_SERVER_IP}:${IMConstants.IM_SERVER_HTTP_PORT}/chat")

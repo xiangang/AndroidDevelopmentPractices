@@ -1,19 +1,19 @@
-
 object Kotlin {
     var kotlin_version = "1.6.21"
 
     //Kotlin 1.4 以后，您不再需要在 gradle 上声明 stdlib
-    var stdlib ="org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    var stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     val stdlibJdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     val stdlibJdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     val test = "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     val plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
     //协程
-    object Coroutines{
+    object Coroutines {
         private const val version = "1.5.1"
-        const val core ="org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
-        const val android ="org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
+        const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
+        const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
+        const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
     }
 
 }

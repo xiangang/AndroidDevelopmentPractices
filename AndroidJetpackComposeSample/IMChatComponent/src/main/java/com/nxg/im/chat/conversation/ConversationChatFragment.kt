@@ -27,21 +27,25 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.nxg.im.chat.MainViewModel
 import com.nxg.im.chat.data.exampleUiState
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.chat.R
+import com.nxg.mvvm.logger.SimpleLogger
+import com.nxg.mvvm.ui.BaseBusinessFragment
 
-class ConversationChatFragment : Fragment() {
+class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
     private val activityViewModel: MainViewModel by activityViewModels()
+
+    private val safeArgs: ConversationChatFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = ComposeView(inflater.context).apply {
-        layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
             JetchatTheme {
@@ -61,5 +65,11 @@ class ConversationChatFragment : Fragment() {
                 )
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        logger.debug { "chatId: ${safeArgs.chatId}" }
+        logger.debug { "chatType: ${safeArgs.chatType}" }
     }
 }

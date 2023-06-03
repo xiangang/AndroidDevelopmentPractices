@@ -73,7 +73,13 @@ android {
 //    kapt {
 //        correctErrorTypes = true
 //    }
+
+    configurations {
+        get("implementation").exclude(group = "com.intellij", module = "annotations")
+    }
 }
+
+
 
 dependencies {
     testImplementation(TestLib.junit)

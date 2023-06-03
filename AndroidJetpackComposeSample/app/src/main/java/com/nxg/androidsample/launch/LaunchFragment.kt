@@ -1,11 +1,9 @@
 package com.nxg.androidsample.launch
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TargetBasedAnimation
@@ -37,18 +35,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.nxg.androidsample.R
 import com.nxg.commonui.theme.ColorText
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.data.Result
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.module.auth.AuthService
+import com.nxg.im.core.module.user.UserService
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.Dispatchers
@@ -98,21 +98,19 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                         val scope = rememberCoroutineScope()
                         Splash {
                             scope.launch(Dispatchers.IO) {
-                                IMClient.getService<AuthService>()?.getApiToken()?.let {
-                                    try {
-                                        IMHttpManger.imApiService.me(it)
-                                        withContext(Dispatchers.Main) {
-                                            findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToMainFragment())
+                                IMClient.userService.me().let {
+                                    when(it){
+                                        is Result.Error -> {
+                                            withContext(Dispatchers.Main) {
+                                                findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                                            }
                                         }
-                                    } catch (e: Exception) {
-                                        logger.debug { "me: ${e.message}" }
-                                        withContext(Dispatchers.Main) {
-                                            findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                                        is Result.Success ->{
+                                            withContext(Dispatchers.Main) {
+                                                findNavController().navigate(R.id.main_fragment)
+                                            }
                                         }
                                     }
-
-                                } ?: withContext(Dispatchers.Main) {
-                                    findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
                                 }
                             }
                         }

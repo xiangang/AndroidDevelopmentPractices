@@ -1,6 +1,5 @@
-package com.nxg.im.conversation
+package com.nxg.im.conversation.component
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,10 +21,11 @@ import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.fragment.findNavController
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.core.data.*
+import com.nxg.im.core.data.db.entity.Conversation
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.launch
@@ -41,6 +41,7 @@ class ConversationListFragment : BaseViewModelFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        conversationViewModel.refresh()
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
@@ -97,32 +98,41 @@ fun ConversationItemCompose(
     onClick: (NavController, Conversation) -> Unit
 ) {
     val cornerSize by remember { mutableStateOf(CornerSize(4.dp)) }
-    conversation.user?.let {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick(navController, conversation)
-            }
-            .padding(10.dp, 10.dp, 10.dp, 0.dp), verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(
-                        MaterialTheme.shapes.small.copy(
-                            topStart = cornerSize,
-                            topEnd = cornerSize,
-                            bottomEnd = cornerSize,
-                            bottomStart = cornerSize
-                        )
-                    ),
-                model = conversation.user.avatar,
-                contentDescription = conversation.user.nickname
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Column() {
-                Text(conversation.user.nickname)
-                Text(conversation.lastMessage)
-            }
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable {
+            onClick(navController, conversation)
+        }
+        .padding(10.dp, 10.dp, 10.dp, 0.dp), verticalAlignment = Alignment.CenterVertically) {
+        AsyncImage(
+            modifier = Modifier
+                .size(60.dp)
+                .clip(
+                    MaterialTheme.shapes.small.copy(
+                        topStart = cornerSize,
+                        topEnd = cornerSize,
+                        bottomEnd = cornerSize,
+                        bottomStart = cornerSize
+                    )
+                ),
+            model = conversation.coverImage,
+            contentDescription = conversation.name
+        )
+        Spacer(modifier = Modifier.size(10.dp))
+        Column {
+            Text(conversation.name)
+            conversation.lastIMMessage?.let {
+                when (val content = it.content) {
+                    is AudioMsgContent -> {}
+                    is FileMsgContent -> {}
+                    is ImageMsgContent -> {}
+                    is LocationMsgContent -> {}
+                    is TextMsgContent -> {
+                        Text(content.text)
+                    }
+                    is VideoMsgContent -> {}
+                }
+            } ?: Text("")
         }
     }
 }

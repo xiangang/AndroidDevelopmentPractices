@@ -1,4 +1,4 @@
-package com.nxg.im.conversation
+package com.nxg.im.conversation.component
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

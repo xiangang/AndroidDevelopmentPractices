@@ -1,5 +1,6 @@
 package com.nxg.im.core.http
 
+import com.nxg.im.core.data.Friend
 import com.nxg.im.core.module.auth.LoginData
 import com.nxg.im.core.module.auth.RegisterData
 import com.nxg.im.core.module.user.User
@@ -23,5 +24,8 @@ interface IMApiService {
 
     @GET("/api/v1/me")
     suspend fun me(@Header("Authorization") token: String): ApiResult<User>
+
+    @GET("/api/v1/myFriends")
+    suspend fun myFriends(@Header("Authorization") token: String): ApiResult<List<Friend>>
 
 }

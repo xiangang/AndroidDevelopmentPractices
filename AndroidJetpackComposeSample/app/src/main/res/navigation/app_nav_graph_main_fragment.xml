@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@id/navigation_chat"
-        android:name="com.nxg.im.conversation.ConversationListFragment"
+        android:name="com.nxg.im.conversation.component.ConversationListFragment"
         android:label="@string/menu_chat" />
 
     <fragment

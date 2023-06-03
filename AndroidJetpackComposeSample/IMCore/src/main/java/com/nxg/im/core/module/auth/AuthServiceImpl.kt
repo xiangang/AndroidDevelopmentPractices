@@ -42,7 +42,7 @@ object AuthServiceImpl : AuthService, SimpleLogger {
 
     }
 
-    suspend fun init() = withContext(Dispatchers.IO) {
+    override suspend fun init() = withContext(Dispatchers.IO) {
         try {
             val loginDataJson = sharedPreferences.getString(Me, "")
             logger.debug { "loginDataJson: $loginDataJson" }

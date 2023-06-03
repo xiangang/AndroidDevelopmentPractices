@@ -258,5 +258,11 @@ object Ktor {
         const val core = "io.ktor:ktor-client-core:$version"
         const val cio = "io.ktor:ktor-client-cio:$version"
         const val websockets = "io.ktor:ktor-client-websockets:$version"
+
+    }
+
+    object Serialization {
+        private const val version = "2.3.0"
+        const val kotlinxJson = "io.ktor:ktor-serialization-kotlinx-json-jvm:$version"
     }
 }
