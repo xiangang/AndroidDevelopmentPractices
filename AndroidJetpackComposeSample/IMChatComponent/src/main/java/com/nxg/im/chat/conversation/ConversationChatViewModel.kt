@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.data.bean.toJson
+import com.nxg.im.core.data.db.entity.Friend
 
 
-data class ConversationChat(val chatId: Long, val chatType: Int, val messages: List<Message>)
+data class ConversationChat(val chatId: Long, val chatType: Int, val friend: Friend, val messages: List<Message>)
 
 data class ConversationChatUiState(
     val conversationChat: ConversationChat? = null
@@ -90,6 +91,9 @@ class ConversationChatViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let {
                 if (chatType == 0) {
+                    val friend =
+                        KtChatDatabase.getInstance(Utils.getApp().applicationContext).friendDao()
+                            .getFriend(chatId)
                     val messages =
                         KtChatDatabase.getInstance(Utils.getApp().applicationContext).messageDao()
                             .loadMessages(chatId, chatId, chatType)
@@ -98,6 +102,7 @@ class ConversationChatViewModel : ViewModel() {
                             conversationChat = ConversationChat(
                                 chatId,
                                 chatType,
+                                friend,
                                 messages
                             )
                         )

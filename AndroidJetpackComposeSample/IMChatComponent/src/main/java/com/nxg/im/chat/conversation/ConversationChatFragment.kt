@@ -51,6 +51,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         setContent {
             JetchatTheme {
                 ConversationContent(
+                    conversationChatViewModel,
                     uiState = exampleUiState,
                     navigateToProfile = { user ->
                         // Click callback
@@ -65,6 +66,9 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     },
                     onMessageSent = {
                         conversationChatViewModel.sendMessage(it)
+                    },
+                    onNavigateUp = {
+                        findNavController().navigateUp()
                     }
                 )
             }

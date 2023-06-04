@@ -45,27 +45,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -98,11 +82,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationContent(
+    conversationChatViewModel: ConversationChatViewModel,
     uiState: ConversationUiState,
     navigateToProfile: (String) -> Unit,
     modifier: Modifier = Modifier,
     onNavIconPressed: () -> Unit = { },
-    onMessageSent: (String) -> Unit
+    onMessageSent: (String) -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     val authorMe = stringResource(R.string.author_me)
     val timeNow = stringResource(id = R.string.now)
@@ -111,14 +97,49 @@ fun ConversationContent(
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
+    val conversationChatUiState = conversationChatViewModel.uiState.collectAsState()
 
+    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
+    if (functionalityNotAvailablePopupShown) {
+        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
+    }
     Scaffold(
         topBar = {
-            ChannelNameBar(
-                channelName = uiState.channelName,
-                channelMembers = uiState.channelMembers,
-                onNavIconPressed = onNavIconPressed,
-                scrollBehavior = scrollBehavior,
+            CenterAlignedTopAppBar(
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        conversationChatUiState.value.conversationChat?.friend?.nickname?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                onNavigateUp()
+                            })
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp), 
+                        contentDescription = stringResource(id = R.string.search)
+                    )
+                },
+                actions = {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clickable(onClick = { functionalityNotAvailablePopupShown = true })
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = stringResource(id = R.string.info)
+                    )
+                }
             )
         },
         // Exclude ime and navigation bar padding so this can be added by the UserInput composable
@@ -497,9 +518,11 @@ fun ClickableMessage(
 fun ConversationPreview() {
     JetchatTheme {
         ConversationContent(
+            conversationChatViewModel = ConversationChatViewModel(),
             uiState = exampleUiState,
             navigateToProfile = { },
-            onMessageSent = { }
+            onMessageSent = { },
+            onNavigateUp = { }
         )
     }
 }
