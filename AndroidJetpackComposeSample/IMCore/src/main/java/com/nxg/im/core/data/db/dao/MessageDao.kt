@@ -15,7 +15,7 @@ interface MessageDao {
     @Delete
     suspend fun deleteMessages(vararg messages: Message)
 
-    @Query("SELECT * from message WHERE from_id =:fromId AND  to_id =:toId AND chat_type=:chatType")
+    @Query("SELECT * from message WHERE (from_id =:fromId AND to_id =:toId OR from_id =:toId AND to_id =:fromId ) AND chat_type=:chatType")
     suspend fun loadMessages(fromId: Long, toId: Long, chatType: Int): List<Message>
 
 }

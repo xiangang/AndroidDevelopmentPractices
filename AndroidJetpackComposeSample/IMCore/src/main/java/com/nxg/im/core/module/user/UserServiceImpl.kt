@@ -1,16 +1,20 @@
 package com.nxg.im.core.module.user
 
+import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
-import com.nxg.im.core.data.Friend
-import com.nxg.im.core.data.Result
+import com.nxg.im.core.data.db.entity.Friend
+import com.nxg.im.core.data.bean.Result
+import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.exception.IMException
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.mvvm.logger.SimpleLogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 object UserServiceImpl : UserService, SimpleLogger {
 
-    override suspend fun me(): Result<User> {
+    override suspend fun getMe(): Result<User> {
         return try {
             IMClient.authService.getApiToken()?.let { it ->
                 val apiResult =
@@ -26,13 +30,16 @@ object UserServiceImpl : UserService, SimpleLogger {
         }
     }
 
-    override suspend fun myFriends(): Result<List<Friend>> {
+    override suspend fun getMyFriends(): Result<List<Friend>> {
         try {
             IMClient.authService.getApiToken()?.let { it ->
                 val apiResult =
                     IMHttpManger.imApiService.myFriends(it)
                 logger.debug { "myFriends: apiResult $apiResult" }
                 apiResult.data?.let {
+                    withContext(Dispatchers.IO) {
+                        KtChatDatabase.getInstance(Utils.getApp()).friendDao().insertOrReplace(it)
+                    }
                     return Result.Success(it)
                 }
                 return Result.Error(IMException.ApiException(apiResult.message))

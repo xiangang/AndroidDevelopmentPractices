@@ -20,12 +20,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.nxg.im.chat.MainViewModel
@@ -34,10 +32,13 @@ import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.chat.R
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
+import kotlinx.coroutines.launch
 
 class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
     private val activityViewModel: MainViewModel by activityViewModels()
+
+    private val conversationChatViewModel: ConversationChatViewModel by activityViewModels()
 
     private val safeArgs: ConversationChatFragmentArgs by navArgs()
 
@@ -61,6 +62,9 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     },
                     onNavIconPressed = {
                         activityViewModel.openDrawer()
+                    },
+                    onMessageSent = {
+                        conversationChatViewModel.sendMessage(it)
                     }
                 )
             }
@@ -71,5 +75,13 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "chatId: ${safeArgs.chatId}" }
         logger.debug { "chatType: ${safeArgs.chatType}" }
+        conversationChatViewModel.insertConversations(safeArgs.chatId, safeArgs.chatType)
+        conversationChatViewModel.loadConversationChat(safeArgs.chatId, safeArgs.chatType)
+        lifecycleScope.launch {
+            conversationChatViewModel.uiState.collect {
+                logger.debug { "uiState: ${it.conversationChat?.messages}" }
+            }
+        }
     }
+
 }

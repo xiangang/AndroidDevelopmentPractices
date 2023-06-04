@@ -1,8 +1,7 @@
 package com.nxg.im.core.data.db.entity
 
 import androidx.room.*
-import com.nxg.im.core.data.IMMessage
-import com.nxg.im.core.data.parseIMMessage
+import com.nxg.im.core.data.bean.IMMessage
 
 @Entity(primaryKeys = ["user_id", "chat_id", "chat_type"], indices = [Index(value = ["name"])])
 data class Conversation(
@@ -26,6 +25,6 @@ data class Conversation(
     var lastIMMessage: IMMessage? = null//最后一个消息IMMessage
 
     fun updateLastIMMessage() {
-        lastIMMessage = lastMsgContent.parseIMMessage()
+        //lastIMMessage = lastMsgContent.parseIMMessage()
     }
 }

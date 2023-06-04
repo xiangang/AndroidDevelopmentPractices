@@ -1,4 +1,4 @@
-package com.nxg.im.core.data
+package com.nxg.im.core.data.bean
 
 /**
  * A generic class that holds a value with its loading status.

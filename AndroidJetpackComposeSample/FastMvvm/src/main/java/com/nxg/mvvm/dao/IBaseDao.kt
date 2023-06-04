@@ -25,28 +25,28 @@ interface IBaseDao<T, K> {
      * Insert the given entities into the table associated with a concrete DAO.
      *
      * @param entities Array<out T> The entities to insert
-     * @return LongArray? row ID of newly inserted entities
+     * @return LongArray row ID of newly inserted entities
     </out> */
     @Insert
-    fun insert(vararg entities: T): LongArray?
+    fun insert(vararg entities: T): LongArray
 
     /**
      * Insert the given entities into the table associated with a concrete DAO.
      *
      * @param entities Collection<T>
-     * @return LongArray? row ID of newly inserted entities
+     * @return LongArray row ID of newly inserted entities
     </T> */
     @Insert
-    fun insert(entities: Collection<T>?): LongArray?
+    fun insert(entities: Collection<T>): LongArray
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrReplace(entity: T): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplace(vararg entities: T): LongArray?
+    fun insertOrReplace(vararg entities: T): LongArray
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplace(entities: Collection<T>?): LongArray?
+    fun insertOrReplace(entities: Collection<T>): LongArray
 
     @Update
     fun update(entity: T): Int
@@ -55,7 +55,7 @@ interface IBaseDao<T, K> {
     fun update(vararg entities: T)
 
     @Update
-    fun update(entities: Collection<T>?)
+    fun update(entities: Collection<T>)
 
     @Delete
     fun delete(entity: T)
@@ -64,7 +64,7 @@ interface IBaseDao<T, K> {
     fun delete(vararg entities: T)
 
     @Delete
-    fun delete(entities: Collection<T>?)
+    fun delete(entities: Collection<T>)
 
     /**
      * execute sql
@@ -73,7 +73,7 @@ interface IBaseDao<T, K> {
      * @return List<T>
     </T> */
     @RawQuery
-    fun rawQueryList(sql: SupportSQLiteQuery?): List<T>?
+    fun rawQueryList(sql: SupportSQLiteQuery): List<T>
 
     /**
      * execute sql
@@ -82,7 +82,7 @@ interface IBaseDao<T, K> {
      * @return T
      */
     @RawQuery
-    fun rawQuerySingle(sql: SupportSQLiteQuery?): T
+    fun rawQuerySingle(sql: SupportSQLiteQuery): T
 
     /**
      * execute sql
@@ -91,8 +91,9 @@ interface IBaseDao<T, K> {
      * @return long row num
      */
     @RawQuery
-    fun rawQueryLine(sql: SupportSQLiteQuery?): Long
-    fun loadAll(): List<T>? {
+    fun rawQueryLine(sql: SupportSQLiteQuery): Long
+
+    fun loadAll(): List<T> {
         return rawQueryList(SimpleSQLiteQuery("select * from $tableName"))
     }
 

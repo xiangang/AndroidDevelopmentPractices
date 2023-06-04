@@ -2,22 +2,20 @@ package com.nxg.im.contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
-import com.nxg.im.core.data.Friend
-import com.nxg.im.core.data.Result
-import com.nxg.im.core.module.user.User
-import com.nxg.im.core.module.user.UserService
+import com.nxg.im.core.data.db.entity.Friend
+import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 data class ContactUiState(val contactList: List<Contact>, val contactDetail: ContactDetail? = null)
 
-class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(),SimpleLogger {
+class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(), SimpleLogger {
 
 
     // Backing property to avoid state updates from other classes
@@ -29,17 +27,22 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(),S
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.Default) {
-
-
+            KtChatDatabase.getInstance(Utils.getApp()).friendDao().flowFriendList().collect() {
+                val contactList = mutableListOf<Contact>()
+                contactList.addAll(
+                    listOf(
+                        Contact.ContactFriendList(it)
+                    )
+                )
+                _uiState.emit(_uiState.value.copy(contactList = contactList))
             }
         }
     }
 
     fun getMyFriends() {
-        viewModelScope.launch {
-            IMClient.userService.myFriends().let {
-                when (it) {
+        viewModelScope.launch(Dispatchers.IO) {
+            IMClient.userService.getMyFriends().let {
+                /*when (it) {
                     is Result.Error -> {
                         logger.debug { it.exception }
                     }
@@ -52,7 +55,7 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(),S
                         )
                         _uiState.emit(_uiState.value.copy(contactList = contactList))
                     }
-                }
+                }*/
             }
 
         }

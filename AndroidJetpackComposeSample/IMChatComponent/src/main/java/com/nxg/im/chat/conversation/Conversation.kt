@@ -101,7 +101,8 @@ fun ConversationContent(
     uiState: ConversationUiState,
     navigateToProfile: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onNavIconPressed: () -> Unit = { }
+    onNavIconPressed: () -> Unit = { },
+    onMessageSent: (String) -> Unit
 ) {
     val authorMe = stringResource(R.string.author_me)
     val timeNow = stringResource(id = R.string.now)
@@ -127,7 +128,11 @@ fun ConversationContent(
             .exclude(WindowInsets.ime),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
-        Column(Modifier.fillMaxSize().padding(paddingValues)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             Messages(
                 messages = uiState.messages,
                 navigateToProfile = navigateToProfile,
@@ -139,6 +144,7 @@ fun ConversationContent(
                     uiState.addMessage(
                         Message(authorMe, content, timeNow)
                     )
+                    onMessageSent(content)
                 },
                 resetScroll = {
                     scope.launch {
@@ -147,7 +153,9 @@ fun ConversationContent(
                 },
                 // let this element handle the padding so that the elevation is shown behind the
                 // navigation bar
-                modifier = Modifier.navigationBarsPadding().imePadding()
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
             )
         }
     }
@@ -270,7 +278,7 @@ fun Messages(
         val jumpToBottomButtonEnabled by remember {
             derivedStateOf {
                 scrollState.firstVisibleItemIndex != 0 ||
-                    scrollState.firstVisibleItemScrollOffset > jumpThreshold
+                        scrollState.firstVisibleItemScrollOffset > jumpThreshold
             }
         }
 
@@ -490,7 +498,8 @@ fun ConversationPreview() {
     JetchatTheme {
         ConversationContent(
             uiState = exampleUiState,
-            navigateToProfile = { }
+            navigateToProfile = { },
+            onMessageSent = { }
         )
     }
 }

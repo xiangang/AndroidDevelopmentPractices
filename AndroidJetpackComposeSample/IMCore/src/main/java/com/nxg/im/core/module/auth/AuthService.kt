@@ -1,7 +1,7 @@
 package com.nxg.im.core.module.auth
 
 import com.nxg.im.core.IMService
-import com.nxg.im.core.data.Result
+import com.nxg.im.core.data.bean.Result
 
 interface AuthService : IMService {
 

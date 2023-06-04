@@ -41,14 +41,10 @@ import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.nxg.androidsample.R
 import com.nxg.commonui.theme.ColorText
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
-import com.nxg.im.core.data.Result
-import com.nxg.im.core.http.IMHttpManger
-import com.nxg.im.core.module.auth.AuthService
-import com.nxg.im.core.module.user.UserService
+import com.nxg.im.core.data.bean.Result
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.Dispatchers
@@ -98,19 +94,29 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                         val scope = rememberCoroutineScope()
                         Splash {
                             scope.launch(Dispatchers.IO) {
-                                IMClient.userService.me().let {
-                                    when(it){
-                                        is Result.Error -> {
-                                            withContext(Dispatchers.Main) {
-                                                findNavController().navigate(LaunchFragmentDirections.actionLaunchFragmentToLoginFragment())
+                                try {
+                                    IMClient.userService.getMe().let {
+                                        when (it) {
+                                            is Result.Error -> {
+                                                withContext(Dispatchers.Main) {
+                                                    logger.debug { "currentDestination: " + findNavController().currentDestination }
+                                                    findNavController().navigate(
+                                                        LaunchFragmentDirections.actionLaunchFragmentToLoginFragment()
+                                                    )
+                                                }
                                             }
-                                        }
-                                        is Result.Success ->{
-                                            withContext(Dispatchers.Main) {
-                                                findNavController().navigate(R.id.main_fragment)
+                                            is Result.Success -> {
+                                                withContext(Dispatchers.Main) {
+                                                    logger.debug { "currentDestination: " + findNavController().currentDestination }
+                                                    findNavController().navigate(
+                                                        LaunchFragmentDirections.actionLaunchFragmentToMainFragment()
+                                                    )
+                                                }
                                             }
                                         }
                                     }
+                                } catch (e: Exception) {
+
                                 }
                             }
                         }

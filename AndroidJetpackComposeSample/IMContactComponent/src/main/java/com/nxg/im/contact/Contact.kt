@@ -1,6 +1,6 @@
 package com.nxg.im.contact
 
-import com.nxg.im.core.data.Friend
+import com.nxg.im.core.data.db.entity.Friend
 
 sealed class Contact {
 

@@ -54,9 +54,7 @@ dependencies {
     implementation(Lifecycle.liveDataKtx)
     implementation(Lifecycle.viewModelKtx)
     implementation(Room.runtime)
-    kapt(Room.compiler) {
-        exclude(group = "com.intellij", module = "annotations")
-    }
+    kapt(Room.compiler)
     implementation(Room.compiler)
     implementation(Kotlin.Coroutines.core)
     implementation(Kotlin.Coroutines.json)
@@ -71,7 +69,7 @@ dependencies {
     // For App Authentication APIs
     implementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
     // For App Authentication API testing
-    androidTestImplementation("androidx.security:security-app-authenticator:1.0.0-alpha01")
+    androidTestImplementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
 
     /*// 通讯录功能组件
     implementation("com.netease.yunxin.kit.contact:contactkit-ui:9.0.0")

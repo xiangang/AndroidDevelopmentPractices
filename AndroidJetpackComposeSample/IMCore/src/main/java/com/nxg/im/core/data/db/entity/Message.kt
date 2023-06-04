@@ -2,8 +2,8 @@ package com.nxg.im.core.data.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.nxg.im.core.data.IMMessage
-import com.nxg.im.core.data.parseIMMessage
+import com.nxg.im.core.data.bean.IMMessage
+import com.nxg.im.core.data.bean.parseIMMessage
 
 @Entity(primaryKeys = ["from_id", "to_id", "chat_type"])
 data class Message(
@@ -13,7 +13,7 @@ data class Message(
     @ColumnInfo(name = "msg_content") val msgContent: String,//消息的内容（json
     @ColumnInfo(name = "msg_at") val msgAt: String,//@对象（json）
     @ColumnInfo(name = "status") val status: Int,//0未读，1已读，2伪删除
-    @ColumnInfo(name = "create_ime") val createTime: Long,//创建时间
+    @ColumnInfo(name = "create_time") val createTime: Long,//创建时间
 ){
     fun toIMMessage(): IMMessage {
         return msgContent.parseIMMessage()

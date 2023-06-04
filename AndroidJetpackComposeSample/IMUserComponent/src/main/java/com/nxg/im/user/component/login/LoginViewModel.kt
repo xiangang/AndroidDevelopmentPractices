@@ -5,8 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nxg.im.core.data.Result
-import com.nxg.im.user.component.profile.ProfileUiState
+import com.nxg.im.core.data.bean.Result
 import com.nxg.mvvm.ktx.launchExceptionHandler
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.user.component.R

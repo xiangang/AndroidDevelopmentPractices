@@ -25,7 +25,7 @@ import androidx.navigation.NavDeepLinkRequest
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme
-import com.nxg.im.core.data.Friend
+import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.launch
@@ -140,12 +140,12 @@ fun ContactItemCompose(
                         bottomStart = cornerSize
                     )
                 ),
-            model = friend.user.avatar,
-            contentDescription = friend.user.nickname
+            model = friend.avatar,
+            contentDescription = friend.nickname
         )
         Spacer(modifier = Modifier.size(10.dp))
         Column {
-            Text(friend.user.nickname)
+            Text(friend.nickname)
         }
     }
 }

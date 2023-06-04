@@ -60,7 +60,7 @@ class ContactDetailFragment : BaseViewModelFragment() {
                             CenterAlignedTopAppBar(
                                 title = {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        uiState.contactDetail?.friend?.user?.nickname?.let {
+                                        uiState.contactDetail?.friend?.nickname?.let {
                                             androidx.compose.material3.Text(
                                                 text = it,
                                                 style = androidx.compose.material3.MaterialTheme.typography.titleMedium
@@ -162,13 +162,13 @@ fun ContactUserInfoCompose(
                             bottomStart = cornerSize
                         )
                     ),
-                model = contactDetail.friend.user.avatar,
-                contentDescription = contactDetail.friend.user.nickname
+                model = contactDetail.friend.avatar,
+                contentDescription = contactDetail.friend.nickname
             )
             Spacer(modifier = Modifier.size(10.dp))
             Column {
-                Text("用户名：${contactDetail.friend.user.username}")
-                Text("昵称：${contactDetail.friend.user.nickname}")
+                Text("用户名：${contactDetail.friend.username}")
+                Text("昵称：${contactDetail.friend.nickname}")
             }
         }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -178,7 +178,7 @@ fun ContactUserInfoCompose(
                 .height(48.dp),
             onClick = {
                 val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/0?chatId=${contactDetail.friend.user.uuid}".toUri())
+                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/0?chatId=${contactDetail.friend.uuid}".toUri())
                     .build()
                 navController?.navigate(request)
             },

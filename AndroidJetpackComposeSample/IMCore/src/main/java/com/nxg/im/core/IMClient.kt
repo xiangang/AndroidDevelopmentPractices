@@ -5,8 +5,8 @@ import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.module.auth.AuthService
 import com.nxg.im.core.module.auth.AuthServiceImpl
-import com.nxg.im.core.module.contact.RecentContact
-import com.nxg.im.core.module.contact.RecentContactImpl
+import com.nxg.im.core.module.chat.ChatService
+import com.nxg.im.core.module.chat.ChatServiceImpl
 import com.nxg.im.core.module.conversation.ConversationService
 import com.nxg.im.core.module.conversation.ConversationServiceImpl
 import com.nxg.im.core.module.user.UserService
@@ -36,6 +36,10 @@ object IMClient {
 
     val conversationService: ConversationService by lazy {
         ConversationServiceImpl
+    }
+
+    val chatService: ChatService by lazy {
+        ChatServiceImpl
     }
 
     /**

@@ -19,7 +19,6 @@ object IMWebSocket : SimpleLogger {
 
     private var webSocket: WebSocket? = null
 
-
     private val init = AtomicBoolean(false)
 
     @Volatile
@@ -86,6 +85,11 @@ object IMWebSocket : SimpleLogger {
                 delay(1000)
             }
         }
+    }
+
+    fun send(text: String) {
+        logger.debug { "send $text" }
+        webSocket?.send(text)
     }
 
     fun close() {

@@ -11,7 +11,7 @@ import com.nxg.im.core.IMConstants.Api.MediaTypeJson
 import com.nxg.im.core.IMConstants.Api.SecretSharedPrefs
 import com.nxg.im.core.IMConstants.Api.Token
 import com.nxg.im.core.http.IMHttpManger
-import com.nxg.im.core.data.Result
+import com.nxg.im.core.data.bean.Result
 import com.nxg.im.core.http.IMWebSocket
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Dispatchers

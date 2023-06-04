@@ -24,7 +24,7 @@ import androidx.navigation.NavDeepLinkRequest
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme
-import com.nxg.im.core.data.*
+import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.Conversation
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
