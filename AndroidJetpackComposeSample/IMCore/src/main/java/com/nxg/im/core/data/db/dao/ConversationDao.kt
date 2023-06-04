@@ -10,6 +10,9 @@ interface ConversationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertConversations(vararg conversations: Conversation)
 
+    @Query("SELECT * from conversation WHERE user_id =:userId AND chat_id =:chatId AND chat_type =:chatType ")
+    suspend fun loadConversations(userId: Long, chatId: Long, chatType: Int): Conversation?
+
     @Update
     suspend fun updateConversations(vararg conversations: Conversation)
 

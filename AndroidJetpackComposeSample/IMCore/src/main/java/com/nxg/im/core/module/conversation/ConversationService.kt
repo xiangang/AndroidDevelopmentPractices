@@ -10,6 +10,8 @@ interface ConversationService : IMService {
 
     suspend fun getConversationList(): List<Conversation>
 
+    suspend fun loadConversations(userId: Long, chatId: Long, chatType: Int):Conversation?
+
     suspend fun insertConversations(vararg conversations: Conversation)
 
     suspend fun updateConversations(vararg conversations: Conversation)

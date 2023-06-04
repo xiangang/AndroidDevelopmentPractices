@@ -75,7 +75,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "chatId: ${safeArgs.chatId}" }
         logger.debug { "chatType: ${safeArgs.chatType}" }
-        conversationChatViewModel.insertConversations(safeArgs.chatId, safeArgs.chatType)
+        conversationChatViewModel.insertOrReplaceConversations(safeArgs.chatId, safeArgs.chatType)
         conversationChatViewModel.loadConversationChat(safeArgs.chatId, safeArgs.chatType)
         lifecycleScope.launch {
             conversationChatViewModel.uiState.collect {

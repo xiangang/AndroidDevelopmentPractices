@@ -31,27 +31,57 @@ class ConversationChatViewModel : ViewModel() {
     // The UI collects from this StateFlow to get its state updates
     val uiState: StateFlow<ConversationChatUiState> = _uiState.asStateFlow()
 
-    fun insertConversations(chatId: Long, chatType: Int) {
+    fun insertOrReplaceConversations(chatId: Long, chatType: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            IMClient.authService.getLoginData()?.let {
-                val conversation = Conversation(
-                    userId = it.user.uuid,
-                    chatId = chatId,
-                    chatType = chatType,
-                    name = "",
-                    coverImage = "",
-                    backgroundImage = "",
-                    lastMsgId = 0,
-                    lastMsgContent = "",
-                    createTime = System.currentTimeMillis(),
-                    updateTime = System.currentTimeMillis(),
-                    unreadCount = 0,
-                    draft = "",
-                    top = false,
-                    sticky = false,
-                    remind = false,
+            IMClient.authService.getLoginData()?.let { loginData ->
+                val friend =
+                    KtChatDatabase.getInstance(Utils.getApp().applicationContext).friendDao()
+                        .getFriend(chatId)
+                IMClient.conversationService.loadConversations(
+                    loginData.user.uuid,
+                    chatId,
+                    chatType
                 )
-                IMClient.conversationService.insertConversations(conversation)
+                    ?.let { conversation ->
+                        IMClient.conversationService.insertConversations(
+                            conversation.copy(
+                                userId = loginData.user.uuid,
+                                chatId = chatId,
+                                chatType = chatType,
+                                name = friend.nickname,
+                                coverImage = friend.avatar,
+                                backgroundImage = "",
+                                lastMsgId = 0,
+                                lastMsgContent = "",
+                                updateTime = System.currentTimeMillis(),
+                                unreadCount = 0,
+                                draft = "",
+                                top = false,
+                                sticky = false,
+                                remind = false,
+                            )
+                        )
+                    } ?: let {
+                    val conversation = Conversation(
+                        userId = loginData.user.uuid,
+                        chatId = chatId,
+                        chatType = chatType,
+                        name = friend.nickname,
+                        coverImage = friend.avatar,
+                        backgroundImage = "",
+                        lastMsgId = 0,
+                        lastMsgContent = "",
+                        createTime = System.currentTimeMillis(),
+                        updateTime = System.currentTimeMillis(),
+                        unreadCount = 0,
+                        draft = "",
+                        top = false,
+                        sticky = false,
+                        remind = false,
+                    )
+                    IMClient.conversationService.insertConversations(conversation)
+                }
+
             }
         }
     }
@@ -60,9 +90,6 @@ class ConversationChatViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let {
                 if (chatType == 0) {
-                    val friend =
-                        KtChatDatabase.getInstance(Utils.getApp().applicationContext).friendDao()
-                            .getFriend(chatId)
                     val messages =
                         KtChatDatabase.getInstance(Utils.getApp().applicationContext).messageDao()
                             .loadMessages(chatId, chatId, chatType)

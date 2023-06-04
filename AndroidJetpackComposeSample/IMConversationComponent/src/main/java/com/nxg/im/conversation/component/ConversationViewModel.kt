@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.db.entity.Conversation
+import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ data class ConversationUiState(
     val conversation: Conversation? = null
 )
 
-class ConversationViewModel(val conversationRepository: ConversationRepository) : ViewModel() {
+class ConversationViewModel(val conversationRepository: ConversationRepository) : ViewModel(),
+    SimpleLogger {
 
 
     // Backing property to avoid state updates from other classes
@@ -32,11 +34,11 @@ class ConversationViewModel(val conversationRepository: ConversationRepository) 
 
         viewModelScope.launch {
             val conversations = IMClient.conversationService.getConversationList()
+            logger.debug { "conversations: $conversations" }
             conversations.forEach {
                 it.updateLastIMMessage()
             }
             _uiState.emit(_uiState.value.copy(conversations = conversations))
-
         }
     }
 

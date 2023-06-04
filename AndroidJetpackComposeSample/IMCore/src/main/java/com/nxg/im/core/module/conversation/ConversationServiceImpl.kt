@@ -30,6 +30,10 @@ object ConversationServiceImpl : ConversationService, SimpleLogger {
         conversationDao.insertConversations(*conversations)
     }
 
+    override suspend fun loadConversations(userId: Long, chatId: Long, chatType: Int): Conversation? {
+        return conversationDao.loadConversations(userId, chatId, chatType)
+    }
+
     override suspend fun updateConversations(vararg conversations: Conversation) {
         conversationDao.updateConversations(*conversations)
     }

@@ -27,13 +27,9 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(), 
 
     init {
         viewModelScope.launch {
-            KtChatDatabase.getInstance(Utils.getApp()).friendDao().flowFriendList().collect() {
-                val contactList = mutableListOf<Contact>()
-                contactList.addAll(
-                    listOf(
-                        Contact.ContactFriendList(it)
-                    )
-                )
+            KtChatDatabase.getInstance(Utils.getApp()).friendDao().flowFriendList().collect {
+                logger.debug { "flowFriendList: $it" }
+                val contactList = mutableListOf<Contact>(Contact.ContactFriendList(it))
                 _uiState.emit(_uiState.value.copy(contactList = contactList))
             }
         }
