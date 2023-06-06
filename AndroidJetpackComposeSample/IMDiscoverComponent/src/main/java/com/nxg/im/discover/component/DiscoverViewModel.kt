@@ -1,4 +1,4 @@
-package com.nxg.im.discover
+package com.nxg.im.discover.component
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*

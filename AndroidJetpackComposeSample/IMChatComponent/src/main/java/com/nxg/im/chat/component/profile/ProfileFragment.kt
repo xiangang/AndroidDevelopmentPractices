@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.profile
+package com.nxg.im.chat.component.profile
 
 import android.content.Context
 import android.os.Bundle
@@ -45,7 +45,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
-import com.nxg.im.chat.MainViewModel
+import com.nxg.im.chat.component.MainViewModel
 import com.nxg.im.chat.R
 import com.nxg.im.commonui.components.JetchatAppBar
 import com.nxg.im.commonui.theme.JetchatTheme

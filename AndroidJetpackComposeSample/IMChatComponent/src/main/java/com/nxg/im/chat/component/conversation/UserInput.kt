@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility

@@ -1,5 +1,6 @@
 package com.nxg.im.core.data.db.dao
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.nxg.im.core.data.db.entity.Message
 
@@ -17,5 +18,8 @@ interface MessageDao {
 
     @Query("SELECT * from message WHERE (from_id =:fromId AND to_id =:toId OR from_id =:toId AND to_id =:fromId ) AND chat_type=:chatType")
     suspend fun loadMessages(fromId: Long, toId: Long, chatType: Int): List<Message>
+
+    @Query("SELECT * FROM message")
+    fun pagingSource(): PagingSource<Int, Message>
 
 }

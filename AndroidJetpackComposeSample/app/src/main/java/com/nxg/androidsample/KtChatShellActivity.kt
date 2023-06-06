@@ -25,7 +25,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.nxg.androidsample.databinding.FragmentMainBinding
 import com.nxg.androidsample.main.KtChatViewModel
-import com.nxg.im.chat.MainViewModel
+import com.nxg.im.chat.component.MainViewModel
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.logger.SimpleLogger

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat
+package com.nxg.im.chat.component
 
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
@@ -34,6 +34,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.nxg.im.chat.R
 import com.nxg.im.chat.databinding.ContentMainBinding
 import com.nxg.im.commonui.components.JetchatDrawer
 import kotlinx.coroutines.launch

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.profile
+package com.nxg.im.chat.component.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -64,8 +64,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
-import com.nxg.im.chat.data.colleagueProfile
-import com.nxg.im.chat.data.meProfile
+import com.nxg.im.chat.component.data.colleagueProfile
+import com.nxg.im.chat.component.data.meProfile
 import com.nxg.im.commonui.components.AnimatingFabContent
 import com.nxg.im.commonui.components.baselineHeight
 import com.nxg.im.commonui.theme.JetchatTheme

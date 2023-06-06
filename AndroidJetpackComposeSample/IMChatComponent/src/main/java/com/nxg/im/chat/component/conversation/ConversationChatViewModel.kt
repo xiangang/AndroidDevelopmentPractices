@@ -1,7 +1,8 @@
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.*
 import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.TextMessage
@@ -15,14 +16,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.data.bean.toJson
+import com.nxg.im.core.data.db.dao.MessageDao
 import com.nxg.im.core.data.db.entity.Friend
 
 
-data class ConversationChat(val chatId: Long, val chatType: Int, val friend: Friend, val messages: List<Message>)
+data class ConversationChat(
+    val chatId: Long,
+    val chatType: Int,
+    val friend: Friend,
+    val messages: List<Message>
+)
 
 data class ConversationChatUiState(
     val conversationChat: ConversationChat? = null
 )
+
 
 class ConversationChatViewModel : ViewModel() {
 
@@ -31,6 +39,12 @@ class ConversationChatViewModel : ViewModel() {
 
     // The UI collects from this StateFlow to get its state updates
     val uiState: StateFlow<ConversationChatUiState> = _uiState.asStateFlow()
+
+    val messagePager = Pager(
+        config = PagingConfig(pageSize = 50)
+    ) {
+        KtChatDatabase.getInstance(Utils.getApp()).messageDao().pagingSource()
+    }
 
     fun insertOrReplaceConversations(chatId: Long, chatType: Int) {
         viewModelScope.launch(Dispatchers.IO) {

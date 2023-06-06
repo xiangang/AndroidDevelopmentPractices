@@ -1,4 +1,4 @@
-package com.nxg.im.contact
+package com.nxg.im.contact.component
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.commonui.theme.ColorText
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.contact.R
 import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.ui.BaseViewModelFragment
 import kotlinx.coroutines.InternalCoroutinesApi

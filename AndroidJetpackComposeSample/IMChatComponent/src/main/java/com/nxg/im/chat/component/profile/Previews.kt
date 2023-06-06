@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.profile
+package com.nxg.im.chat.component.profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.nxg.im.chat.data.colleagueProfile
-import com.nxg.im.chat.data.meProfile
+import com.nxg.im.chat.component.data.colleagueProfile
+import com.nxg.im.chat.component.data.meProfile
 import com.nxg.im.commonui.theme.JetchatTheme
 
 @Preview(widthDp = 340, name = "340 width - Me")

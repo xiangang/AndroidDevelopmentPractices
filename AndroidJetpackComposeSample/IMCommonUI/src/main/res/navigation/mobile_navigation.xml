@@ -22,12 +22,12 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.nxg.im.chat.conversation.ConversationChatFragment"
+        android:name="com.nxg.im.chat.component.ConversationChatFragment"
         android:label="Conversation" />
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.nxg.im.chat.profile.ProfileFragment"
+        android:name="com.nxg.im.chat.component.ProfileFragment"
         android:label="Profile">
         <argument
             android:name="userId"

@@ -1,4 +1,4 @@
-package com.nxg.im.contact
+package com.nxg.im.contact.component
 
 import com.nxg.im.core.data.db.entity.Friend
 

@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.data
+package com.nxg.im.chat.component.data
 
-import com.nxg.im.chat.conversation.ConversationUiState
-import com.nxg.im.chat.conversation.Message
-import com.nxg.im.chat.data.EMOJIS.EMOJI_CLOUDS
-import com.nxg.im.chat.data.EMOJIS.EMOJI_FLAMINGO
-import com.nxg.im.chat.data.EMOJIS.EMOJI_MELTING
-import com.nxg.im.chat.data.EMOJIS.EMOJI_PINK_HEART
-import com.nxg.im.chat.data.EMOJIS.EMOJI_POINTS
-import com.nxg.im.chat.profile.ProfileScreenState
+import com.nxg.im.chat.component.conversation.ConversationUiState
+import com.nxg.im.chat.component.conversation.JetChatMessage
+import com.nxg.im.chat.component.data.EMOJIS.EMOJI_CLOUDS
+import com.nxg.im.chat.component.data.EMOJIS.EMOJI_FLAMINGO
+import com.nxg.im.chat.component.data.EMOJIS.EMOJI_MELTING
+import com.nxg.im.chat.component.data.EMOJIS.EMOJI_PINK_HEART
+import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
+import com.nxg.im.chat.component.profile.ProfileScreenState
 import com.nxg.im.chat.R
 
-private val initialMessages = listOf(
-    Message(
+private val initialJetChatMessages = listOf(
+    JetChatMessage(
         "me",
         "Check it out!",
         "8:07 PM"
     ),
-    Message(
+    JetChatMessage(
         "me",
         "Thank you!$EMOJI_PINK_HEART",
         "8:06 PM",
         R.drawable.sticker
     ),
-    Message(
+    JetChatMessage(
         "Taylor Brooks",
         "You can use all the same stuff",
         "8:05 PM"
     ),
-    Message(
+    JetChatMessage(
         "Taylor Brooks",
         "@aliconors Take a look at the `Flow.collectAsStateWithLifecycle()` APIs",
         "8:05 PM"
     ),
-    Message(
+    JetChatMessage(
         "John Glenn",
         "Compose newbie as well $EMOJI_FLAMINGO, have you looked at the JetNews sample? " +
                 "Most blog posts end up out of date pretty fast but this sample is always up to " +
@@ -56,7 +56,7 @@ private val initialMessages = listOf(
                 "applies) $EMOJI_POINTS https://goo.gle/jetnews",
         "8:04 PM"
     ),
-    Message(
+    JetChatMessage(
         "me",
         "Compose newbie: I’ve scourged the internet for tutorials about async data " +
                 "loading but haven’t found any good ones $EMOJI_MELTING $EMOJI_CLOUDS. " +
@@ -66,7 +66,7 @@ private val initialMessages = listOf(
 )
 
 val exampleUiState = ConversationUiState(
-    initialMessages = initialMessages,
+    initialJetChatMessages = initialJetChatMessages,
     channelName = "聊天",
     channelMembers = 42
 )

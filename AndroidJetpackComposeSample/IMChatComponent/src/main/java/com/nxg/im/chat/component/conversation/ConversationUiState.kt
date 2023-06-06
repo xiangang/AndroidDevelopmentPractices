@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.toMutableStateList
 import com.nxg.im.chat.R
+import com.nxg.im.core.data.bean.*
+import com.nxg.im.core.data.db.entity.Message
 
 class ConversationUiState(
     val channelName: String,
     val channelMembers: Int,
-    initialMessages: List<Message>
+    initialJetChatMessages: List<JetChatMessage>
 ) {
-    private val _messages: MutableList<Message> = initialMessages.toMutableStateList()
-    val messages: List<Message> = _messages
+    private val _Jetchat_messages: MutableList<JetChatMessage> = initialJetChatMessages.toMutableStateList()
+    val jetChatMessages: List<JetChatMessage> = _Jetchat_messages
 
-    fun addMessage(msg: Message) {
-        _messages.add(0, msg) // Add to the beginning of the list
+    fun addMessage(msg: JetChatMessage) {
+        _Jetchat_messages.add(0, msg) // Add to the beginning of the list
     }
 }
 
 @Immutable
-data class Message(
+data class JetChatMessage(
     val author: String,
     val content: String,
     val timestamp: String,
     val image: Int? = null,
     val authorImage: Int = if (author == "me") R.drawable.ali else R.drawable.someone_else
 )
+

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.profile
+package com.nxg.im.chat.component.profile
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.nxg.im.chat.data.colleagueProfile
-import com.nxg.im.chat.data.meProfile
+import com.nxg.im.chat.component.data.colleagueProfile
+import com.nxg.im.chat.component.data.meProfile
 
 class ProfileViewModel : ViewModel() {
 

@@ -11,12 +11,12 @@
 
     <fragment
         android:id="@id/navigation_contact"
-        android:name="com.nxg.im.contact.ContactListFragment"
+        android:name="com.nxg.im.contact.component.ContactListFragment"
         android:label="@string/menu_contact" />
 
     <fragment
         android:id="@id/navigation_discovery"
-        android:name="com.nxg.im.discover.DiscoverFragment"
+        android:name="com.nxg.im.discover.component.DiscoverFragment"
         android:label="@string/menu_discovery" />
 
     <fragment

@@ -1,4 +1,4 @@
-package com.nxg.im.contact
+package com.nxg.im.contact.component
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/contact_detail_fragment"
-        android:name="com.nxg.im.contact.ContactDetailFragment"
+        android:name="com.nxg.im.contact.component.ContactDetailFragment"
         android:label="联系人详情">
 
         <deepLink app:uri="android-app://com.nxg.app/contact_detail_fragment" />

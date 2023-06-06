@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,8 +26,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.nxg.im.chat.MainViewModel
-import com.nxg.im.chat.data.exampleUiState
+import com.nxg.im.chat.component.MainViewModel
+import com.nxg.im.chat.component.data.exampleUiState
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.chat.R
 import com.nxg.mvvm.logger.SimpleLogger

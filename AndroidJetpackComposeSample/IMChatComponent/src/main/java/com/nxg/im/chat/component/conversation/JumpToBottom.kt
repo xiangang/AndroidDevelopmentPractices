@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition

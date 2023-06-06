@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme

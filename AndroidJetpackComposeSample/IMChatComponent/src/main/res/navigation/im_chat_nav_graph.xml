@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/conversation_chat_fragment"
-        android:name="com.nxg.im.chat.conversation.ConversationChatFragment"
+        android:name="com.nxg.im.chat.component.conversation.ConversationChatFragment"
         android:label="聊天">
 
         <argument

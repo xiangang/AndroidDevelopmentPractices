@@ -64,6 +64,7 @@ object Compose {
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
     const val material3 = "androidx.compose.material3:material3:1.1.0"
     const val animation = "androidx.compose.animation:animation:$version"
+    const val paging = "androidx.paging:paging-compose:1.0.0-alpha18"
     const val activity = "androidx.activity:activity-compose:1.7.1"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     const val runtime = "androidx.compose.runtime:runtime:$version"
@@ -83,6 +84,7 @@ object Compose {
         "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
     const val accompanistSystemUiController =
         "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+    const val customviewPoolingContainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 }
 
 object Hilt {
@@ -199,6 +201,7 @@ object Room {
     private const val version = "2.5.0"
 
     const val runtime = "androidx.room:room-runtime:$version"
+    const val paging = "androidx.room:room-paging:$version"
 
     // for java use annotationProcessor , for kotlin use kapt
     const val compiler = "androidx.room:room-compiler:$version"

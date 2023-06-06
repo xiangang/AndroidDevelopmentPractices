@@ -6,15 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk = 31
-
+    compileSdk = BuildConfig.compileSdk
     defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = BuildConfig.minSdkVersion
+        targetSdk = BuildConfig.targetSdkVersion
+        testInstrumentationRunner = BuildConfig.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
-
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf(
@@ -24,7 +21,6 @@ android {
             }
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -53,9 +49,10 @@ dependencies {
     implementation(AndroidX.fragmentKtx)
     implementation(Lifecycle.liveDataKtx)
     implementation(Lifecycle.viewModelKtx)
+    implementation(Paging.runtimeKtx)
     implementation(Room.runtime)
+    implementation(Room.paging)
     kapt(Room.compiler)
-    implementation(Room.compiler)
     implementation(Kotlin.Coroutines.core)
     implementation(Kotlin.Coroutines.json)
     implementation(Google.material)

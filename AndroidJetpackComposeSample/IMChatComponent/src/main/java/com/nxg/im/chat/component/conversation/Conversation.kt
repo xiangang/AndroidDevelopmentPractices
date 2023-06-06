@@ -16,7 +16,7 @@
 
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.nxg.im.chat.conversation
+package com.nxg.im.chat.component.conversation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -64,11 +64,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
+import androidx.paging.Pager
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
-import com.nxg.im.chat.data.exampleUiState
+import com.nxg.im.chat.component.data.exampleUiState
 import com.nxg.im.commonui.components.JetchatAppBar
 import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.core.data.db.entity.Message
 import kotlinx.coroutines.launch
 
 /**
@@ -125,7 +129,7 @@ fun ConversationContent(
                                 onNavigateUp()
                             })
                             .padding(horizontal = 12.dp, vertical = 16.dp)
-                            .height(24.dp), 
+                            .height(24.dp),
                         contentDescription = stringResource(id = R.string.search)
                     )
                 },
@@ -154,8 +158,8 @@ fun ConversationContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Messages(
-                messages = uiState.messages,
+            JetChatMessages(
+                jetChatMessages = uiState.jetChatMessages,
                 navigateToProfile = navigateToProfile,
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
@@ -163,7 +167,7 @@ fun ConversationContent(
             UserInput(
                 onMessageSent = { content ->
                     uiState.addMessage(
-                        Message(authorMe, content, timeNow)
+                        JetChatMessage(authorMe, content, timeNow)
                     )
                     onMessageSent(content)
                 },
@@ -242,8 +246,8 @@ fun ChannelNameBar(
 const val ConversationTestTag = "ConversationTestTag"
 
 @Composable
-fun Messages(
-    messages: List<Message>,
+fun JetChatMessages(
+    jetChatMessages: List<JetChatMessage>,
     navigateToProfile: (String) -> Unit,
     scrollState: LazyListState,
     modifier: Modifier = Modifier
@@ -259,15 +263,15 @@ fun Messages(
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-            for (index in messages.indices) {
-                val prevAuthor = messages.getOrNull(index - 1)?.author
-                val nextAuthor = messages.getOrNull(index + 1)?.author
-                val content = messages[index]
+            for (index in jetChatMessages.indices) {
+                val prevAuthor = jetChatMessages.getOrNull(index - 1)?.author
+                val nextAuthor = jetChatMessages.getOrNull(index + 1)?.author
+                val content = jetChatMessages[index]
                 val isFirstMessageByAuthor = prevAuthor != content.author
                 val isLastMessageByAuthor = nextAuthor != content.author
 
                 // Hardcode day dividers for simplicity
-                if (index == messages.size - 1) {
+                if (index == jetChatMessages.size - 1) {
                     item {
                         DayHeader("20 Aug")
                     }
@@ -278,7 +282,7 @@ fun Messages(
                 }
 
                 item {
-                    Message(
+                    JetChatMessage(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
                         isUserMe = content.author == authorMe,
@@ -317,9 +321,9 @@ fun Messages(
 }
 
 @Composable
-fun Message(
+fun JetChatMessage(
     onAuthorClick: (String) -> Unit,
-    msg: Message,
+    msg: JetChatMessage,
     isUserMe: Boolean,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
@@ -366,7 +370,7 @@ fun Message(
 
 @Composable
 fun AuthorAndTextMessage(
-    msg: Message,
+    msg: JetChatMessage,
     isUserMe: Boolean,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean,
@@ -389,7 +393,7 @@ fun AuthorAndTextMessage(
 }
 
 @Composable
-private fun AuthorNameTimestamp(msg: Message) {
+private fun AuthorNameTimestamp(msg: JetChatMessage) {
     // Combine author and timestamp for a11y.
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
@@ -441,7 +445,7 @@ private fun RowScope.DayHeaderLine() {
 
 @Composable
 fun ChatItemBubble(
-    message: Message,
+    jetchatMessage: JetChatMessage,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit
 ) {
@@ -458,13 +462,13 @@ fun ChatItemBubble(
             shape = ChatBubbleShape
         ) {
             ClickableMessage(
-                message = message,
+                jetchatMessage = jetchatMessage,
                 isUserMe = isUserMe,
                 authorClicked = authorClicked
             )
         }
 
-        message.image?.let {
+        jetchatMessage.image?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Surface(
                 color = backgroundBubbleColor,
@@ -483,14 +487,14 @@ fun ChatItemBubble(
 
 @Composable
 fun ClickableMessage(
-    message: Message,
+    jetchatMessage: JetChatMessage,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
 
     val styledMessage = messageFormatter(
-        text = message.content,
+        text = jetchatMessage.content,
         primary = isUserMe
     )
 
@@ -512,6 +516,13 @@ fun ClickableMessage(
         }
     )
 }
+
+@Preview
+@Composable
+fun ClickableMessagePreview() {
+
+}
+
 
 @Preview
 @Composable

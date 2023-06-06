@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat
+package com.nxg.im.chat.component
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
