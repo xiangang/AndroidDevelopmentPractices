@@ -1,7 +1,10 @@
 package com.nxg.im.chat.component.conversation
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.LocalContentColor
@@ -9,12 +12,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -227,5 +231,121 @@ fun KtChatAuthorAndTextMessagePreview() {
     Column {
         KtChatAuthorAndTextMessage(textMessage, "AnonXG", "2023年06月06日23:31:19", true)
         KtChatAuthorAndTextMessage(imageMessage, "nxg", "2023年06月06日23:31:20", false)
+    }
+}
+
+@Composable
+fun KtChatIMMessage(
+    imMessage: IMMessage,
+    avatar: String,
+    name: String,
+    timestamp: String,
+    isUserMe: Boolean,
+    onAuthorClick: (String) -> Unit = {}
+) {
+    val borderColor = if (isUserMe) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.tertiary
+    }
+    val spaceBetweenAuthors = Modifier.padding(top = 8.dp)
+    Row(modifier = spaceBetweenAuthors) {
+        // Avatar
+        AsyncImage(
+            modifier = Modifier
+                .clickable(onClick = {
+                    onAuthorClick("${imMessage.fromId}")
+                })
+                .padding(horizontal = 16.dp)
+                .size(42.dp)
+                .border(1.5.dp, borderColor, CircleShape)
+                .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                .clip(CircleShape)
+                .align(Alignment.Top),
+            model = avatar,
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+        KtChatAuthorAndTextMessage(
+            imMessage = imMessage,
+            isUserMe = isUserMe,
+            name = name,
+            timestamp = timestamp,
+            authorClicked = onAuthorClick,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .weight(1f)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun KtChatIMMessagePreview() {
+    val textMsgContent = TextMsgContent(
+        "Compose newbie as well ${EMOJIS.EMOJI_FLAMINGO}, have you looked at the JetNews sample? " +
+                "Most blog posts end up out of date pretty fast but this sample is always up to " +
+                "date and deals with async data loading (it's faked but the same idea " +
+                "applies) $EMOJI_POINTS https://goo.gle/jetnews",
+    )
+    val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
+    val imageMsgContent = ImageMsgContent(
+        "https://img2.woyaogexing.com/2023/06/06/c1ad220f395db3f53f82ef5b502e7390.jpg", 400, 400
+    )
+    val imageMessage = ImageMessage(0, 0, 0, imageMsgContent, System.currentTimeMillis())
+    Box {
+        LazyColumn(
+            reverseLayout = true,//反转方向，这样才符合IM聊天列表的设计，最新的在底部，最老的在顶部
+            modifier = Modifier
+                .testTag(ConversationTestTag)
+                .fillMaxSize()
+        ) {
+            item {
+                KtChatIMMessage(
+                    textMessage,
+                    "https://randomuser.me/api/portraits/men/1.jpg",
+                    "AnonXG",
+                    "2023年06月06日23:31:19",
+                    true
+                )
+
+            }
+            item {
+                KtChatIMMessage(
+                    imageMessage,
+                    "https://randomuser.me/api/portraits/men/2.jpg",
+                    "nxg",
+                    "2023年06月06日23:31:20",
+                    false
+                )
+            }
+            item {
+                KtChatIMMessage(
+                    textMessage,
+                    "https://randomuser.me/api/portraits/men/1.jpg",
+                    "AnonXG",
+                    "2023年06月06日23:31:19",
+                    false
+                )
+            }
+            item {
+                KtChatIMMessage(
+                    textMessage,
+                    "https://randomuser.me/api/portraits/men/2.jpg",
+                    "nxg",
+                    "2023年06月06日23:31:20",
+                    true
+                )
+            }
+            item {
+                KtChatIMMessage(
+                    imageMessage,
+                    "https://randomuser.me/api/portraits/men/2.jpg",
+                    "nxg",
+                    "2023年06月06日23:31:20",
+                    true
+                )
+            }
+        }
     }
 }
