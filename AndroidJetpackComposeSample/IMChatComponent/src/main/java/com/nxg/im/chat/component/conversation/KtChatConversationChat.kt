@@ -1,33 +1,49 @@
 package com.nxg.im.chat.component.conversation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.Pager
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
+import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
+import com.blankj.utilcode.util.TimeUtils
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
+import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.core.data.bean.*
+import com.nxg.im.core.data.db.entity.Friend
+import com.nxg.im.core.data.db.entity.Message
+import com.nxg.im.core.module.user.User
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -349,3 +365,199 @@ fun KtChatIMMessagePreview() {
         }
     }
 }
+
+private val KtChatJumpToBottomThreshold = 56.dp
+
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun KtChatMessages(
+    pager: Pager<Int, Message>,
+    me: User,
+    friend: Friend,
+    onAuthorClick: (String) -> Unit,
+    scrollState: LazyListState,
+    modifier: Modifier = Modifier
+) {
+    val lazyPagingItems = pager.flow.collectAsLazyPagingItems()
+    var itemCount by remember { mutableStateOf(lazyPagingItems.itemCount) }
+    val scope = rememberCoroutineScope()
+    Box(modifier = modifier) {
+        LazyColumn(
+            reverseLayout = true,
+            state = scrollState,
+            modifier = Modifier
+                .testTag(ConversationTestTag)
+                .fillMaxSize()
+        ) {
+            itemsIndexed(
+                items = lazyPagingItems,
+                // The key is important so the Lazy list can remember your
+                // scroll position when more items are fetched!
+                key = { _, message -> message.id }
+            ) { index, message ->
+                if (message != null) {
+                    val imMessage = message.toIMMessage()
+                    KtChatIMMessage(
+                        imMessage = imMessage,
+                        avatar = if (imMessage.fromId == me.uuid) {
+                            me.avatar
+                        } else {
+                            friend.avatar
+                        },
+                        name = if (imMessage.fromId == me.uuid) {
+                            me.nickname
+                        } else {
+                            friend.nickname
+                        },
+                        isUserMe = imMessage.fromId == me.uuid,
+                        timestamp = TimeUtils.millis2String(imMessage.timestamp),
+                        onAuthorClick = { name -> onAuthorClick(name) }
+                    )
+                    if (index % 5 == 0) {
+                        DayHeader(TimeUtils.millis2String(imMessage.timestamp))
+                    }
+                }
+
+            }
+        }
+        if (itemCount < lazyPagingItems.itemCount) {
+            itemCount = lazyPagingItems.itemCount
+            /* scope.launch {
+                delay(200)
+                scrollState.animateScrollToItem(itemCount)
+            }*/
+        }
+        // Jump to bottom button shows up when user scrolls past a threshold.
+        // Convert to pixels:
+        val jumpThreshold = with(LocalDensity.current) {
+            KtChatJumpToBottomThreshold.toPx()
+        }
+
+        // Show the button if the first visible item is not the first one or if the offset is
+        // greater than the threshold.
+        val jumpToBottomButtonEnabled by remember {
+            derivedStateOf {
+                scrollState.firstVisibleItemIndex != 0 ||
+                        scrollState.firstVisibleItemScrollOffset > jumpThreshold
+            }
+        }
+
+        JumpToBottom(
+            // Only show if the scroller is not at the bottom
+            enabled = jumpToBottomButtonEnabled,
+            onClicked = {
+                scope.launch {
+                    scrollState.animateScrollToItem(0)
+                }
+            },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun KtChatIMMessagesPreview() {
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun KtChatConversationContent(
+    conversationChatViewModel: ConversationChatViewModel,
+    modifier: Modifier = Modifier,
+    onAuthorClick: (String) -> Unit,
+    onMessageSent: (String) -> Unit,
+    onNavigateUp: () -> Unit,
+) {
+    val scrollState = rememberLazyListState()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
+    val scope = rememberCoroutineScope()
+    val conversationChatUiState = conversationChatViewModel.uiState.collectAsState()
+    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
+    if (functionalityNotAvailablePopupShown) {
+        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
+    }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        conversationChatUiState.value.conversationChat?.friend?.nickname?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                onNavigateUp()
+                            })
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = stringResource(id = R.string.search)
+                    )
+                },
+                actions = {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clickable(onClick = { functionalityNotAvailablePopupShown = true })
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = stringResource(id = R.string.info)
+                    )
+                }
+            )
+        },
+        // Exclude ime and navigation bar padding so this can be added by the UserInput composable
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(WindowInsets.navigationBars)
+            .exclude(WindowInsets.ime),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { paddingValues ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            conversationChatUiState.value.conversationChat?.let {
+                KtChatMessages(
+                    pager = conversationChatViewModel.messagePager,
+                    me = it.me,
+                    friend = it.friend,
+                    onAuthorClick = onAuthorClick,
+                    modifier = Modifier.weight(1f),
+                    scrollState = scrollState
+                )
+            }
+            UserInput(
+                onMessageSent = { content ->
+                    onMessageSent(content)
+                },
+                resetScroll = {
+                    scope.launch {
+                        scrollState.scrollToItem(0)
+                    }
+                },
+                // let this element handle the padding so that the elevation is shown behind the
+                // navigation bar
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            )
+        }
+    }
+}
+

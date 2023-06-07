@@ -16,13 +16,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.data.bean.toJson
-import com.nxg.im.core.data.db.dao.MessageDao
 import com.nxg.im.core.data.db.entity.Friend
+import com.nxg.im.core.module.user.User
 
 
 data class ConversationChat(
     val chatId: Long,
     val chatType: Int,
+    val me: User,
     val friend: Friend,
     val messages: List<Message>
 )
@@ -46,7 +47,10 @@ class ConversationChatViewModel : ViewModel() {
         KtChatDatabase.getInstance(Utils.getApp()).messageDao().pagingSource()
     }
 
-    fun insertOrReplaceConversations(chatId: Long, chatType: Int) {
+    /**
+     * 创建会话
+     */
+    fun insertOrReplaceConversation(chatId: Long, chatType: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let { loginData ->
                 val friend =
@@ -56,27 +60,26 @@ class ConversationChatViewModel : ViewModel() {
                     loginData.user.uuid,
                     chatId,
                     chatType
-                )
-                    ?.let { conversation ->
-                        IMClient.conversationService.insertConversations(
-                            conversation.copy(
-                                userId = loginData.user.uuid,
-                                chatId = chatId,
-                                chatType = chatType,
-                                name = friend.nickname,
-                                coverImage = friend.avatar,
-                                backgroundImage = "",
-                                lastMsgId = 0,
-                                lastMsgContent = "",
-                                updateTime = System.currentTimeMillis(),
-                                unreadCount = 0,
-                                draft = "",
-                                top = false,
-                                sticky = false,
-                                remind = false,
-                            )
+                )?.let { conversation ->
+                    IMClient.conversationService.insertConversations(
+                        conversation.copy(
+                            userId = loginData.user.uuid,
+                            chatId = chatId,
+                            chatType = chatType,
+                            name = friend.nickname,
+                            coverImage = friend.avatar,
+                            backgroundImage = "",
+                            lastMsgId = 0,
+                            lastMsgContent = "",
+                            updateTime = System.currentTimeMillis(),
+                            unreadCount = 0,
+                            draft = "",
+                            top = false,
+                            sticky = false,
+                            remind = false,
                         )
-                    } ?: let {
+                    )
+                } ?: let {
                     val conversation = Conversation(
                         userId = loginData.user.uuid,
                         chatId = chatId,
@@ -101,6 +104,9 @@ class ConversationChatViewModel : ViewModel() {
         }
     }
 
+    /**
+     * 加载会话聊天详情
+     */
     fun loadConversationChat(chatId: Long, chatType: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let {
@@ -116,6 +122,7 @@ class ConversationChatViewModel : ViewModel() {
                             conversationChat = ConversationChat(
                                 chatId,
                                 chatType,
+                                it.user,
                                 friend,
                                 messages
                             )
@@ -126,11 +133,31 @@ class ConversationChatViewModel : ViewModel() {
         }
     }
 
+    /**
+     * 发送聊天信息
+     */
     fun sendMessage(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let { loginData ->
                 _uiState.value.conversationChat?.let { conversationChat ->
                     let {
+                        val msgContent = TextMessage(
+                            loginData.user.uuid,
+                            conversationChat.chatId,
+                            conversationChat.chatType,
+                            TextMsgContent(text),
+                            System.currentTimeMillis()
+                        ).toJson()
+                        val message = Message(
+                            0,
+                            0,
+                            fromId = loginData.user.uuid,
+                            toId = conversationChat.chatId,
+                            chatType = 0,
+                            msgContent = msgContent
+                        )
+                        KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                            .insertMessages(message)
                         IMClient.chatService.sendMessage(
                             TextMessage(
                                 loginData.user.uuid,

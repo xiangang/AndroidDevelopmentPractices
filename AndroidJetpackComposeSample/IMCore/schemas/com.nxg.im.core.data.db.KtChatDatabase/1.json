@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8fbb62652186915ab9b2eec51a32ec1f",
+    "identityHash": "6eaaf5f63dd5f4ef45d30e54afe6fc38",
     "entities": [
       {
         "tableName": "Conversation",
@@ -256,16 +256,28 @@
       },
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`from_id` INTEGER NOT NULL, `to_id` INTEGER NOT NULL, `chat_type` INTEGER NOT NULL, `msg_content` TEXT NOT NULL, `msg_at` TEXT NOT NULL, `status` INTEGER NOT NULL, `create_time` INTEGER NOT NULL, PRIMARY KEY(`from_id`, `to_id`, `chat_type`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` INTEGER NOT NULL, `from_id` INTEGER NOT NULL, `to_id` INTEGER NOT NULL, `chat_type` INTEGER NOT NULL, `msg_content` TEXT NOT NULL, `msg_at` TEXT NOT NULL, `sent` INTEGER NOT NULL, `status` INTEGER NOT NULL, `create_time` INTEGER NOT NULL)",
         "fields": [
           {
-            "fieldPath": "from_id",
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fromId",
             "columnName": "from_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "to_id",
+            "fieldPath": "toId",
             "columnName": "to_id",
             "affinity": "INTEGER",
             "notNull": true
@@ -289,6 +301,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "sent",
+            "columnName": "sent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "status",
             "columnName": "status",
             "affinity": "INTEGER",
@@ -302,11 +320,9 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "from_id",
-            "to_id",
-            "chat_type"
+            "id"
           ]
         },
         "indices": [],
@@ -316,7 +332,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8fbb62652186915ab9b2eec51a32ec1f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6eaaf5f63dd5f4ef45d30e54afe6fc38')"
     ]
   }
 }

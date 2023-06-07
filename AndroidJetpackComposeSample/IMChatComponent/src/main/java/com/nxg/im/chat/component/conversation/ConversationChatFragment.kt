@@ -50,19 +50,15 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
         setContent {
             JetchatTheme {
-                ConversationContent(
+                KtChatConversationContent(
                     conversationChatViewModel,
-                    uiState = exampleUiState,
-                    navigateToProfile = { user ->
+                    onAuthorClick = { user ->
                         // Click callback
                         val bundle = bundleOf("userId" to user)
                         findNavController().navigate(
                             R.id.nav_profile,
                             bundle
                         )
-                    },
-                    onNavIconPressed = {
-                        activityViewModel.openDrawer()
                     },
                     onMessageSent = {
                         conversationChatViewModel.sendMessage(it)
@@ -79,7 +75,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "chatId: ${safeArgs.chatId}" }
         logger.debug { "chatType: ${safeArgs.chatType}" }
-        conversationChatViewModel.insertOrReplaceConversations(safeArgs.chatId, safeArgs.chatType)
+        conversationChatViewModel.insertOrReplaceConversation(safeArgs.chatId, safeArgs.chatType)
         conversationChatViewModel.loadConversationChat(safeArgs.chatId, safeArgs.chatType)
         lifecycleScope.launch {
             conversationChatViewModel.uiState.collect {

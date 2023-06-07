@@ -15,9 +15,9 @@ interface AuthService : IMService {
 
     suspend fun isLoggedIn(): Boolean
 
-    suspend  fun saveLoginData(loginData: LoginData? = null)
+    suspend fun saveLoginData(loginData: LoginData? = null)
 
-    suspend fun getLoginData(): LoginData?
+    fun getLoginData(): LoginData?
 
     suspend fun saveUserToken(token: String)
 

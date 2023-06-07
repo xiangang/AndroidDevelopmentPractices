@@ -214,7 +214,9 @@ private fun SelectorExpanded(
             InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
             InputSelector.MAP -> FunctionalityNotAvailablePanel()
             InputSelector.PHONE -> FunctionalityNotAvailablePanel()
-            else -> { throw NotImplementedError() }
+            else -> {
+                throw NotImplementedError()
+            }
         }
     }
 }
@@ -355,7 +357,9 @@ private fun InputSelectorButton(
         Icon(
             icon,
             tint = tint,
-            modifier = Modifier.padding(8.dp).size(56.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .size(56.dp),
             contentDescription = description
         )
     }
@@ -413,11 +417,11 @@ private fun UserInputText(
                         },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = keyboardType,
-                        imeAction = ImeAction.Send
+                        imeAction = ImeAction.Done
                     ),
                     maxLines = 1,
                     cursorBrush = SolidColor(LocalContentColor.current),
-                    textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
+                    textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
                 )
 
                 val disableContentColor =
@@ -427,7 +431,7 @@ private fun UserInputText(
                         modifier = Modifier
                             .align(Alignment.CenterStart)
                             .padding(start = 32.dp),
-                        text = stringResource(id = R.string.textfield_hint),
+                        text = "",
                         style = MaterialTheme.typography.bodyLarge.copy(color = disableContentColor)
                     )
                 }

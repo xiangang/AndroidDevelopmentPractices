@@ -33,8 +33,7 @@ object AuthServiceImpl : AuthService, SimpleLogger {
     )
 
     // in-memory cache of the loggedInUser object
-    var loginData: LoginData? = null
-        private set
+    private var userLoginData: LoginData? = null
 
     init {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
@@ -47,7 +46,7 @@ object AuthServiceImpl : AuthService, SimpleLogger {
             val loginDataJson = sharedPreferences.getString(Me, "")
             logger.debug { "loginDataJson: $loginDataJson" }
             if (loginDataJson != null && loginDataJson.isNotEmpty()) {
-                loginData = GsonUtils.fromJson(loginDataJson, LoginData::class.java)
+                userLoginData = GsonUtils.fromJson(loginDataJson, LoginData::class.java)
             }
             IMWebSocket.init()
         } catch (e: Exception) {
@@ -89,8 +88,8 @@ object AuthServiceImpl : AuthService, SimpleLogger {
     }
 
     override suspend fun logout() {
-        loginData?.let {
-            loginData = null
+        userLoginData?.let {
+            userLoginData = null
             saveLoginData(null)
             saveUserToken("")
             //TODO 暂时不需要通过服务器接口来登出
@@ -105,10 +104,10 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         }
     }
 
-    override suspend fun isLoggedIn(): Boolean = loginData != null
+    override suspend fun isLoggedIn(): Boolean = userLoginData != null
 
     override suspend fun saveLoginData(loginData: LoginData?) {
-        this.loginData = loginData
+        this.userLoginData = loginData
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         loginData?.let {
             editor.putString(Me, GsonUtils.toJson(it))
@@ -118,8 +117,8 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         editor.apply()
     }
 
-    override suspend fun getLoginData(): LoginData? {
-        return loginData
+    override fun getLoginData(): LoginData? {
+        return userLoginData
     }
 
     override suspend fun saveUserToken(token: String) {
@@ -129,12 +128,12 @@ object AuthServiceImpl : AuthService, SimpleLogger {
     }
 
     override suspend fun getApiToken(): String? {
-        return loginData?.token?.let {
+        return userLoginData?.token?.let {
             "${IMConstants.Api.Bearer} $it"
         } ?: let { null }
     }
 
     override suspend fun getWebSocketToken(): String? {
-        return loginData?.token ?: let { null }
+        return userLoginData?.token ?: let { null }
     }
 }
