@@ -26,17 +26,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.nxg.im.chat.component.MainViewModel
-import com.nxg.im.chat.component.data.exampleUiState
-import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.chat.R
+import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import kotlinx.coroutines.launch
 
 class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
-
-    private val activityViewModel: MainViewModel by activityViewModels()
 
     private val conversationChatViewModel: ConversationChatViewModel by activityViewModels()
 
@@ -50,7 +46,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
         setContent {
             JetchatTheme {
-               /* KtChatConversationContent(
+                KtChatConversationContent(
                     conversationChatViewModel,
                     onAuthorClick = { user ->
                         // Click callback
@@ -59,27 +55,6 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                             R.id.nav_profile,
                             bundle
                         )
-                    },
-                    onMessageSent = {
-                        conversationChatViewModel.sendMessage(it)
-                    },
-                    onNavigateUp = {
-                        findNavController().navigateUp()
-                    }
-                )*/
-                ConversationContent(
-                    conversationChatViewModel,
-                    uiState = exampleUiState,
-                    navigateToProfile = { user ->
-                        // Click callback
-                        val bundle = bundleOf("userId" to user)
-                        findNavController().navigate(
-                            R.id.nav_profile,
-                            bundle
-                        )
-                    },
-                    onNavIconPressed = {
-                        activityViewModel.openDrawer()
                     },
                     onMessageSent = {
                         conversationChatViewModel.sendMessage(it)
@@ -96,13 +71,13 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "chatId: ${safeArgs.chatId}" }
         logger.debug { "chatType: ${safeArgs.chatType}" }
-       /* conversationChatViewModel.insertOrReplaceConversation(safeArgs.chatId, safeArgs.chatType)
+        conversationChatViewModel.insertOrReplaceConversation(safeArgs.chatId, safeArgs.chatType)
         conversationChatViewModel.loadConversationChat(safeArgs.chatId, safeArgs.chatType)
         lifecycleScope.launch {
             conversationChatViewModel.uiState.collect {
                 logger.debug { "uiState: ${it.conversationChat?.messages}" }
             }
-        }*/
+        }
     }
 
 }

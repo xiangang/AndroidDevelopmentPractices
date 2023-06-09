@@ -1,6 +1,7 @@
 package com.nxg.im.chat.component.conversation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -414,20 +415,23 @@ fun KtChatMessages(
                         timestamp = TimeUtils.millis2String(imMessage.timestamp),
                         onAuthorClick = { name -> onAuthorClick(name) }
                     )
-                    if (index % 5 == 0) {
+                    if (index % 10 == 0) {
                         DayHeader(TimeUtils.millis2String(imMessage.timestamp))
                     }
                 }
 
             }
         }
-        if (itemCount < lazyPagingItems.itemCount) {
-            itemCount = lazyPagingItems.itemCount
-            /* scope.launch {
-                delay(200)
-                scrollState.animateScrollToItem(itemCount)
-            }*/
+        //Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
+        if (itemCount == lazyPagingItems.itemCount) {
+            scope.launch {
+                if (scrollState.firstVisibleItemIndex != 0) {
+                    //Log.i("TAG", "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} ")
+                    scrollState.animateScrollToItem(0)
+                }
+            }
         }
+        itemCount = lazyPagingItems.itemCount
         // Jump to bottom button shows up when user scrolls past a threshold.
         // Convert to pixels:
         val jumpThreshold = with(LocalDensity.current) {
@@ -443,16 +447,16 @@ fun KtChatMessages(
             }
         }
 
-        JumpToBottom(
-            // Only show if the scroller is not at the bottom
-            enabled = jumpToBottomButtonEnabled,
-            onClicked = {
-                scope.launch {
-                    scrollState.animateScrollToItem(0)
-                }
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        /* JumpToBottom(
+             // Only show if the scroller is not at the bottom
+             enabled = jumpToBottomButtonEnabled,
+             onClicked = {
+                 scope.launch {
+                     scrollState.animateScrollToItem(0)
+                 }
+             },
+             modifier = Modifier.align(Alignment.BottomCenter)
+         )*/
     }
 }
 
