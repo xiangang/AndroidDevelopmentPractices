@@ -34,7 +34,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Compose.version
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
 }
 
@@ -60,7 +60,6 @@ dependencies {
     api(NavigationLib.compose)
     api(Google.material)
     api(Compose.ui)
-    api(Compose.material)
     api(Compose.materialIcons)
     api(Compose.material3)
     api(Compose.unit)
@@ -75,7 +74,7 @@ dependencies {
     api(Compose.uiTooling)
     api(Compose.accompanistPager)
     api(Compose.accompanistPagerIndicators)
-    api(Compose. accompanistSystemUiController)
+    api(Compose.accompanistSystemUiController)
     api(Lifecycle.runtimeCompose)
     api(Coil.coilCompose)
     api(Coil.coilGif)

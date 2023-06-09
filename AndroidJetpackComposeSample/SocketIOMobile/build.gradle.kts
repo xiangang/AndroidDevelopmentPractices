@@ -48,7 +48,7 @@ dependencies {
     implementation(Lifecycle.viewModelKtx)
     implementation(Google.material)
     implementation(Compose.ui)
-    implementation(Compose.material)
+    implementation(Compose.material3)
     implementation(Compose.preview)
     implementation(Compose.activity)
     implementation(Compose.lifecycleViewModel)

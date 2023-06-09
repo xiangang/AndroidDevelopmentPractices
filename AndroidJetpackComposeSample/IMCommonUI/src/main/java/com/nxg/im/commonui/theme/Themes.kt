@@ -90,7 +90,7 @@ private val JetchatLightColorScheme = lightColorScheme(
 @Composable
 fun JetchatTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    isDynamicColor: Boolean = false,
+    isDynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

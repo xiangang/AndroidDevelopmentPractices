@@ -37,7 +37,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Compose.version
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
 }
 
@@ -65,7 +65,6 @@ dependencies {
     implementation(Paging.compose)
     implementation(Google.material)
     implementation(Compose.ui)
-    implementation(Compose.material)
     implementation(Compose.materialIcons)
     implementation(Compose.activity)
     implementation(Compose.preview)

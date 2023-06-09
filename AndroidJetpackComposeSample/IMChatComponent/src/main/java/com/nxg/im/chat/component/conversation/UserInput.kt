@@ -16,6 +16,8 @@
 
 package com.nxg.im.chat.component.conversation
 
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_ENTER
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -78,6 +80,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
@@ -140,6 +143,7 @@ fun UserInput(
     Surface(tonalElevation = 2.dp) {
         Column(modifier = modifier) {
             UserInputText(
+                keyboardType = KeyboardType.Text,
                 textFieldValue = textState,
                 onTextChanged = { textState = it },
                 // Only show the keyboard if there's no input selector and text field has focus
@@ -417,7 +421,7 @@ private fun UserInputText(
                         },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = keyboardType,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Send
                     ),
                     maxLines = 1,
                     cursorBrush = SolidColor(LocalContentColor.current),

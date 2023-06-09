@@ -61,7 +61,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Compose.version
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
 
     packagingOptions {
@@ -105,7 +105,7 @@ dependencies {
     implementation(Paging.compose)
     implementation(Google.material)
     implementation(Compose.ui)
-    implementation(Compose.material)
+    implementation(Compose.material3)
     implementation(Compose.activity)
     implementation(Compose.preview)
     implementation(Compose.lifecycleViewModel)

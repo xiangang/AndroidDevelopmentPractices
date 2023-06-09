@@ -52,17 +52,17 @@ object AndroidX {
 }
 
 object Compose {
-    const val bom = "androidx.compose:compose-bom:2022.10.00"
-    const val version = "1.3.1"
+    const val bom = "androidx.compose:compose-bom:2023.04.01"
+    private const val version = ""
+    const val kotlinCompilerExtensionVersion = "1.4.3"
     const val ui = "androidx.compose.ui:ui:$version"
     const val unit = "androidx.compose.ui:ui-unit:$version"
     const val util = "androidx.compose.ui:ui-util:$version"
     const val viewbinding = "androidx.compose.ui:ui-viewbinding:$version"
     const val googlefonts = "androidx.compose.ui:ui-text-google-fonts:$version"
-    const val material = "androidx.compose.material:material:$version"
+    const val material3 = "androidx.compose.material3:material3:1.1.0"
     const val materialIcons = "androidx.compose.material:material-icons-extended:$version"
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
-    const val material3 = "androidx.compose.material3:material3:1.1.0"
     const val animation = "androidx.compose.animation:animation:$version"
     const val paging = "androidx.paging:paging-compose:1.0.0-alpha18"
     const val activity = "androidx.activity:activity-compose:1.7.1"

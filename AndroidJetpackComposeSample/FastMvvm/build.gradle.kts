@@ -38,7 +38,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Compose.version
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
 }
 
@@ -48,6 +48,7 @@ dependencies {
     testApi(TestLib.espresso)
     androidTestApi(Compose.test)
     debugApi(Compose.uiTooling)
+    api(Kotlin.stdlib)
     api(AndroidX.appcompat)
     api(AndroidX.constraintlayout)
     api(AndroidX.cardview)
@@ -67,7 +68,7 @@ dependencies {
     api(Paging.compose)
     api(Google.material)
     api(Compose.ui)
-    api(Compose.material)
+    api(Compose.material3)
     api(Compose.activity)
     api(Compose.preview)
     api(Compose.lifecycleViewModel)
