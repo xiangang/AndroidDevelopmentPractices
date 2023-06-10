@@ -48,6 +48,8 @@ object IMWebSocket : SimpleLogger {
                                 override fun onMessage(webSocket: WebSocket, text: String) {
                                     super.onMessage(webSocket, text)
                                     logger.debug { "onMessage $text" }
+                                    //处理收到的消息
+                                    IMClient.onMessageCallback?.onMessage(text)
                                 }
 
                                 override fun onClosing(

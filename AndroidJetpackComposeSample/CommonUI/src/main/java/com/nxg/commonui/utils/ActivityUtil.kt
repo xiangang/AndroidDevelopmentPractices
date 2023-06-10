@@ -79,7 +79,6 @@ fun Activity.setAndroidNativeLightStatusBar(isLight: Boolean) {
  * WindowInsetsCompat.Type.systemBars()表示状态栏、导航栏和标题栏（ STATUS_BARS | NAVIGATION_BARS | CAPTION_BAR）
  */
 fun Activity.hideSystemBars() {
-    WindowCompat.setDecorFitsSystemWindows(window, false)
     WindowCompat.getInsetsController(window, window.decorView).let { controller ->
         controller.hide(WindowInsetsCompat.Type.systemBars())
     }
@@ -89,7 +88,6 @@ fun Activity.hideSystemBars() {
  * 显示系统UI
  */
 fun Activity.showSystemBars() {
-    WindowCompat.setDecorFitsSystemWindows(window, true)
     WindowCompat.getInsetsController(window, window.decorView)
         .show(WindowInsetsCompat.Type.systemBars())
 }

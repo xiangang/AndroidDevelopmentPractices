@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.fragment.findNavController
 import com.nxg.androidsample.R
 import com.nxg.im.chat.component.MainViewModel
+import com.nxg.im.chat.component.conversation.ConversationChatViewModel
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.contact.component.ContactListCompose
@@ -39,6 +40,9 @@ import com.nxg.im.contact.component.ContactViewModelFactory
 import com.nxg.im.conversation.component.ConversationListCompose
 import com.nxg.im.conversation.component.ConversationViewModel
 import com.nxg.im.conversation.component.ConversationViewModelFactory
+import com.nxg.im.core.IMClient
+import com.nxg.im.core.callback.OnMessageCallback
+import com.nxg.im.core.data.bean.parseIMMessage
 import com.nxg.im.discover.component.DiscoverListCompose
 import com.nxg.im.discover.component.DiscoverViewModel
 import com.nxg.im.user.component.login.LoginViewModel
@@ -64,6 +68,8 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         ContactViewModelFactory()
     }
 
+    private val conversationChatViewModel: ConversationChatViewModel by activityViewModels()
+
     private val discoverViewModel: DiscoverViewModel by activityViewModels()
 
     private val profileViewModel: ProfileViewModel by activityViewModels {
@@ -82,6 +88,16 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         return ComposeView(requireContext()).apply {
             setContent {
                 KtChatCompose()
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        IMClient.onMessageCallback = object : OnMessageCallback {
+            override fun onMessage(message: String) {
+                logger.debug { "onMessage: $message" }
+                conversationChatViewModel.onMessage(message)
             }
         }
     }
@@ -195,6 +211,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                         }
                     }
                     composable("contact") {
+                        contactViewModel.getMyFriends()
                         val scope = rememberCoroutineScope()
                         ContactListCompose(
                             contactViewModel,

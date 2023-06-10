@@ -37,23 +37,7 @@ class ContactViewModel(val contactRepository: ContactRepository) : ViewModel(), 
 
     fun getMyFriends() {
         viewModelScope.launch(Dispatchers.IO) {
-            IMClient.userService.getMyFriends().let {
-                /*when (it) {
-                    is Result.Error -> {
-                        logger.debug { it.exception }
-                    }
-                    is Result.Success -> {
-                        val contactList = mutableListOf<Contact>()
-                        contactList.addAll(
-                            listOf(
-                                Contact.ContactFriendList(it.data)
-                            )
-                        )
-                        _uiState.emit(_uiState.value.copy(contactList = contactList))
-                    }
-                }*/
-            }
-
+            IMClient.userService.getMyFriends()
         }
     }
 

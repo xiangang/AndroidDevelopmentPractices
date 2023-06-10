@@ -1,6 +1,7 @@
 package com.nxg.im.core
 
 import android.content.Context
+import com.nxg.im.core.callback.OnMessageCallback
 import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.module.auth.AuthService
@@ -41,6 +42,8 @@ object IMClient {
     val chatService: ChatService by lazy {
         ChatServiceImpl
     }
+
+    var onMessageCallback: OnMessageCallback? = null
 
     /**
      * 初始化

@@ -73,11 +73,6 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         logger.debug { "chatType: ${safeArgs.chatType}" }
         conversationChatViewModel.insertOrReplaceConversation(safeArgs.chatId, safeArgs.chatType)
         conversationChatViewModel.loadConversationChat(safeArgs.chatId, safeArgs.chatType)
-        lifecycleScope.launch {
-            conversationChatViewModel.uiState.collect {
-                logger.debug { "uiState: ${it.conversationChat?.messages}" }
-            }
-        }
     }
 
 }

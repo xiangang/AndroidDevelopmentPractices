@@ -5,7 +5,7 @@ import java.util.concurrent.Executors
 
 
 val IMDispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor { runnable ->
-    Thread(runnable, "SdkDataBaseDispatcher")
+    Thread(runnable, "IMDispatcher")
 }.asCoroutineDispatcher()
 
 val IMCoroutineScope = CoroutineScope(IMDispatcher + SupervisorJob())

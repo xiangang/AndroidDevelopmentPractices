@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.blankj.utilcode.util.TimeUtils
@@ -43,7 +42,6 @@ import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.module.user.User
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -372,7 +370,7 @@ private val KtChatJumpToBottomThreshold = 56.dp
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun KtChatMessages(
+fun KtChatIMMessages(
     pager: Pager<Int, Message>,
     me: User,
     friend: Friend,
@@ -389,7 +387,8 @@ fun KtChatMessages(
             state = scrollState,
             modifier = Modifier
                 .testTag(ConversationTestTag)
-                .fillMaxSize()
+                .fillMaxWidth()
+                .wrapContentHeight()
         ) {
             itemsIndexed(
                 items = lazyPagingItems,
@@ -540,7 +539,7 @@ fun KtChatConversationContent(
                 .padding(paddingValues)
         ) {
             conversationChatUiState.value.conversationChat?.let {
-                KtChatMessages(
+                KtChatIMMessages(
                     pager = conversationChatViewModel.messagePager,
                     me = it.me,
                     friend = it.friend,

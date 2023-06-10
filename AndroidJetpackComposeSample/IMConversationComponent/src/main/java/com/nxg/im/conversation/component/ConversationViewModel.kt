@@ -26,10 +26,6 @@ class ConversationViewModel(val conversationRepository: ConversationRepository) 
     val uiState: StateFlow<ConversationUiState> = _uiState.asStateFlow()
 
 
-    init {
-
-    }
-
     fun refresh() {
 
         viewModelScope.launch {
