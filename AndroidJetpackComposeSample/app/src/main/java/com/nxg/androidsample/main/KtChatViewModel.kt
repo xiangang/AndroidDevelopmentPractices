@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 data class KtChatUiState(val title: String)
 
-class KtChatViewModel() : ViewModel(), SimpleLogger {
+class KtChatViewModel : ViewModel(), SimpleLogger {
 
     // Backing property to avoid state updates from other classes
     private val _uiState = MutableStateFlow(KtChatUiState("聊天"))

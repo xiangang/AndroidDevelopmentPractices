@@ -31,12 +31,12 @@
             app:popUpTo="@id/launch_fragment"
             app:popUpToInclusive="true" />
 
-        <action
+        <!--<action
             android:id="@+id/action_launch_fragment_to_kt_chat_shell_fragment"
             app:destination="@id/kt_chat_shell_fragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/launch_fragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true" />-->
 
         <action
             android:id="@+id/action_launch_fragment_to_login_fragment"
@@ -47,7 +47,6 @@
 
     </fragment>
 
-
     <fragment
         android:id="@+id/login_fragment"
         android:name="com.nxg.im.user.component.login.LoginFragment"
@@ -57,7 +56,7 @@
 
     </fragment>
 
-    <fragment
+   <!-- <fragment
         android:id="@+id/kt_chat_shell_fragment"
         android:name="com.nxg.androidsample.main.KtChatShellFragment"
         android:label="聊天">
@@ -84,8 +83,7 @@
             android:id="@+id/action_kt_chat_shell_fragment_to_im_user_nav_graph"
             app:destination="@id/im_user_nav_graph" />
 
-
-    </fragment>
+    </fragment>-->
 
 
 </navigation>

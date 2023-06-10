@@ -2,8 +2,10 @@ package com.nxg.androidsample
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.nxg.androidsample.databinding.ActivityMainBinding
 import com.nxg.im.user.component.login.LoginViewModel
@@ -26,6 +28,10 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Turn off the decor fitting system windows, which allows us to handle insets,
+        // including IME animations
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         fragmentLifecycleObserver = FragmentLifecycleObserver(supportFragmentManager)
@@ -34,7 +40,13 @@ class MainActivity : BaseViewModelActivity(), SimpleLogger {
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 loginResult.success?.let {
-                    findNavController().navigate(R.id.main_fragment)
+                    findNavController().navigate(
+                        resId = R.id.main_fragment,
+                        null,
+                        navOptions = NavOptions.Builder()
+                            .setPopUpTo(R.id.login_fragment, inclusive = true, saveState = false)
+                            .build()
+                    )
                 }
             })
 

@@ -2,6 +2,7 @@ package com.nxg.androidsample.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavGraph
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,10 +35,14 @@ import com.nxg.androidsample.R
 import com.nxg.androidsample.databinding.FragmentMainBinding
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
-import com.nxg.mvvm.ktx.findMainActivityNavController
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelFragment
 
+/**
+ * 暂时启弃用
+ *     java.lang.IllegalArgumentException: No view found for id 0x7f0a0064 (com.nxg.androidsample:id/app_nav_host_main_fragment)
+ *     for fragment NavHostFragment{8e5a4df} (d245223f-0306-4560-ba58-7849a41b5e80 id=0x7f0a0064)
+ */
 class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
     private val ktChatViewModel: KtChatViewModel by activityViewModels()
@@ -49,14 +54,10 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val destinationCountOnBackStack = findMainActivityNavController().backQueue.count { entry ->
-            logger.debug { "onCreateView: entry.destination ${entry.destination.displayName}" }
-            entry.destination !is NavGraph
-        }
-        logger.debug { "onCreateView: destinationCountOnBackStack $destinationCountOnBackStack" }
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
+                    Log.i("KtChatShellFragment", "onCreateView: ")
                     val uiState by ktChatViewModel.uiState.collectAsState()
                     Scaffold(
                         topBar = {
@@ -70,6 +71,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
                                     }
                                 },
+                                modifier = Modifier,
                                 navigationIcon = {
                                     JetchatIcon(
                                         contentDescription = stringResource(id = R.string.navigation_drawer_open),
@@ -112,7 +114,9 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                     ) {
                         AndroidViewBinding(FragmentMainBinding::inflate) {
                             val navView: BottomNavigationView = this.appBottomNavMainFragment
-                            val navController = findNavController()
+                            val navHostFragment =
+                                childFragmentManager.findFragmentById(R.id.app_nav_host_main_fragment) as NavHostFragment
+                            val navController = navHostFragment.navController
                             navController.let {
                                 navView.setupWithNavController(navController)
                                 navController.addOnDestinationChangedListener { controller, destination, arguments ->

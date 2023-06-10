@@ -13,7 +13,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
@@ -35,13 +34,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nxg.commonui.theme.ColorText
+import com.nxg.commonui.utils.hideSystemBars
+import com.nxg.commonui.utils.showStatusBars
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.Result
@@ -65,58 +63,36 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    // Remember a SystemUiController
-                    val systemUiController = rememberSystemUiController()
-                    val useDarkIcons = !isSystemInDarkTheme()
-                    requireActivity().apply {
-                        // 设置全屏
-                        /*window.setFlags(
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN
-                        )*/
-                        //隐藏状态栏、导航栏、标题栏
-                        WindowCompat.getInsetsController(window, window.decorView)
-                            .hide(WindowInsetsCompat.Type.systemBars())
-                    }
-                    DisposableEffect(systemUiController, useDarkIcons) {
-                        // Update all of the system bar colors to be transparent, and use
-                        // dark icons if we're in light theme
-                        systemUiController.setSystemBarsColor(
-                            color = if (!useDarkIcons) Color.Black else Color.White,
-                            darkIcons = useDarkIcons
-                        )
-
-                        // setStatusBarColor() and setNavigationBarColor() also exist
-
-                        onDispose {}
-                    }
-                    Surface(color = if (!useDarkIcons) Color.Black else Color.White) {
+                    hideSystemBars()
+                    Surface {
                         val scope = rememberCoroutineScope()
                         Splash {
-                            scope.launch(Dispatchers.IO) {
-                                try {
-                                    IMClient.userService.getMe().let {
-                                        when (it) {
-                                            is Result.Error -> {
-                                                withContext(Dispatchers.Main) {
-                                                    logger.debug { "currentDestination: " + findNavController().currentDestination }
-                                                    findNavController().navigate(
-                                                        LaunchFragmentDirections.actionLaunchFragmentToLoginFragment()
-                                                    )
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    try {
+                                        IMClient.userService.getMe().let {
+                                            when (it) {
+                                                is Result.Error -> {
+                                                    withContext(Dispatchers.Main) {
+                                                        logger.debug { "currentDestination: " + findNavController().currentDestination }
+                                                        findNavController().navigate(
+                                                            LaunchFragmentDirections.actionLaunchFragmentToLoginFragment()
+                                                        )
+                                                    }
                                                 }
-                                            }
-                                            is Result.Success -> {
-                                                withContext(Dispatchers.Main) {
-                                                    logger.debug { "currentDestination: " + findNavController().currentDestination }
-                                                    findNavController().navigate(
-                                                        LaunchFragmentDirections.actionLaunchFragmentToMainFragment()
-                                                    )
+                                                is Result.Success -> {
+                                                    withContext(Dispatchers.Main) {
+                                                        logger.debug { "currentDestination: " + findNavController().currentDestination }
+                                                        findNavController().navigate(
+                                                            LaunchFragmentDirections.actionLaunchFragmentToMainFragment()
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                } catch (e: Exception) {
+                                    } catch (e: Exception) {
 
+                                    }
                                 }
                             }
                         }
@@ -128,14 +104,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().apply {
-            //取消全屏
-            //window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            //显示状态栏、导航栏、标题栏
-            WindowCompat.getInsetsController(requireActivity().window, window.decorView)
-                .show(WindowInsetsCompat.Type.systemBars())
-        }
-
+        showStatusBars()
     }
 
     @Composable
