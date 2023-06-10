@@ -106,13 +106,6 @@ fun JetchatTheme(
         isDarkTheme -> JetchatDarkColorScheme
         else -> JetchatLightColorScheme
     }
-
-    MaterialTheme(
-        colorScheme = myColorScheme,
-        typography = JetchatTypography,
-        content = content
-    )
-
     // Remember a SystemUiController
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = !isSystemInDarkTheme()
@@ -129,4 +122,11 @@ fun JetchatTheme(
 
         onDispose {}
     }
+
+    MaterialTheme(
+        colorScheme = myColorScheme,
+        typography = JetchatTypography,
+        content = content
+    )
+
 }

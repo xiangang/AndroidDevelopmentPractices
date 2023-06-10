@@ -38,6 +38,8 @@ import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
+import com.nxg.im.commonui.components.SymbolAnnotationType
+import com.nxg.im.commonui.components.messageFormatter
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.data.db.entity.Message
@@ -79,17 +81,6 @@ fun KtChatTextMessagePreview() {
 
 @Composable
 fun KtChatImageMessage(url: String, isUserMe: Boolean, authorClicked: (String) -> Unit = {}) {
-    val backgroundBubbleColor = if (isUserMe) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant
-    }
-    /*Image(
-        painter = painterResource(R.drawable.sticker),
-        contentScale = ContentScale.Fit,
-        modifier = Modifier.size(160.dp),
-        contentDescription = stringResource(id = R.string.attached_image)
-    )*/
     AsyncImage(
         modifier = Modifier
             .size(100.dp),
@@ -108,9 +99,14 @@ fun KtChatImageMessagePreview() {
 }
 
 @Composable
-private fun KtChatAuthorNameTimestamp(name: String, timestamp: String) {
+private fun KtChatAuthorNameTimestamp(name: String, timestamp: String, isUserMe: Boolean) {
     // Combine author and timestamp for a11y.
-    Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) {},
+        horizontalArrangement = if (isUserMe) Arrangement.End else Arrangement.Start
+    ) {
         Text(
             text = name,
             style = MaterialTheme.typography.titleMedium,
@@ -131,7 +127,7 @@ private fun KtChatAuthorNameTimestamp(name: String, timestamp: String) {
 @Preview
 @Composable
 fun KtChatAuthorNameTimestampPreview() {
-    KtChatAuthorNameTimestamp("AnonXG", "2023年06月06日22:28:03")
+    KtChatAuthorNameTimestamp("AnonXG", "2023年06月06日22:28:03", true)
 }
 
 @Composable
@@ -172,6 +168,8 @@ fun KtChatClickableMessagePreview() {
 
 private val KtChatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
 
+private val KtChatBubbleShapeUserMe = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+
 @Composable
 fun KtChatItemBubble(
     imMessage: IMMessage,
@@ -186,7 +184,7 @@ fun KtChatItemBubble(
     Column {
         Surface(
             color = backgroundBubbleColor,
-            shape = KtChatBubbleShape
+            shape = if (isUserMe) KtChatBubbleShapeUserMe else KtChatBubbleShape
         ) {
             KtChatClickableMessage(
                 imMessage = imMessage,
@@ -219,8 +217,11 @@ fun KtChatAuthorAndTextMessage(
     modifier: Modifier = Modifier,
     authorClicked: (String) -> Unit = {}
 ) {
-    Column(modifier = modifier) {
-        KtChatAuthorNameTimestamp(name, timestamp)
+    Column(
+        modifier = modifier,
+        horizontalAlignment = if (isUserMe) Alignment.End else Alignment.Start
+    ) {
+        KtChatAuthorNameTimestamp(name, timestamp, isUserMe)
         KtChatItemBubble(imMessage, isUserMe, authorClicked = authorClicked)
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -264,34 +265,68 @@ fun KtChatIMMessage(
         MaterialTheme.colorScheme.tertiary
     }
     val spaceBetweenAuthors = Modifier.padding(top = 8.dp)
-    Row(modifier = spaceBetweenAuthors) {
-        // Avatar
-        AsyncImage(
-            modifier = Modifier
-                .clickable(onClick = {
-                    onAuthorClick("${imMessage.fromId}")
-                })
-                .padding(horizontal = 16.dp)
-                .size(42.dp)
-                .border(1.5.dp, borderColor, CircleShape)
-                .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
-                .clip(CircleShape)
-                .align(Alignment.Top),
-            model = avatar,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-        )
-        KtChatAuthorAndTextMessage(
-            imMessage = imMessage,
-            isUserMe = isUserMe,
-            name = name,
-            timestamp = timestamp,
-            authorClicked = onAuthorClick,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .weight(1f)
-        )
+    if (isUserMe) {
+        Row(modifier = spaceBetweenAuthors, horizontalArrangement = Arrangement.End) {
+            //消息
+            KtChatAuthorAndTextMessage(
+                imMessage = imMessage,
+                isUserMe = isUserMe,
+                name = name,
+                timestamp = timestamp,
+                authorClicked = onAuthorClick,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .weight(1f)
+            )
+            // Avatar
+            AsyncImage(
+                modifier = Modifier
+                    .clickable(onClick = {
+                        onAuthorClick("${imMessage.fromId}")
+                    })
+                    .padding(horizontal = 16.dp)
+                    .size(42.dp)
+                    .border(1.5.dp, borderColor, CircleShape)
+                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .clip(CircleShape)
+                    .align(Alignment.Top),
+                model = avatar,
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+        }
+    } else {
+        Row(modifier = spaceBetweenAuthors) {
+            // Avatar
+            AsyncImage(
+                modifier = Modifier
+                    .clickable(onClick = {
+                        onAuthorClick("${imMessage.fromId}")
+                    })
+                    .padding(horizontal = 16.dp)
+                    .size(42.dp)
+                    .border(1.5.dp, borderColor, CircleShape)
+                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .clip(CircleShape)
+                    .align(Alignment.Top),
+                model = avatar,
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+            //消息
+            KtChatAuthorAndTextMessage(
+                imMessage = imMessage,
+                isUserMe = isUserMe,
+                name = name,
+                timestamp = timestamp,
+                authorClicked = onAuthorClick,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .weight(1f)
+            )
+        }
     }
+
 }
 
 @Preview

@@ -150,12 +150,6 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                     modifier = Modifier.fillMaxSize()
 
                 )
-                /*Image(
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
-                )*/
             }
             Row(
                 modifier = Modifier

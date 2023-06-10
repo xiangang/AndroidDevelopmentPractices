@@ -47,6 +47,7 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
         // Turn off the decor fitting system windows, which allows us to handle insets,
         // including IME animations
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContentView(
             ComposeView(this).apply {
                 consumeWindowInsets = false

@@ -55,6 +55,8 @@ import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.exampleUiState
 import com.nxg.im.commonui.components.JetchatAppBar
+import com.nxg.im.commonui.components.SymbolAnnotationType
+import com.nxg.im.commonui.components.messageFormatter
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.data.db.entity.Message
 import kotlinx.coroutines.launch

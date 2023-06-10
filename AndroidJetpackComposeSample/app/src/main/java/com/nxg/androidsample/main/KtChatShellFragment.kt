@@ -108,6 +108,9 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
     fun KtChatCompose() {
         JetchatTheme {
             val ktChatUIState by ktChatViewModel.uiState.collectAsState()
+            var startDestination by remember {
+                mutableStateOf(Screen.Chat.route)
+            }
             val navHostController = rememberNavController()
             Scaffold(
                 topBar = {
@@ -171,6 +174,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                                 selected = index == currentSelect,
                                 onClick = {
                                     currentSelect = index
+                                    startDestination = screen.route
                                     ktChatViewModel.changeTitle(name)
                                     navHostController.navigate(screen.route)
                                 },
@@ -192,7 +196,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
             ) {
                 NavHost(
                     navController = navHostController,
-                    startDestination = "chat"
+                    startDestination = startDestination
                 ) {
                     composable("chat") {
                         conversationViewModel.refresh()

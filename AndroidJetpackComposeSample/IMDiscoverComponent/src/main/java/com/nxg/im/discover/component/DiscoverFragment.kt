@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.activityViewModels
+import com.nxg.im.commonui.components.messageFormatter
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
@@ -112,7 +113,11 @@ fun DiscoverItemCompose(
         )
         Spacer(modifier = Modifier.size(10.dp))
         Column {
-            Text(discovery.name)
+            Text(
+                text = discovery.name,
+                style = MaterialTheme.typography.titleSmall,
+                color = if (isSystemInDarkTheme()) Color.White else LocalContentColor.current
+            )
         }
         Spacer(
             modifier = Modifier
