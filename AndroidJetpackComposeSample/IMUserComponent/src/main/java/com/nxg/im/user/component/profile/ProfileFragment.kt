@@ -59,6 +59,7 @@ class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
                     val uiState by profileViewModel.uiState.collectAsState()
                     uiState.user?.let {
                         ProfileCompose(
+                            profileViewModel, loginViewModel,
                             it,
                             findMainActivityNavController()
                         ) { navController, friend ->
@@ -71,71 +72,73 @@ class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
     }
 
 
-    @Composable
-    fun ProfileCompose(
-        user: User,
-        navController: NavController,
-        onClick: (NavController, User) -> Unit
+}
+
+@Composable
+fun ProfileCompose(
+    profileViewModel: ProfileViewModel,
+    loginViewModel: LoginViewModel,
+    user: User,
+    navController: NavController,
+    onClick: (NavController, User) -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val cornerSize by remember { mutableStateOf(CornerSize(4.dp)) }
+    LazyColumn(
+        modifier = Modifier
+            .background(ColorBackground.Primary)
+            .fillMaxSize()
     ) {
-        val scope = rememberCoroutineScope()
-        val cornerSize by remember { mutableStateOf(CornerSize(4.dp)) }
-        logger.debug { "ProfileCompose: $user" }
-        LazyColumn(
-            modifier = Modifier
-                .background(ColorBackground.Primary)
-                .fillMaxSize()
-        ) {
-            item {
-                Row(modifier = Modifier
-                    .clickable {
-                        onClick(navController, user)
-                    }
-                    .padding(10.dp, 10.dp, 10.dp, 0.dp)) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(
-                                MaterialTheme.shapes.small.copy(
-                                    topStart = cornerSize,
-                                    topEnd = cornerSize,
-                                    bottomEnd = cornerSize,
-                                    bottomStart = cornerSize
-                                )
-                            ),
-                        model = user.avatar,
-                        contentDescription = user.nickname
-                    )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Column {
-                        Text(user.nickname)
-                    }
+        item {
+            Row(modifier = Modifier
+                .clickable {
+                    onClick(navController, user)
                 }
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Button(
+                .padding(10.dp, 10.dp, 10.dp, 0.dp)) {
+                AsyncImage(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    onClick = {
-                        scope.launch(Dispatchers.IO) {
-                            profileViewModel.logout()
-                            loginViewModel.logout()
-                            withContext(Dispatchers.Main) {
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/login_fragment".toUri())
-                                    .build()
-                                navController.popBackStack()
-                                navController.navigate(request)
-                            }
-                        }
-                    },
-                    shape = MaterialTheme.shapes.small,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ColorError.Primary,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(text = "退出登录")
+                        .size(50.dp)
+                        .clip(
+                            MaterialTheme.shapes.small.copy(
+                                topStart = cornerSize,
+                                topEnd = cornerSize,
+                                bottomEnd = cornerSize,
+                                bottomStart = cornerSize
+                            )
+                        ),
+                    model = user.avatar,
+                    contentDescription = user.nickname
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Column {
+                    Text(user.nickname)
                 }
+            }
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                onClick = {
+                    scope.launch(Dispatchers.IO) {
+                        profileViewModel.logout()
+                        loginViewModel.logout()
+                        withContext(Dispatchers.Main) {
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("android-app://com.nxg.app/login_fragment".toUri())
+                                .build()
+                            navController.popBackStack()
+                            navController.navigate(request)
+                        }
+                    }
+                },
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = ColorError.Primary,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "退出登录")
             }
         }
     }

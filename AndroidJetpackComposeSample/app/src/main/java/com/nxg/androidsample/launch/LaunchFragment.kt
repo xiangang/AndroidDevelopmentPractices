@@ -84,7 +84,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                                                     withContext(Dispatchers.Main) {
                                                         logger.debug { "currentDestination: " + findNavController().currentDestination }
                                                         findNavController().navigate(
-                                                            LaunchFragmentDirections.actionLaunchFragmentToMainFragment()
+                                                            LaunchFragmentDirections.actionLaunchFragmentToKtChatShellFragment()
                                                         )
                                                     }
                                                 }

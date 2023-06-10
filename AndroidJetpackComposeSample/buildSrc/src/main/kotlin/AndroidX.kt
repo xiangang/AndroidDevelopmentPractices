@@ -84,7 +84,7 @@ object Compose {
         "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
     const val accompanistSystemUiController =
         "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
-    const val customviewPoolingContainer = "androidx.customview:customview-poolingcontainer:1.0.0"
+    const val customViewPoolingContainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 }
 
 object Hilt {

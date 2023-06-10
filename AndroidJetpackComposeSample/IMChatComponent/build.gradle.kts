@@ -61,7 +61,7 @@ dependencies {
     implementation(Compose.paging)
     implementation(Lifecycle.runtimeCompose)
     debugImplementation(Lifecycle.viewModelSavedState)
-    debugImplementation(Compose.customviewPoolingContainer)
+    debugImplementation(Compose.customViewPoolingContainer)
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":IMCore")))
     implementation(project(mapOf("path" to ":IMCommonUI")))

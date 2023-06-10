@@ -30,11 +30,11 @@
 
             <nav-graph android:value="@navigation/app_nav_graph" />
 
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                 <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
 
         <activity
@@ -42,15 +42,15 @@
             android:allowBackup="true"
             android:exported="true"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.KtChat.NoActionBar">
+            android:windowSoftInputMode="adjustResize">
 
             <nav-graph android:value="@navigation/app_nav_graph" />
 
-<!--            <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <activity

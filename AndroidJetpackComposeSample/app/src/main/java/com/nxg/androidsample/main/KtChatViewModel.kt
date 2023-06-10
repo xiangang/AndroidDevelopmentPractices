@@ -33,8 +33,8 @@ class KtChatViewModel : ViewModel(), SimpleLogger {
         }
     }
 
-    val items = listOf(
-        Screen.Conservation,
+    val navigationBars = listOf(
+        Screen.Chat,
         Screen.Contact,
         Screen.Discover,
         Screen.Profile,

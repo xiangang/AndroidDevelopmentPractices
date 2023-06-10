@@ -122,7 +122,7 @@ private fun KtChatAuthorNameTimestamp(name: String, timestamp: String) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = timestamp,
+            text = "",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.alignBy(LastBaseline),
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -422,11 +422,14 @@ fun KtChatMessages(
 
             }
         }
-        //Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
+        Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
         if (itemCount == lazyPagingItems.itemCount) {
             scope.launch {
+                Log.i(
+                    "TAG",
+                    "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} "
+                )
                 if (scrollState.firstVisibleItemIndex != 0) {
-                    //Log.i("TAG", "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} ")
                     scrollState.animateScrollToItem(0)
                 }
             }

@@ -2,35 +2,32 @@ package com.nxg.androidsample
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.nxg.androidsample.databinding.FragmentMainBinding
-import com.nxg.androidsample.main.KtChatViewModel
+import com.nxg.androidsample.databinding.FragmentKtChatShellBinding
 import com.nxg.im.chat.component.MainViewModel
-import com.nxg.im.commonui.components.JetchatIcon
-import com.nxg.im.commonui.theme.JetchatTheme
+import com.nxg.im.commonui.components.JetchatDrawer
+import com.nxg.im.user.component.login.LoginViewModel
+import com.nxg.im.user.component.login.LoginViewModelFactory
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseViewModelActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -38,89 +35,95 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private val ktChatViewModel: KtChatViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory()
+    }
+
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // Turn off the decor fitting system windows, which allows us to handle insets,
         // including IME animations
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(
             ComposeView(this).apply {
-                //consumeWindowInsets = false
+                consumeWindowInsets = false
                 setContent {
-                    JetchatTheme {
-                        val uiState by ktChatViewModel.uiState.collectAsState()
-                        androidx.compose.material.Scaffold(
-                            topBar = {
-                                CenterAlignedTopAppBar(
-                                    title = {
-                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text(
-                                                text = uiState.title,
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
+                    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                    val drawerOpen by viewModel.drawerShouldBeOpened
+                        .collectAsStateWithLifecycle()
 
-                                        }
-                                    },
-                                    navigationIcon = {
-                                        JetchatIcon(
-                                            contentDescription = stringResource(id = R.string.navigation_drawer_open),
-                                            modifier = Modifier
-                                                .size(64.dp)
-                                                .clickable(onClick = {
-                                                    //TODO
-                                                })
-                                                .padding(16.dp)
-                                        )
-                                    },
-                                    actions = {
-                                        // Search icon
-                                        Icon(
-                                            imageVector = Icons.Outlined.Search,
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier
-                                                .clickable(onClick = {
-                                                    //TODO
-                                                })
-                                                .padding(horizontal = 12.dp, vertical = 16.dp)
-                                                .height(24.dp),
-                                            contentDescription = stringResource(id = R.string.search)
-                                        )
-                                        // Info icon
-                                        Icon(
-                                            imageVector = Icons.Outlined.Add,
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier
-                                                .clickable(onClick = {
-                                                    //TODO
-                                                })
-                                                .padding(horizontal = 12.dp, vertical = 16.dp)
-                                                .height(24.dp),
-                                            contentDescription = stringResource(id = R.string.add)
-                                        )
-                                    }
-                                )
-                            }
-                        ) {
-                            AndroidViewBinding(FragmentMainBinding::inflate) {
-                                val navHostFragment =
-                                    supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as? NavHostFragment
-                                navHostFragment?.let {
-                                    this.appBottomNavMainFragment.setupWithNavController(it.navController)
-                                    it.navController.addOnDestinationChangedListener { _, destination, arguments ->
-                                        ktChatViewModel.changeTitle(destination.label.toString())
-                                    }
-                                }
+                    if (drawerOpen) {
+                        // Open drawer and reset state in VM.
+                        LaunchedEffect(Unit) {
+                            // wrap in try-finally to handle interruption whiles opening drawer
+                            try {
+                                drawerState.open()
+                            } finally {
+                                viewModel.resetOpenDrawerAction()
                             }
                         }
                     }
+
+                    // Intercepts back navigation when the drawer is open
+                    val scope = rememberCoroutineScope()
+                    if (drawerState.isOpen) {
+                        BackHandler {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
+                    }
+
+                    JetchatDrawer(
+                        drawerState = drawerState,
+                        onChatClicked = {
+                            //findNavController().popBackStack(R.id.nav_home, false)
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        onProfileClicked = {
+                            val bundle = bundleOf("userId" to it)
+                            //findNavController().navigate(R.id.nav_profile, bundle)
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
+                    ) {
+                        AndroidViewBinding(FragmentKtChatShellBinding::inflate)
+                    }
                 }
             }
-
         )
+        loginViewModel.loginResult.observe(this,
+            Observer { loginResult ->
+                loginResult ?: return@Observer
+                loginResult.success?.let {
+                    findNavController().navigate(
+                        resId = R.id.kt_chat_shell_fragment,
+                        null,
+                        navOptions = NavOptions.Builder()
+                            .setPopUpTo(R.id.login_fragment, inclusive = true, saveState = false)
+                            .build()
+                    )
+                }
+            })
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return findNavController().navigateUp() || super.onSupportNavigateUp()
+    }
+
+    /**
+     * See https://issuetracker.google.com/142847973
+     */
+    private fun findNavController(): NavController {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
+        return navHostFragment.navController
     }
 
 }

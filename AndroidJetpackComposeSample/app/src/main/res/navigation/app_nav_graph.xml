@@ -4,6 +4,7 @@
     android:id="@+id/app_nav_graph"
     app:startDestination="@id/launch_fragment">
 
+    <include app:graph="@navigation/nui_nav_graph" />
     <include app:graph="@navigation/im_conversation_nav_graph" />
     <include app:graph="@navigation/im_chat_nav_graph" />
     <include app:graph="@navigation/im_contact_nav_graph" />
@@ -31,16 +32,23 @@
             app:popUpTo="@id/launch_fragment"
             app:popUpToInclusive="true" />
 
-        <!--<action
+        <action
             android:id="@+id/action_launch_fragment_to_kt_chat_shell_fragment"
             app:destination="@id/kt_chat_shell_fragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/launch_fragment"
-            app:popUpToInclusive="true" />-->
+            app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/action_launch_fragment_to_login_fragment"
             app:destination="@id/login_fragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launch_fragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_launch_fragment_to_nui_nav_graph"
+            app:destination="@id/nui_nav_graph"
             app:launchSingleTop="true"
             app:popUpTo="@id/launch_fragment"
             app:popUpToInclusive="true" />
@@ -56,34 +64,14 @@
 
     </fragment>
 
-   <!-- <fragment
+    <fragment
         android:id="@+id/kt_chat_shell_fragment"
         android:name="com.nxg.androidsample.main.KtChatShellFragment"
         android:label="聊天">
 
         <deepLink app:uri="android-app://com.nxg.app/kt_chat_shell_fragment" />
 
-        <action
-            android:id="@+id/action_kt_chat_shell_fragment_to_im_chat_nav_graph"
-            app:destination="@id/im_chat_nav_graph" />
-
-        <action
-            android:id="@+id/action_kt_chat_shell_fragment_to_im_contact_nav_graph"
-            app:destination="@id/im_contact_nav_graph" />
-
-        <action
-            android:id="@+id/action_kt_chat_shell_fragment_to_im_conversation_nav_graph"
-            app:destination="@id/im_conversation_nav_graph" />
-
-        <action
-            android:id="@+id/action_kt_chat_shell_fragment_to_im_discover_nav_graph"
-            app:destination="@id/im_discover_nav_graph" />
-
-        <action
-            android:id="@+id/action_kt_chat_shell_fragment_to_im_user_nav_graph"
-            app:destination="@id/im_user_nav_graph" />
-
-    </fragment>-->
+    </fragment>
 
 
 </navigation>
