@@ -51,34 +51,27 @@ fun Context.isDarkMode(): Boolean {
  * 设置透明状态栏
  */
 fun Activity.transparentStatusBar() {
-    val controller = ViewCompat.getWindowInsetsController(window.decorView)
     // 隐藏状态栏
-    controller?.hide(statusBars())
+    WindowCompat.getInsetsController(window, window.decorView).hide(statusBars())
     // 设置状态栏颜色为透明
     window.statusBarColor = Color.TRANSPARENT
 }
 
 /**
- * 设置透明状态栏
+ * 设置状态栏颜色
  */
 fun Activity.transparentStatusBar(@ColorInt color: Int) {
-    val controller = ViewCompat.getWindowInsetsController(window.decorView)
     // 隐藏状态栏
-    controller?.hide(statusBars())
+    WindowCompat.getInsetsController(window, window.decorView).hide(statusBars())
     // 设置状态栏颜色为color
     window.statusBarColor = color
 }
 
 /**
- * 状态栏反色
+ * 设置状态栏模式：Light OR Dark
  */
-fun Activity.setAndroidNativeLightStatusBar() {
-    setAndroidNativeLightStatusBar(!isDarkMode())
-}
-
 fun Activity.setAndroidNativeLightStatusBar(isLight: Boolean) {
-    val controller = ViewCompat.getWindowInsetsController(window.decorView)
-    controller?.isAppearanceLightStatusBars = isLight
+    WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = isLight
 }
 
 /**
@@ -87,7 +80,7 @@ fun Activity.setAndroidNativeLightStatusBar(isLight: Boolean) {
  */
 fun Activity.hideSystemBars() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    ViewCompat.getWindowInsetsController(window.decorView)?.let { controller ->
+    WindowCompat.getInsetsController(window, window.decorView).let { controller ->
         controller.hide(WindowInsetsCompat.Type.systemBars())
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -99,23 +92,21 @@ fun Activity.hideSystemBars() {
  */
 fun Activity.showSystemBars() {
     WindowCompat.setDecorFitsSystemWindows(window, true)
-    ViewCompat.getWindowInsetsController(findViewById<FrameLayout>(android.R.id.content))
-        ?.show(WindowInsetsCompat.Type.systemBars())
+    WindowCompat.getInsetsController(window, window.decorView)
+        .show(WindowInsetsCompat.Type.systemBars())
 }
 
 /**
  * 隐藏ime
  */
 fun Activity.hideIme() {
-    val controller = ViewCompat.getWindowInsetsController(window.decorView)
-    controller?.hide(ime())
+    WindowCompat.getInsetsController(window, window.decorView).hide(ime())
 }
 
 /**
  * 显示ime
  */
 fun Activity.showIme() {
-    val controller = ViewCompat.getWindowInsetsController(window.decorView)
-    controller?.show(ime())
+    WindowCompat.getInsetsController(window, window.decorView).show(ime())
 }
 
