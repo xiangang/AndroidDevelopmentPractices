@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -19,19 +17,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.nxg.androidsample.R
 import com.nxg.im.chat.component.MainViewModel
 import com.nxg.im.chat.component.conversation.ConversationChatViewModel
+import com.nxg.im.chat.component.conversation.ConversationContent
+import com.nxg.im.chat.component.data.exampleUiState
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.contact.component.ContactListCompose
@@ -42,7 +45,6 @@ import com.nxg.im.conversation.component.ConversationViewModel
 import com.nxg.im.conversation.component.ConversationViewModelFactory
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.callback.OnMessageCallback
-import com.nxg.im.core.data.bean.parseIMMessage
 import com.nxg.im.discover.component.DiscoverListCompose
 import com.nxg.im.discover.component.DiscoverViewModel
 import com.nxg.im.user.component.login.LoginViewModel
@@ -56,7 +58,7 @@ import kotlinx.coroutines.launch
 
 class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private val ktChatViewModel: KtChatViewModel by activityViewModels()
 
@@ -86,6 +88,10 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
             setContent {
                 KtChatCompose()
             }
@@ -111,6 +117,8 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
             var startDestination by remember {
                 mutableStateOf(Screen.Chat.route)
             }
+            val topBarState = rememberTopAppBarState()
+            val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
             val navHostController = rememberNavController()
             Scaffold(
                 topBar = {
@@ -123,14 +131,13 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                                 )
                             }
                         },
-                        modifier = Modifier,
                         navigationIcon = {
                             JetchatIcon(
                                 contentDescription = stringResource(id = R.string.navigation_drawer_open),
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clickable(onClick = {
-                                        viewModel.openDrawer()
+                                        mainViewModel.openDrawer()
                                     })
                                     .padding(16.dp)
                             )
@@ -192,60 +199,73 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                             )
                         }
                     }
-                }
-            ) {
-                NavHost(
-                    navController = navHostController,
-                    startDestination = startDestination
+                },
+                // Exclude ime and navigation bar padding so this can be added by the UserInput composable
+                contentWindowInsets = ScaffoldDefaults
+                    .contentWindowInsets
+                    .exclude(WindowInsets.navigationBars)
+                    .exclude(WindowInsets.ime),
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            ) { paddingValues ->
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
                 ) {
-                    composable("chat") {
-                        conversationViewModel.refresh()
-                        val scope = rememberCoroutineScope()
-                        ConversationListCompose(
-                            conversationViewModel,
-                            findNavController()
-                        ) { navController, conversation ->
-                            scope.launch {
-                                conversationViewModel.loadConversation(conversation)
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/${conversation.chatType}?chatId=${conversation.chatId}".toUri())
-                                    .build()
-                                navController.navigate(request)
-                            }
-                        }
-                    }
-                    composable("contact") {
-                        contactViewModel.getMyFriends()
-                        val scope = rememberCoroutineScope()
-                        ContactListCompose(
-                            contactViewModel,
-                            findNavController()
-                        ) { navController, friend ->
-                            scope.launch {
-                                contactViewModel.loadContactDetail(friend)
-                                //从壳跳转到联系人详情页
-                                val request = NavDeepLinkRequest.Builder
-                                    .fromUri("android-app://com.nxg.app/contact_detail_fragment".toUri())
-                                    .build()
-                                navController.navigate(request)
-                            }
-                        }
-                    }
-                    composable("discover") {
-                        val discoverUIState by discoverViewModel.uiState.collectAsState()
-                        DiscoverListCompose(discoverUIState)
-                    }
-                    composable("profile") {
-                        profileViewModel.getLoginData()
-                        val profileUIState by profileViewModel.uiState.collectAsState()
-                        Log.i("TAG", "KtChatCompose: profileUIState ${profileUIState.user}")
-                        profileUIState.user?.let {
-                            ProfileCompose(
-                                profileViewModel, loginViewModel,
-                                it,
-                                findNavController()
-                            ) { _, friend ->
 
+                    NavHost(
+                        navController = navHostController,
+                        startDestination = startDestination
+                    ) {
+                        composable("chat") {
+                            conversationViewModel.refresh()
+                            val scope = rememberCoroutineScope()
+                            ConversationListCompose(
+                                conversationViewModel,
+                                findNavController()
+                            ) { navController, conversation ->
+                                scope.launch {
+                                    conversationViewModel.loadConversation(conversation)
+                                    val request = NavDeepLinkRequest.Builder
+                                        .fromUri("android-app://com.nxg.app/conversation_chat_fragment/${conversation.chatType}?chatId=${conversation.chatId}".toUri())
+                                        .build()
+                                    navController.navigate(request)
+                                }
+                            }
+                        }
+                        composable("contact") {
+                            contactViewModel.getMyFriends()
+                            val scope = rememberCoroutineScope()
+                            ContactListCompose(
+                                contactViewModel,
+                                findNavController()
+                            ) { navController, friend ->
+                                scope.launch {
+                                    contactViewModel.loadContactDetail(friend)
+                                    //从壳跳转到联系人详情页
+                                    val request = NavDeepLinkRequest.Builder
+                                        .fromUri("android-app://com.nxg.app/contact_detail_fragment".toUri())
+                                        .build()
+                                    navController.navigate(request)
+                                }
+                            }
+                        }
+                        composable("discover") {
+                            val discoverUIState by discoverViewModel.uiState.collectAsState()
+                            DiscoverListCompose(discoverUIState)
+                        }
+                        composable("profile") {
+                            profileViewModel.getLoginData()
+                            val profileUIState by profileViewModel.uiState.collectAsState()
+                            Log.i("TAG", "KtChatCompose: profileUIState ${profileUIState.user}")
+                            profileUIState.user?.let {
+                                ProfileCompose(
+                                    profileViewModel, loginViewModel,
+                                    it,
+                                    findNavController()
+                                ) { _, friend ->
+
+                                }
                             }
                         }
                     }

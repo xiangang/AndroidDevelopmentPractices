@@ -73,5 +73,15 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/conversation_fragment"
+        android:name="com.nxg.im.chat.component.conversation.ConversationFragment"
+        android:label="ConversationFragment" />
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.nxg.im.chat.component.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+
 
 </navigation>

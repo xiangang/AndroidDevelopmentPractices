@@ -48,6 +48,7 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
         // including IME animations
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+
         setContentView(
             ComposeView(this).apply {
                 consumeWindowInsets = false
