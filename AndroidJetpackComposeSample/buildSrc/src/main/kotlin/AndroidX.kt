@@ -231,3 +231,11 @@ object Camera {
 
     const val view = "androidx.camera:camera-view:1.0.0-alpha27"
 }
+
+object Datastore {
+    private const val version = "1.0.0"
+
+    const val datastore = "androidx.datastore:datastore:$version"
+    const val protobuf_javalite = "com.google.protobuf:protobuf-javalite:3.18.0"
+
+}

@@ -132,6 +132,5 @@ dependencies {
     implementation(project(mapOf("path" to ":SocketIOStudyComponent")))
     implementation(project(mapOf("path" to ":IMUserComponent")))
     implementation(project(mapOf("path" to ":SettingComponent")))
-    implementation(project(mapOf("path" to ":NoticeComponent")))
 
 }

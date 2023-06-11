@@ -62,7 +62,7 @@ class ProfileFragment : BaseBusinessFragment(), SimpleLogger {
                             profileViewModel, loginViewModel,
                             it,
                             findMainActivityNavController()
-                        ) { navController, friend ->
+                        ) { _, _ ->
 
                         }
                     }

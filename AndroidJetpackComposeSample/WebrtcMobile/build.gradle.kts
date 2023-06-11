@@ -5,7 +5,6 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -55,13 +54,12 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation(Hilt.android)
     implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
     implementation(project(mapOf("path" to ":FastMvvm")))
 //    implementation("org.webrtc:google-webrtc:1.0.32006")
-    implementation(files("libs/google-webrtc-1.0.32006.aar"))
+    implementation(project(mapOf("path" to ":LocalAAR:WebRTC")))
     implementation("com.github.shenbengit:WebRTCExtension:1.0.1")
     implementation("com.google.code.gson:gson:2.9.0")
 }

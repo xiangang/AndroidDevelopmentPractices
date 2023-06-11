@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.protobuf") version "0.8.17"
 }
 
 android {
@@ -56,6 +57,8 @@ dependencies {
     implementation(Kotlin.Coroutines.core)
     implementation(Kotlin.Coroutines.json)
     implementation(Google.material)
+    implementation(Datastore.datastore)
+    implementation(Datastore.protobuf_javalite)
     testImplementation(TestLib.junit)
     testImplementation(TestLib.androidJunit)
     testImplementation(TestLib.espresso)
@@ -81,3 +84,4 @@ dependencies {
     // 搜索功能组件
     implementation("com.netease.yunxin.kit.search:searchkit-ui:9.0.0")*/
 }
+
