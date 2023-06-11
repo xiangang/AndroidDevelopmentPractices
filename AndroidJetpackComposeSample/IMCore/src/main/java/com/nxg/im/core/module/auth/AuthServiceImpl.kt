@@ -72,6 +72,8 @@ object AuthServiceImpl : AuthService, SimpleLogger {
 
     override suspend fun login(username: String, password: String): Result<LoginData> {
         try {
+            rememberUserName(username)
+            rememberPassword(password)
             val requestBody = GsonUtils.toJson(LoginForm(username, password))
                 .toRequestBody(MediaTypeJson.toMediaTypeOrNull())
             val apiResult = IMHttpManger.imApiService.login(requestBody)
@@ -135,5 +137,25 @@ object AuthServiceImpl : AuthService, SimpleLogger {
 
     override suspend fun getWebSocketToken(): String? {
         return userLoginData?.token ?: let { null }
+    }
+
+    override suspend fun rememberUserName(username: String) {
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("username", username)
+        editor.apply()
+    }
+
+    override suspend fun rememberPassword(password: String) {
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("password", password)
+        editor.apply()
+    }
+
+    override suspend fun getUsername(): String {
+        return sharedPreferences.getString("username", "") ?: ""
+    }
+
+    override suspend fun getPassword(): String {
+        return sharedPreferences.getString("password", "") ?: ""
     }
 }

@@ -33,6 +33,15 @@ class LoginFragment : BaseBusinessFragment(R.layout.fragment_login) {
         val loginButton = binding.login
         val loadingProgressBar = binding.loading
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        loginViewModel.getUsernamePassword()
+        loginViewModel.loginForm.observe(viewLifecycleOwner,
+            Observer { loginForm ->
+                if (loginForm == null) {
+                    return@Observer
+                }
+                usernameEditText.setText(loginForm.username)
+                passwordEditText.setText(loginForm.password)
+            })
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {

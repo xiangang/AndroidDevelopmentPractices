@@ -5,22 +5,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.Result
+import com.nxg.im.core.module.auth.LoginForm
 import com.nxg.mvvm.ktx.launchExceptionHandler
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.user.component.R
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel(), SimpleLogger {
 
-    private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState> = _loginForm
+    private val _loginFormState = MutableLiveData<LoginFormState>()
+    val loginFormState: LiveData<LoginFormState> = _loginFormState
 
     private val _loginResult = MutableLiveData<LoginResult?>()
     val loginResult: LiveData<LoginResult?> = _loginResult
+
+    private val _loginForm = MutableLiveData<LoginForm>()
+    val loginForm: LiveData<LoginForm> = _loginForm
+
+
+    fun getUsernamePassword() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val deferredUsername = async { IMClient.authService.getUsername() }
+            val deferredPassword = async { IMClient.authService.getPassword() }
+            val username = deferredUsername.await()
+            val password = deferredPassword.await()
+            withContext(Dispatchers.Main) {
+                _loginForm.value = LoginForm(username, password)
+            }
+        }
+    }
+
 
     fun login(username: String, password: String) {
         launchExceptionHandler(viewModelScope, Dispatchers.IO, {
@@ -49,11 +69,11 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
+            _loginFormState.value = LoginFormState(usernameError = R.string.invalid_username)
         } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            _loginFormState.value = LoginFormState(passwordError = R.string.invalid_password)
         } else {
-            _loginForm.value = LoginFormState(isDataValid = true)
+            _loginFormState.value = LoginFormState(isDataValid = true)
         }
     }
 
