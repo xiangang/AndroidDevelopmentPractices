@@ -10,6 +10,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okio.ByteString
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -89,9 +90,14 @@ object IMWebSocket : SimpleLogger {
         }
     }
 
-    fun send(text: String) {
-        logger.debug { "send $text" }
-        webSocket?.send(text)
+    fun send(text: String): Boolean {
+        logger.debug { "sendMessage $text" }
+        return webSocket?.send(text) ?: false
+    }
+
+    fun send(bytes: ByteString): Boolean {
+        logger.debug { "sendMessage $bytes" }
+        return webSocket?.send(bytes) ?: false
     }
 
     fun close() {

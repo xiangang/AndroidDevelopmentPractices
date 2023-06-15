@@ -13,6 +13,7 @@ sealed class IMMessage {
 }
 
 @Serializable
+@SerialName("Text")
 data class TextMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -22,6 +23,7 @@ data class TextMessage(
 ) : IMMessage()
 
 @Serializable
+@SerialName("Image")
 data class ImageMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -31,6 +33,7 @@ data class ImageMessage(
 ) : IMMessage()
 
 @Serializable
+@SerialName("Audio")
 data class AudioMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -40,6 +43,7 @@ data class AudioMessage(
 ) : IMMessage()
 
 @Serializable
+@SerialName("Video")
 data class VideoMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -49,6 +53,7 @@ data class VideoMessage(
 ) : IMMessage()
 
 @Serializable
+@SerialName("File")
 data class FileMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -58,6 +63,7 @@ data class FileMessage(
 ) : IMMessage()
 
 @Serializable
+@SerialName("Location")
 data class LocationMessage(
     override val fromId: Long,
     override val toId: Long,
@@ -72,22 +78,28 @@ sealed class MessageContent
 fun MessageContent.toJson(): String = Json.encodeToString(MessageContent.serializer(), this)
 
 @Serializable
+@SerialName("Text")
 data class TextMsgContent(val text: String) : MessageContent()
 
 @Serializable
+@SerialName("Image")
 data class ImageMsgContent(val url: String, val width: Int, val height: Int) : MessageContent()
 
 @Serializable
+@SerialName("Audio")
 data class AudioMsgContent(val url: String, val duration: Int) : MessageContent()
 
 @Serializable
+@SerialName("Video")
 data class VideoMsgContent(val url: String, val duration: Int, val width: Int, val height: Int) :
     MessageContent()
 
 @Serializable
+@SerialName("File")
 data class FileMsgContent(val url: String, val name: String, val size: Int) : MessageContent()
 
 @Serializable
+@SerialName("Location")
 data class LocationMsgContent(val latitude: Double, val longitude: Double, val address: String) :
     MessageContent()
 

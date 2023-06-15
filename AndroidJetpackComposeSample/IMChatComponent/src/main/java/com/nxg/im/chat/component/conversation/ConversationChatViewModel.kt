@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.blankj.utilcode.util.Utils
+import com.google.protobuf.ByteString
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.IMCoreMessage
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.data.db.entity.Conversation
@@ -17,6 +19,8 @@ import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.module.user.User
 import com.nxg.mvvm.logger.SimpleLogger
+import okio.ByteString.Companion.toByteString
+import java.io.ByteArrayOutputStream
 
 
 data class ConversationChat(
@@ -135,6 +139,7 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
             IMClient.authService.getLoginData()?.let { loginData ->
                 _uiState.value.conversationChat?.let { conversationChat ->
                     let {
+                        //保存到本地数据库
                         val msgContent = TextMessage(
                             loginData.user.uuid,
                             conversationChat.chatId,
@@ -152,15 +157,20 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
                         )
                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                             .insertMessages(message)
-                        IMClient.chatService.sendMessage(
-                            TextMessage(
-                                loginData.user.uuid,
-                                conversationChat.chatId,
-                                conversationChat.chatType,
-                                TextMsgContent(text),
-                                System.currentTimeMillis()
-                            ).toJson()
-                        )
+                        //通过WebSocket发送
+                        val body = msgContent.toByteArray()
+                        val imCoreMessage = IMCoreMessage.newBuilder().apply {
+                            version = 1
+                            cmd = "chat"
+                            subCmd = "text"
+                            type = 0
+                            logId = 0
+                            seqId = 0
+                            bodyLen = body.size
+                            bodyData = ByteString.copyFrom(body)
+                        }.build()
+                        val byteString = imCoreMessage.toByteArray().toByteString()
+                        IMClient.chatService.sendMessage(byteString)
                     }
                 }
             }

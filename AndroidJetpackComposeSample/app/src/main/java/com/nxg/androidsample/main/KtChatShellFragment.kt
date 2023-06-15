@@ -100,6 +100,9 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        profileViewModel.getLoginData()
+        //获取好友列表
+        contactViewModel.getMyFriends()
         IMClient.onMessageCallback = object : OnMessageCallback {
             override fun onMessage(message: String) {
                 logger.debug { "onMessage: $message" }
