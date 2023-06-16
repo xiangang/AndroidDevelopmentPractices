@@ -2,6 +2,7 @@ package com.nxg.im.core.http
 
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.IMConstants
+import com.nxg.im.core.IMCoreMessage
 import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.delay
@@ -50,7 +51,28 @@ object IMWebSocket : SimpleLogger {
                                     super.onMessage(webSocket, text)
                                     logger.debug { "onMessage $text" }
                                     //处理收到的消息
-                                    IMClient.onMessageCallback?.onMessage(text)
+                                    IMCoroutineScope.launch {
+                                        IMClient.onMessageCallback?.onMessage(text)
+                                    }
+                                }
+
+                                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                                    super.onMessage(webSocket, bytes)
+                                    IMCoroutineScope.launch {
+                                        try {
+                                            //处理收到的消息
+                                            val imCoreMessage =
+                                                IMCoreMessage.parseFrom(bytes.toByteArray())
+                                            logger.debug { "onMessage imCoreMessage $imCoreMessage" }
+                                            val imMessageJson =
+                                                imCoreMessage.bodyData.toStringUtf8()
+                                            logger.debug { "onMessage imMessage $imMessageJson" }
+                                            IMClient.onMessageCallback?.onMessage(imMessageJson)
+                                        } catch (e: Exception) {
+                                            println("chat ${e.message}")
+                                        }
+                                    }
+
                                 }
 
                                 override fun onClosing(
