@@ -2,6 +2,8 @@ package com.nxg.im.chat.component.conversation
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
@@ -19,12 +23,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,9 +47,10 @@ import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.commonui.components.SymbolAnnotationType
 import com.nxg.im.commonui.components.messageFormatter
+import com.nxg.im.commonui.theme.BlueGrey30
+import com.nxg.im.commonui.theme.Red40
 import com.nxg.im.core.data.bean.*
-import com.nxg.im.core.data.db.entity.Friend
-import com.nxg.im.core.data.db.entity.Message
+import com.nxg.im.core.data.db.entity.*
 import com.nxg.im.core.module.user.User
 import kotlinx.coroutines.launch
 
@@ -150,6 +158,7 @@ fun KtChatClickableMessage(
             KtChatTextMessage(imMessage.content.text, isUserMe, authorClicked)
         }
         is VideoMessage -> {}
+        else -> {}
     }
 }
 
@@ -173,6 +182,7 @@ private val KtChatBubbleShapeUserMe = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.
 @Composable
 fun KtChatItemBubble(
     imMessage: IMMessage,
+    sent: IMSendStatus,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit = {}
 ) {
@@ -181,7 +191,48 @@ fun KtChatItemBubble(
     } else {
         MaterialTheme.colorScheme.surfaceVariant
     }
-    Column {
+    Row {
+        if (isUserMe) {
+            // 状态
+            when (sent) {
+                IM_SEND_REQUEST -> {
+                    // 创建一个 [InfiniteTransition] 实列用来管理子动画
+                    val infiniteTransition = rememberInfiniteTransition()
+                    // 创建一个float类型的子动画
+                    val angle by infiniteTransition.animateFloat(
+                        initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
+                        targetValue = 360F,
+                        animationSpec = infiniteRepeatable(
+                            //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
+                            animation = tween(1000, easing = LinearEasing),
+                        )
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .graphicsLayer { rotationZ = angle }
+                            .clickable(onClick = { })
+                            .size(30.dp)
+                            .align(Alignment.CenterVertically),
+                        imageVector = Icons.Filled.Loop,
+                        tint = BlueGrey30,
+                        contentDescription = null,
+                    )
+                }
+                IM_SEND_FAILED -> {
+                    // 状态
+                    Icon(
+                        modifier = Modifier
+                            .clickable(onClick = { })
+                            .size(30.dp)
+                            .align(Alignment.CenterVertically),
+                        imageVector = Icons.Filled.Error,
+                        tint = Red40,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+        }
         Surface(
             color = backgroundBubbleColor,
             shape = if (isUserMe) KtChatBubbleShapeUserMe else KtChatBubbleShape
@@ -191,6 +242,35 @@ fun KtChatItemBubble(
                 isUserMe = isUserMe,
                 authorClicked = authorClicked
             )
+        }
+        if (!isUserMe) {
+            when (sent) {
+                IM_SEND_REQUEST -> {
+                    // 状态
+                    Image(
+                        modifier = Modifier
+                            .clickable(onClick = { })
+                            .size(30.dp)
+                            .align(Alignment.CenterVertically),
+                        painter = painterResource(id = R.drawable.ic_baseline_loop_24),
+                        colorFilter = ColorFilter.tint(BlueGrey30),
+                        contentDescription = null,
+                    )
+                }
+                IM_SEND_FAILED -> {
+                    // 状态
+                    Image(
+                        modifier = Modifier
+                            .clickable(onClick = { })
+                            .size(30.dp)
+                            .align(Alignment.CenterVertically),
+                        painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                        colorFilter = ColorFilter.tint(Red40),
+                        contentDescription = null,
+                    )
+                }
+            }
+
         }
     }
 }
@@ -205,12 +285,13 @@ fun KtChatItemBubblePreview() {
                 "applies) $EMOJI_POINTS https://goo.gle/jetnews",
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
-    KtChatItemBubble(textMessage, true)
+    KtChatItemBubble(textMessage, 1, true)
 }
 
 @Composable
 fun KtChatAuthorAndTextMessage(
     imMessage: IMMessage,
+    sent: IMSendStatus,
     name: String,
     timestamp: String,
     isUserMe: Boolean,
@@ -222,7 +303,7 @@ fun KtChatAuthorAndTextMessage(
         horizontalAlignment = if (isUserMe) Alignment.End else Alignment.Start
     ) {
         KtChatAuthorNameTimestamp(name, timestamp, isUserMe)
-        KtChatItemBubble(imMessage, isUserMe, authorClicked = authorClicked)
+        KtChatItemBubble(imMessage, sent, isUserMe, authorClicked = authorClicked)
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
@@ -245,14 +326,15 @@ fun KtChatAuthorAndTextMessagePreview() {
     )
     val imageMessage = ImageMessage(0, 0, 0, imageMsgContent, System.currentTimeMillis())
     Column {
-        KtChatAuthorAndTextMessage(textMessage, "AnonXG", "2023年06月06日23:31:19", true)
-        KtChatAuthorAndTextMessage(imageMessage, "nxg", "2023年06月06日23:31:20", false)
+        KtChatAuthorAndTextMessage(textMessage, 0, "AnonXG", "2023年06月06日23:31:19", true)
+        KtChatAuthorAndTextMessage(imageMessage, 0, "nxg", "2023年06月06日23:31:20", false)
     }
 }
 
 @Composable
 fun KtChatIMMessage(
     imMessage: IMMessage,
+    sent: IMSendStatus,
     avatar: String,
     name: String,
     timestamp: String,
@@ -270,6 +352,7 @@ fun KtChatIMMessage(
             //消息
             KtChatAuthorAndTextMessage(
                 imMessage = imMessage,
+                sent = sent,
                 isUserMe = isUserMe,
                 name = name,
                 timestamp = timestamp,
@@ -316,6 +399,7 @@ fun KtChatIMMessage(
             //消息
             KtChatAuthorAndTextMessage(
                 imMessage = imMessage,
+                sent = sent,
                 isUserMe = isUserMe,
                 name = name,
                 timestamp = timestamp,
@@ -352,7 +436,7 @@ fun KtChatIMMessagePreview() {
         ) {
             item {
                 KtChatIMMessage(
-                    textMessage,
+                    textMessage, 0,
                     "https://randomuser.me/api/portraits/men/1.jpg",
                     "AnonXG",
                     "2023年06月06日23:31:19",
@@ -362,7 +446,7 @@ fun KtChatIMMessagePreview() {
             }
             item {
                 KtChatIMMessage(
-                    imageMessage,
+                    imageMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
                     "2023年06月06日23:31:20",
@@ -371,7 +455,7 @@ fun KtChatIMMessagePreview() {
             }
             item {
                 KtChatIMMessage(
-                    textMessage,
+                    textMessage, 0,
                     "https://randomuser.me/api/portraits/men/1.jpg",
                     "AnonXG",
                     "2023年06月06日23:31:19",
@@ -380,7 +464,7 @@ fun KtChatIMMessagePreview() {
             }
             item {
                 KtChatIMMessage(
-                    textMessage,
+                    textMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
                     "2023年06月06日23:31:20",
@@ -389,7 +473,7 @@ fun KtChatIMMessagePreview() {
             }
             item {
                 KtChatIMMessage(
-                    imageMessage,
+                    imageMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
                     "2023年06月06日23:31:20",
@@ -435,6 +519,7 @@ fun KtChatIMMessages(
                     val imMessage = message.toIMMessage()
                     KtChatIMMessage(
                         imMessage = imMessage,
+                        message.sent,
                         avatar = if (imMessage.fromId == me.uuid) {
                             me.avatar
                         } else {
@@ -449,9 +534,7 @@ fun KtChatIMMessages(
                         timestamp = TimeUtils.millis2String(imMessage.timestamp),
                         onAuthorClick = { name -> onAuthorClick(name) }
                     )
-                    if (index % 10 == 0) {
-                        DayHeader(TimeUtils.millis2String(imMessage.timestamp))
-                    }
+                    DayHeader(TimeUtils.millis2String(imMessage.timestamp))
                 }
 
             }

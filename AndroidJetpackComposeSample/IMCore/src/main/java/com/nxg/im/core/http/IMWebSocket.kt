@@ -58,21 +58,7 @@ object IMWebSocket : SimpleLogger {
 
                                 override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                                     super.onMessage(webSocket, bytes)
-                                    IMCoroutineScope.launch {
-                                        try {
-                                            //处理收到的消息
-                                            val imCoreMessage =
-                                                IMCoreMessage.parseFrom(bytes.toByteArray())
-                                            logger.debug { "onMessage imCoreMessage $imCoreMessage" }
-                                            val imMessageJson =
-                                                imCoreMessage.bodyData.toStringUtf8()
-                                            logger.debug { "onMessage imMessage $imMessageJson" }
-                                            IMClient.onMessageCallback?.onMessage(imMessageJson)
-                                        } catch (e: Exception) {
-                                            println("chat ${e.message}")
-                                        }
-                                    }
-
+                                    IMClient.chatService.onReceiveMessage(bytes)
                                 }
 
                                 override fun onClosing(

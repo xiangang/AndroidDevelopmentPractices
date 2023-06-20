@@ -10,12 +10,12 @@ message IMCoreMessage {
   string cmd = 2;
   // 子命令
   string sub_cmd = 3;
-  // 消息类型，0:request，1:response，2:notify
+  // 消息类型，0:request，1:acknowledge，2:notify
   uint32 type = 4;
   // 消息log_id
-  uint32 log_id = 5;
+  uint64 log_id = 5;
   // 消息序列
-  uint32 seq_id = 6;
+  uint64 seq_id = 6;
   // 消息体长度
   uint32 body_len = 7;
   // 消息体，根据cmd，sub_cmd，type来确定

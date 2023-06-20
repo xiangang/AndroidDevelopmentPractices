@@ -50,11 +50,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     conversationChatViewModel,
                     onAuthorClick = { user ->
                         // Click callback
-                        val bundle = bundleOf("userId" to user)
-                        findNavController().navigate(
-                            R.id.nav_profile,
-                            bundle
-                        )
+
                     },
                     onMessageSent = {
                         conversationChatViewModel.sendMessage(it)

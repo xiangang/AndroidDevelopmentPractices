@@ -7,6 +7,12 @@ import com.nxg.im.core.data.db.entity.Message
 @Dao
 interface MessageDao {
 
+    @Insert
+    suspend fun insertMessage(message: Message): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateMessage(message: Message): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessages(vararg messages: Message)
 
