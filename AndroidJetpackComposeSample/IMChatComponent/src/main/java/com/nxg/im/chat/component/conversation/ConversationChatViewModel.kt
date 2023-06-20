@@ -154,6 +154,12 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
         }
     }
 
+    fun resendMessage(message: Message){
+        viewModelScope.launch(Dispatchers.IO) {
+            IMClient.chatService.resendMessage(message)
+        }
+    }
+
     /**
      * 接收聊天信息
      */

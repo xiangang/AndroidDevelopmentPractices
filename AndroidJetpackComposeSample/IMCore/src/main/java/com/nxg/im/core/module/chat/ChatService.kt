@@ -7,9 +7,9 @@ import okio.ByteString
 
 interface ChatService : IMService {
 
-    suspend fun sendMessage(text: String): Boolean
+    fun sendMessage(imMessage: IMMessage)
 
-    suspend fun sendMessage(imMessage: IMMessage)
+    fun resendMessage(message: Message)
 
     fun onReceiveMessage(bytes: ByteString)
 }

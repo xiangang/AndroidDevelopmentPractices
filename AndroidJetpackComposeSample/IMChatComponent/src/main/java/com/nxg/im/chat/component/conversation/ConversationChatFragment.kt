@@ -52,6 +52,10 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                         // Click callback
 
                     },
+                    resend = { message ->
+                        conversationChatViewModel.resendMessage(message)
+
+                    },
                     onMessageSent = {
                         conversationChatViewModel.sendMessage(it)
                     },

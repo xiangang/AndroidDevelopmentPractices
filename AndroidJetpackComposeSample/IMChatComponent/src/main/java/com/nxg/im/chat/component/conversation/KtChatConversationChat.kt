@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -184,7 +186,8 @@ fun KtChatItemBubble(
     imMessage: IMMessage,
     sent: IMSendStatus,
     isUserMe: Boolean,
-    authorClicked: (String) -> Unit = {}
+    authorClicked: (String) -> Unit = {},
+    resend: () -> Unit = {},
 ) {
     val backgroundBubbleColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
@@ -210,7 +213,6 @@ fun KtChatItemBubble(
                     Icon(
                         modifier = Modifier
                             .graphicsLayer { rotationZ = angle }
-                            .clickable(onClick = { })
                             .size(30.dp)
                             .align(Alignment.CenterVertically),
                         imageVector = Icons.Filled.Loop,
@@ -222,7 +224,8 @@ fun KtChatItemBubble(
                     // 状态
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = { })
+                            .background(Color.Transparent)
+                            .clickable(onClick = { resend() })
                             .size(30.dp)
                             .align(Alignment.CenterVertically),
                         imageVector = Icons.Filled.Error,
@@ -249,7 +252,6 @@ fun KtChatItemBubble(
                     // 状态
                     Image(
                         modifier = Modifier
-                            .clickable(onClick = { })
                             .size(30.dp)
                             .align(Alignment.CenterVertically),
                         painter = painterResource(id = R.drawable.ic_baseline_loop_24),
@@ -261,7 +263,7 @@ fun KtChatItemBubble(
                     // 状态
                     Image(
                         modifier = Modifier
-                            .clickable(onClick = { })
+                            .clickable(onClick = { resend() })
                             .size(30.dp)
                             .align(Alignment.CenterVertically),
                         painter = painterResource(id = R.drawable.ic_baseline_error_24),
@@ -296,14 +298,15 @@ fun KtChatAuthorAndTextMessage(
     timestamp: String,
     isUserMe: Boolean,
     modifier: Modifier = Modifier,
-    authorClicked: (String) -> Unit = {}
+    authorClicked: (String) -> Unit = {},
+    resend: () -> Unit = {},
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = if (isUserMe) Alignment.End else Alignment.Start
     ) {
         KtChatAuthorNameTimestamp(name, timestamp, isUserMe)
-        KtChatItemBubble(imMessage, sent, isUserMe, authorClicked = authorClicked)
+        KtChatItemBubble(imMessage, sent, isUserMe, authorClicked = authorClicked, resend = resend)
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
@@ -339,7 +342,8 @@ fun KtChatIMMessage(
     name: String,
     timestamp: String,
     isUserMe: Boolean,
-    onAuthorClick: (String) -> Unit = {}
+    onAuthorClick: (String) -> Unit = {},
+    resend: () -> Unit = {},
 ) {
     val borderColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
@@ -357,6 +361,7 @@ fun KtChatIMMessage(
                 name = name,
                 timestamp = timestamp,
                 authorClicked = onAuthorClick,
+                resend = resend,
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .weight(1f)
@@ -404,6 +409,7 @@ fun KtChatIMMessage(
                 name = name,
                 timestamp = timestamp,
                 authorClicked = onAuthorClick,
+                resend = resend,
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .weight(1f)
@@ -494,6 +500,7 @@ fun KtChatIMMessages(
     me: User,
     friend: Friend,
     onAuthorClick: (String) -> Unit,
+    resend: (Message) -> Unit = {},
     scrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
@@ -514,7 +521,7 @@ fun KtChatIMMessages(
                 // The key is important so the Lazy list can remember your
                 // scroll position when more items are fetched!
                 key = { _, message -> message.id }
-            ) { index, message ->
+            ) { _, message ->
                 if (message != null) {
                     val imMessage = message.toIMMessage()
                     KtChatIMMessage(
@@ -532,7 +539,8 @@ fun KtChatIMMessages(
                         },
                         isUserMe = imMessage.fromId == me.uuid,
                         timestamp = TimeUtils.millis2String(imMessage.timestamp),
-                        onAuthorClick = { name -> onAuthorClick(name) }
+                        onAuthorClick = { name -> onAuthorClick(name) },
+                        resend = { resend(message) }
                     )
                     DayHeader(TimeUtils.millis2String(imMessage.timestamp))
                 }
@@ -552,31 +560,6 @@ fun KtChatIMMessages(
             }
         }
         itemCount = lazyPagingItems.itemCount
-        // Jump to bottom button shows up when user scrolls past a threshold.
-        // Convert to pixels:
-        val jumpThreshold = with(LocalDensity.current) {
-            KtChatJumpToBottomThreshold.toPx()
-        }
-
-        // Show the button if the first visible item is not the first one or if the offset is
-        // greater than the threshold.
-        val jumpToBottomButtonEnabled by remember {
-            derivedStateOf {
-                scrollState.firstVisibleItemIndex != 0 ||
-                        scrollState.firstVisibleItemScrollOffset > jumpThreshold
-            }
-        }
-
-        /* JumpToBottom(
-             // Only show if the scroller is not at the bottom
-             enabled = jumpToBottomButtonEnabled,
-             onClicked = {
-                 scope.launch {
-                     scrollState.animateScrollToItem(0)
-                 }
-             },
-             modifier = Modifier.align(Alignment.BottomCenter)
-         )*/
     }
 }
 
@@ -593,6 +576,7 @@ fun KtChatConversationContent(
     conversationChatViewModel: ConversationChatViewModel,
     modifier: Modifier = Modifier,
     onAuthorClick: (String) -> Unit,
+    resend: (Message) -> Unit = {},
     onMessageSent: (String) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
@@ -662,6 +646,7 @@ fun KtChatConversationContent(
                     me = it.me,
                     friend = it.friend,
                     onAuthorClick = onAuthorClick,
+                    resend = resend,
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState
                 )

@@ -16,7 +16,7 @@ const val IM_SEND_FAILED: IMSendStatus = 3 //发送失败（没有收到服务�
 const val IM_RETRY_TIMES = 3 //失败后尝试的次数
 
 @Entity
-data class Message(
+data class Message constructor(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") var id: Long,//当前数据库的自增长id
     @ColumnInfo(name = "uuid") var uuid: Long,//服务器的uuid，本地记录可为空

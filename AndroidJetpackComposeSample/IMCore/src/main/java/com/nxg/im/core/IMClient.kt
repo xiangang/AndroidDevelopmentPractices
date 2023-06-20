@@ -39,9 +39,7 @@ object IMClient {
         ConversationServiceImpl
     }
 
-    val chatService: ChatService by lazy {
-        ChatServiceImpl
-    }
+    val chatService: ChatService = ChatServiceImpl
 
     var onMessageCallback: OnMessageCallback? = null
 

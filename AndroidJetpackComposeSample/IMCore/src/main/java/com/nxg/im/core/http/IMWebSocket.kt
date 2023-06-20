@@ -47,17 +47,9 @@ object IMWebSocket : SimpleLogger {
                                     connected = true
                                 }
 
-                                override fun onMessage(webSocket: WebSocket, text: String) {
-                                    super.onMessage(webSocket, text)
-                                    logger.debug { "onMessage $text" }
-                                    //处理收到的消息
-                                    IMCoroutineScope.launch {
-                                        IMClient.onMessageCallback?.onMessage(text)
-                                    }
-                                }
-
                                 override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                                     super.onMessage(webSocket, bytes)
+                                    //处理收到的消息
                                     IMClient.chatService.onReceiveMessage(bytes)
                                 }
 
