@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm'          // 注意要应用Kotlin 插件
 }
 
 //定义Maven仓库信息
@@ -33,8 +34,6 @@ publishing {
         maven {
             url = layout.buildDirectory.dir(MAVEN_NAME)
         }
-        maven {
-            url = "/home/xiangang/.m2/repository/"
-        }
+        mavenLocal()
     }
 }

@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">AndroidJetpackComposeSample</string>
+    <string name="app_name">KtChat</string>
+    <string name="permissions_tips">此应用是需要录音录像权限才可以正常使用</string>
+    <string name="menu_home">首页</string>
+    <string name="menu_chat">聊天</string>
+    <string name="menu_contact">通讯录</string>
+    <string name="menu_discovery">发现</string>
+    <string name="menu_mine">我的</string>
+    <string name="search">搜索</string>
+    <string name="create_group_chat">发起群聊</string>
+    <string name="add_friend">添加朋友</string>
+    <string name="scan">扫一扫</string>
+    <string name="money">收付款</string>
 </resources>

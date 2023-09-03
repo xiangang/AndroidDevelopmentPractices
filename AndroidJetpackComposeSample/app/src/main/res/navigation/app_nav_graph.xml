@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_nav_graph"
+    app:startDestination="@id/launch_fragment">
+
+    <include app:graph="@navigation/nui_nav_graph" />
+    <include app:graph="@navigation/im_conversation_nav_graph" />
+    <include app:graph="@navigation/im_chat_nav_graph" />
+    <include app:graph="@navigation/im_contact_nav_graph" />
+    <include app:graph="@navigation/im_discover_nav_graph" />
+    <include app:graph="@navigation/im_user_nav_graph" />
+
+    <fragment
+        android:id="@+id/main_fragment"
+        android:name="com.nxg.androidsample.main.MainFragment"
+        android:label="MainFragment">
+
+        <deepLink app:uri="android-app://com.nxg.app/main_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/launch_fragment"
+        android:name="com.nxg.androidsample.launch.LaunchFragment"
+        android:label="LaunchFragment">
+
+        <action
+            android:id="@+id/action_launch_fragment_to_main_fragment"
+            app:destination="@id/main_fragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launch_fragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_launch_fragment_to_kt_chat_shell_fragment"
+            app:destination="@id/kt_chat_shell_fragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launch_fragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_launch_fragment_to_login_fragment"
+            app:destination="@id/login_fragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launch_fragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_launch_fragment_to_nui_nav_graph"
+            app:destination="@id/nui_nav_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/launch_fragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.nxg.im.user.component.login.LoginFragment"
+        android:label="登录">
+
+        <deepLink app:uri="android-app://com.nxg.app/login_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/kt_chat_shell_fragment"
+        android:name="com.nxg.androidsample.main.KtChatShellFragment"
+        android:label="聊天">
+
+        <deepLink app:uri="android-app://com.nxg.app/kt_chat_shell_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/conversation_fragment"
+        android:name="com.nxg.im.chat.component.conversation.ConversationFragment"
+        android:label="ConversationFragment" />
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.nxg.im.chat.component.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+
+
+</navigation>

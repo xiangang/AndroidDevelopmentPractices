@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_contact_nav_graph"
+    app:startDestination="@id/contact_detail_fragment">
+
+    <fragment
+        android:id="@+id/contact_detail_fragment"
+        android:name="com.nxg.im.contact.component.ContactDetailFragment"
+        android:label="联系人详情">
+
+        <deepLink app:uri="android-app://com.nxg.app/contact_detail_fragment" />
+
+    </fragment>
+
+
+</navigation>

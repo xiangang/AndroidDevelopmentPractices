@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/im_chat_nav_graph"
+    app:startDestination="@id/conversation_chat_fragment">
+
+    <fragment
+        android:id="@+id/conversation_chat_fragment"
+        android:name="com.nxg.im.chat.component.conversation.ConversationChatFragment"
+        android:label="聊天">
+
+        <argument
+            android:name="chatType"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
+            android:name="chatId"
+            android:defaultValue="0L"
+            app:argType="long" />
+
+        <deepLink app:uri="android-app://com.nxg.app/conversation_chat_fragment/{chatType}?chatId={chatId}" />
+
+    </fragment>
+
+</navigation>

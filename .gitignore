@@ -86,6 +86,8 @@ lint/tmp/
 
 ComposePlane/.idea/
 
+AndroidDoubleColorBall/\.idea/
+
 AndroidComposeExamples/.idea/
 
 AndroidGradlePluginsSample/.idea/
@@ -97,3 +99,5 @@ AndroidJetpackComposeSample/.idea/
 ASanTest/\.idea/
 
 LooperLinearLayoutManager/\.idea/
+
+\.idea/

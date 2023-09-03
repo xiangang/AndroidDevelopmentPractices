@@ -1,15 +1,17 @@
 plugins {
+    kotlin("kapt")
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
-    //id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
 }
 
 
 android {
     compileSdk = BuildConfig.compileSdk
+    //compileSdkPreview = BuildConfig.compileSdkPreview
     buildToolsVersion = BuildConfig.buildToolsVersion
 
     defaultConfig {
@@ -23,9 +25,7 @@ android {
             useSupportLibrary = true
         }
         ndk {
-            //不配置则默认构建并打包所有可用的ABI
-            //same with gradle-> abiFilters 'x86_64','armeabi-v7a','arm64-v8a'
-            abiFilters.addAll(arrayListOf("x86_64", "armeabi-v7a", "arm64-v8a"))
+            abiFilters.addAll(arrayListOf("armeabi-v7a", "arm64-v8a"))
         }
     }
 
@@ -36,36 +36,55 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         dataBinding = true
         viewBinding = true
         compose = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = Compose.version
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
+
     packagingOptions {
         resources.excludes += "META-INF/gradle/incremental.annotation.processors"
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+
+    // Allow references to generated code
+//    kapt {
+//        correctErrorTypes = true
+//    }
+
+    configurations {
+        get("implementation").exclude(group = "com.intellij", module = "annotations")
+    }
 }
 
+
+
 dependencies {
-    implementation(project(mapOf("path" to ":CommonUI")))
-    implementation(project(mapOf("path" to ":CommonLib")))
-    implementation(project(mapOf("path" to ":CommonUtils")))
-    implementation(project(mapOf("path" to ":ffmpeg")))
-    implementation(project(mapOf("path" to ":LibRtmpSample")))
     testImplementation(TestLib.junit)
     testImplementation(TestLib.espresso)
+    debugImplementation(Compose.uiTooling)
     implementation(AndroidX.appcompat)
     implementation(AndroidX.constraintlayout)
     implementation(AndroidX.cardview)
@@ -73,12 +92,38 @@ dependencies {
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.activityKtx)
     implementation(AndroidX.fragmentKtx)
-    implementation(Google.material)
-    implementation(Compose.ui)
-    implementation(Compose.material)
-    implementation(Compose.activity)
-    implementation(Compose.preview)
-    debugImplementation(Compose.uiTooling)
-    androidTestImplementation(Compose.test)
+    implementation(AndroidX.swiperefreshlayout)
+    implementation(AndroidX.legacySupportV4)
+    implementation(NavigationLib.fragmentKtx)
+    implementation(NavigationLib.uiKtx)
+    implementation(NavigationLib.compose)
+    implementation(Lifecycle.liveDataKtx)
+    implementation(Lifecycle.viewModelKtx)
     implementation(Lifecycle.runtimeKtx)
+    implementation(Paging.runtimeKtx)
+    implementation(Paging.compose)
+    implementation(Google.material)
+    implementation(ThirdParty.linkageRecyclerview)
+    implementation(Hilt.android)
+    implementation(Hilt.navigation_fragment)
+    kapt(Hilt.android_compiler)
+    implementation(project(mapOf("path" to ":FastMvvm")))
+    implementation(project(mapOf("path" to ":FFmpegMobile")))
+    implementation(project(mapOf("path" to ":RtmpMobile")))
+    implementation(project(mapOf("path" to ":OpenCVMobile")))
+    implementation(project(mapOf("path" to ":AudioRecordUtils")))
+    implementation(project(mapOf("path" to ":YuvUtil")))
+    implementation(project(mapOf("path" to ":WebrtcMobile")))
+    implementation(project(mapOf("path" to ":IMCore")))
+    implementation(project(mapOf("path" to ":IMCommonUI")))
+    implementation(project(mapOf("path" to ":IMChatComponent")))
+    implementation(project(mapOf("path" to ":IMConversationComponent")))
+    implementation(project(mapOf("path" to ":IMContactComponent")))
+    implementation(project(mapOf("path" to ":IMDiscoverComponent")))
+    implementation(project(mapOf("path" to ":CommonUIComponent")))
+    implementation(project(mapOf("path" to ":FFmpegStudyComponent")))
+    implementation(project(mapOf("path" to ":SocketIOStudyComponent")))
+    implementation(project(mapOf("path" to ":IMUserComponent")))
+    implementation(project(mapOf("path" to ":SettingComponent")))
+
 }

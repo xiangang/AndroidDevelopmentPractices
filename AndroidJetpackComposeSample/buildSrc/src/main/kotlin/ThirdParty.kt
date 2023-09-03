@@ -79,6 +79,9 @@ object ThirdParty {
     const val iconCore = "com.mikepenz:iconics-core:5.3.1"
 
     const val javapoet = "com.squareup:javapoet:1.13.0"
+    const val rtmpClient = "net.butterflytv.utils:rtmp-client:3.1.0"
+    const val brvah = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7"
+    const val linkageRecyclerview = "com.kunminx.linkage:linkage-recyclerview:2.6.0"
 }
 
 object PermissionDispatcher {
@@ -130,7 +133,13 @@ object Glide {
 }
 
 //线圈（Kotlin 协程支持的 Android 图像加载库）
-const val coil = "io.coil-kt:coil:1.3.2"
+object Coil {
+    const val coil = "io.coil-kt:coil:1.3.2"
+    const val coilCompose = "io.coil-kt:coil-compose:2.1.0"
+    const val coilGif = "io.coil-kt:coil-gif:2.1.0"
+    const val coilSvg = "io.coil-kt:coil-svg:2.1.0"
+
+}
 
 /**播放器**/
 object ExoPlayer {
@@ -226,3 +235,34 @@ object DI {
 }
 
 /*******************************依赖注入***********************************/
+
+
+object Log {
+    //https://github.com/MicroUtils/kotlin-logging
+    const val kotlinLoggingWithAndroid = "io.github.oshai:kotlin-logging-jvm:4.0.0-beta-15"
+
+    //https://github.com/oshai/kotlin-logging
+    const val kotlinLogging = "io.github.microutils:kotlin-logging:3.0.5"
+    const val slf4jApi = "org.slf4j:slf4j-api:2.0.7"
+    const val slf4jSimple = "org.slf4j:slf4j-simple:2.0.7"
+    const val log4j = "log4j:log4j:1.2.17"
+
+    //https://github.com/tony19/logback-android
+    const val logbackAndroid = "com.github.tony19:logback-android:3.0.0"
+}
+
+
+object Ktor {
+    object Client {
+        private const val version = "2.2.4"
+        const val core = "io.ktor:ktor-client-core:$version"
+        const val cio = "io.ktor:ktor-client-cio:$version"
+        const val websockets = "io.ktor:ktor-client-websockets:$version"
+
+    }
+
+    object Serialization {
+        private const val version = "2.3.0"
+        const val kotlinxJson = "io.ktor:ktor-serialization-kotlinx-json-jvm:$version"
+    }
+}

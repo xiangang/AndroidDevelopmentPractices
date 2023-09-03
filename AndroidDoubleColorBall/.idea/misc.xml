@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ASMIdeaPluginConfiguration">
+    <asm skipDebug="true" skipFrames="true" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="ScrollView/src/main/res/drawable/scroll_view_shape_item.xml" value="0.33489583333333334" />
+        <entry key="ScrollView/src/main/res/layout/item_number.xml" value="0.303125" />
+        <entry key="ScrollView/src/main/res/layout/item_text.xml" value="0.2653985507246377" />
+        <entry key="ScrollView/src/main/res/layout/scroll_view_item_text.xml" value="0.22916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.31927083333333334" />
+        <entry key="app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.33489583333333334" />
         <entry key="app/src/main/res/drawable/shape_scroll_view.xml" value="0.33489583333333334" />
+        <entry key="app/src/main/res/drawable/shape_scroll_view_blue.xml" value="0.28125" />
+        <entry key="app/src/main/res/drawable/shape_scroll_view_red.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.29483695652173914" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.31875" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.14285714285714285" />
+        <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_number.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_text_blue.xml" value="0.31875" />
+        <entry key="app/src/main/res/layout/item_text_red.xml" value="0.31875" />
       </map>
     </option>
   </component>

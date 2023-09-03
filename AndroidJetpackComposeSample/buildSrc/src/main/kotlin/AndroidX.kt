@@ -11,16 +11,16 @@ object AndroidX {
      * 如果想使用其中某个库的更新版本，可以单独引用，比如下面的vectordrawable
      * 提示：对于声明式依赖，同一个库的不同版本，gradle会自动使用最新版本来进行依赖替换、编译
      */
-    const val appcompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
+    const val appcompat = "androidx.appcompat:appcompat:1.6.1"
 
     //core包+ktx扩展函数
-    const val coreKtx = "androidx.core:core-ktx:1.7.0-alpha01"
+    const val coreKtx = "androidx.core:core-ktx:1.10.1"
 
     //activity+ktx扩展函数
-    const val activityKtx = "androidx.activity:activity-ktx:1.3.1"
+    const val activityKtx = "androidx.activity:activity-ktx:1.5.1"
 
     //fragment+ktx扩展函数
-    const val fragmentKtx = "androidx.fragment:fragment-ktx:1.4.0-alpha04"
+    const val fragmentKtx = "androidx.fragment:fragment-ktx:1.5.1"
 
     //约束布局
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.0"
@@ -52,30 +52,50 @@ object AndroidX {
 }
 
 object Compose {
-    const val version = "1.1.0-beta01"
+    const val bom = "androidx.compose:compose-bom:2023.04.01"
+    private const val version = ""
+    const val kotlinCompilerExtensionVersion = "1.4.3"
     const val ui = "androidx.compose.ui:ui:$version"
-    const val material = "androidx.compose.material:material:$version"
+    const val unit = "androidx.compose.ui:ui-unit:$version"
+    const val util = "androidx.compose.ui:ui-util:$version"
+    const val viewbinding = "androidx.compose.ui:ui-viewbinding:$version"
+    const val googlefonts = "androidx.compose.ui:ui-text-google-fonts:$version"
+    const val material3 = "androidx.compose.material3:material3:1.1.0"
+    const val materialIcons = "androidx.compose.material:material-icons-extended:$version"
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
+    const val animation = "androidx.compose.animation:animation:$version"
+    const val paging = "androidx.paging:paging-compose:1.0.0-alpha18"
+    const val activity = "androidx.activity:activity-compose:1.7.1"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    const val runtime = "androidx.compose.runtime:runtime:$version"
+    const val liveData = "androidx.compose.runtime:runtime-livedata:$version"
+    const val saveable = "androidx.compose.runtime:runtime-saveable:$version"
+    const val constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    const val test = "androidx.compose.ui:ui-test-junit4:$version"
 
     //use debugImplementation
     const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
-    const val material3 = "androidx.compose.material3:material3:1.0.0-alpha02"
-    const val activity = "androidx.activity:activity-compose:1.4.0"
-    const val test = "androidx.compose.ui:ui-test-junit4:$version"
+    const val splashscreen = "androidx.core:core-splashscreen:1.0.0-alpha01"
+
     //更多compose工具集查看 accompanist项目#https://github.com/google/accompanist
+    private const val accompanistVersion = "0.24.13-rc"
+    const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
+    const val accompanistPagerIndicators =
+        "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
+    const val accompanistSystemUiController =
+        "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+    const val customViewPoolingContainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 }
 
 object Hilt {
-    private const val version = "2.40"
-    const val common = "com.google.dagger:hilt-android:$version"
-    const val compiler = "com.google.dagger:hilt-android-compiler:$version"
-    const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
-    private const val hiltVersion = "2.40"
-    const val hiltCompilerVersion = "1.0.0"
-    const val hilt_android = "com.google.dagger:hilt-android:$hiltVersion"
-    const val hilt_android_compiler = "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    const val hilt_compiler = "androidx.hilt:hilt-compiler:$hiltVersion"
-    const val hilt_android_gradle_plugin = "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
+    private const val version = "2.44"
+    private const val hiltCompilerVersion = "1.0.0-beta01"
+    const val common = "androidx.hilt:hilt-common:1.0.0"
+    const val android = "com.google.dagger:hilt-android:$version"
+    const val android_compiler = "com.google.dagger:hilt-android-compiler:$version"
+    const val compiler = "androidx.hilt:hilt-compiler:$hiltCompilerVersion"
+    const val navigation_fragment = "androidx.hilt:hilt-navigation-fragment:1.0.0"
+    const val work = "androidx.hilt:hilt-work:1.0.0"
 }
 
 
@@ -88,7 +108,7 @@ object ViewPager {
 }
 
 object Paging {
-    private const val version = "3.1.0-alpha03"
+    private const val version = "3.1.1"
     const val runtime = "androidx.paging:paging-runtime:$version"
     const val runtimeKtx = "androidx.paging:paging-runtime-ktx:$version"
 
@@ -107,11 +127,11 @@ object Paging {
     const val testingCommonKtx = "androidx.paging:paging-common-ktx:$version"
 
     // optional - Jetpack Compose integration
-    const val compose = "androidx.paging:paging-compose:1.0.0-alpha12"
+    const val compose = "androidx.paging:paging-compose:1.0.0-alpha14"
 }
 
 object Lifecycle {
-    private const val version = "2.4.0-alpha03"
+    private const val version = "2.5.1"
 
     @Deprecated("lifecycle-extensions 已弃用，截至到目前最后一个版本2.2.0，ViewModelProviders.of()被废弃了，使用ViewModelProvider(ViewModelStoreOwner)")
     const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
@@ -142,12 +162,13 @@ object Lifecycle {
 
     const val runtime = "androidx.lifecycle:lifecycle-runtime:$version"
     const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
+    const val runtimeCompose = "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
 }
 
 
 object NavigationLib {
     //这个版本支持多返回栈了
-    private const val version = "2.4.0-alpha04"
+    private const val version = "2.5.3"
 
     //const val fragment = "androidx.navigation:navigation-fragment:$version"
     const val fragmentKtx = "androidx.navigation:navigation-fragment-ktx:$version"
@@ -177,9 +198,10 @@ object NavigationLib {
 
 
 object Room {
-    private const val version = "2.4.0-alpha01"
+    private const val version = "2.5.0"
 
     const val runtime = "androidx.room:room-runtime:$version"
+    const val paging = "androidx.room:room-paging:$version"
 
     // for java use annotationProcessor , for kotlin use kapt
     const val compiler = "androidx.room:room-compiler:$version"
@@ -208,4 +230,12 @@ object Camera {
     const val lifecycle = "androidx.camera:camera-lifecycle:$version"
 
     const val view = "androidx.camera:camera-view:1.0.0-alpha27"
+}
+
+object Datastore {
+    private const val version = "1.0.0"
+
+    const val datastore = "androidx.datastore:datastore:$version"
+    const val protobuf_javalite = "com.google.protobuf:protobuf-javalite:3.18.0"
+
 }

@@ -56,11 +56,11 @@ class NotificationsFragment : Fragment() {
         val scrollView6: ScrollView = binding.scrollView6
         val scrollView7: ScrollView = binding.scrollView7
         val configurationBlue = ScrollView.build {
-            scrollAnimatorDuration = 6000L
+            scrollAnimatorDuration = 3000L
             itemLayoutId = R.layout.item_text_blue
         }
         val configurationRed = ScrollView.build {
-            scrollAnimatorDuration = 6000L
+            scrollAnimatorDuration = 3000L
             itemLayoutId = R.layout.item_text_red
         }
         scrollView.setConfiguration(configurationRed)

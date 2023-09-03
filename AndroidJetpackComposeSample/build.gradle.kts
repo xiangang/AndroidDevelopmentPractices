@@ -1,27 +1,24 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-/*plugins {
-    id("de.fayard.buildSrcVersions") version "0.6.1"
-}*/
-// Don't put any code before the buildscript {} and plugins {} block
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-        /*maven(url = "https://oss.sonatype.org/content/repositories/snapshots") {
-            content {
-                includeModule("com.google.dagger", "hilt-android-gradle-plugin")
-            }
-        }*/
-    }
     dependencies {
-        classpath(Gradle.plugin)
-        classpath(Kotlin.plugin)
         classpath(NavigationLib.safeArgsGradlePlugin)
-        classpath(Hilt.gradlePlugin)
     }
 }
+plugins {
+    id("com.android.application") version ("7.2.1") apply (false)
+    id("com.android.library") version ("7.2.1") apply (false)
+    id("org.jetbrains.kotlin.android") version (Kotlin.kotlin_version) apply (false)
+    id("org.jetbrains.kotlin.kapt") version (Kotlin.kotlin_version) apply (false)
+    id("org.jetbrains.kotlin.plugin.serialization") version Kotlin.kotlin_version apply false
+    id("com.google.dagger.hilt.android") version "2.44" apply false
+}
 
-tasks.register("clean", Delete::class) {
+tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force(Lifecycle.viewModelKtx)
+    }
 }

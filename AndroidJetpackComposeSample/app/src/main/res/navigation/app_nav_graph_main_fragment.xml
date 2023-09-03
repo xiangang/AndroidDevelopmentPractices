@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_fragment_nav_graph"
+    app:startDestination="@id/navigation_chat">
+
+    <fragment
+        android:id="@id/navigation_chat"
+        android:name="com.nxg.im.conversation.component.ConversationListFragment"
+        android:label="@string/menu_chat" />
+
+    <fragment
+        android:id="@id/navigation_contact"
+        android:name="com.nxg.im.contact.component.ContactListFragment"
+        android:label="@string/menu_contact" />
+
+    <fragment
+        android:id="@id/navigation_discovery"
+        android:name="com.nxg.im.discover.component.DiscoverFragment"
+        android:label="@string/menu_discovery" />
+
+    <fragment
+        android:id="@id/navigation_mine"
+        android:name="com.nxg.im.user.component.profile.ProfileFragment"
+        android:label="@string/menu_mine" />
+
+</navigation>

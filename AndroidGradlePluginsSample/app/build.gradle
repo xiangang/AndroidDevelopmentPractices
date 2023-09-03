@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.nxg.plugins.greeting'
-    //如果是本地没发过该插件，需要先注释掉这里，插件发布后在打开注释
-    id 'com.nxg.plugins.greeting-standalone' version '1.0.0'
+    //如果本地没发布过该插件，需要先注释掉这里，插件发布后再打开注释
+    //id 'com.nxg.plugins.greeting-standalone' version '1.0.0'
 }
 
 
