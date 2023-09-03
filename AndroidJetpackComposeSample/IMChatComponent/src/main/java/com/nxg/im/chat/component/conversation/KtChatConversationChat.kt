@@ -499,7 +499,7 @@ private val KtChatJumpToBottomThreshold = 56.dp
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun KtChatIMMessages(
-    pager: Pager<Int, Message>,
+    pager: Pager<Int, Message>? = null,
     me: User,
     friend: Friend,
     onAuthorClick: (String) -> Unit,
@@ -507,64 +507,67 @@ fun KtChatIMMessages(
     scrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
-    val lazyPagingItems = pager.flow.collectAsLazyPagingItems()
-    var itemCount by remember { mutableStateOf(lazyPagingItems.itemCount) }
-    val scope = rememberCoroutineScope()
-    Box(modifier = modifier) {
-        LazyColumn(
-            reverseLayout = true,
-            state = scrollState,
-            modifier = Modifier
-                .testTag(ConversationTestTag)
-                .fillMaxWidth()
-                .wrapContentHeight()
-        ) {
-            itemsIndexed(
-                items = lazyPagingItems,
-                // The key is important so the Lazy list can remember your
-                // scroll position when more items are fetched!
-                key = { _, message -> message.id }
-            ) { _, message ->
-                Log.i("TAG", "KtChatMessages: message $message")
-                if (message != null) {
-                    val imMessage = message.toIMMessage()
-                    KtChatIMMessage(
-                        imMessage = imMessage,
-                        message.sent,
-                        avatar = if (imMessage.fromId == me.uuid) {
-                            me.avatar
-                        } else {
-                            friend.avatar
-                        },
-                        name = if (imMessage.fromId == me.uuid) {
-                            me.nickname
-                        } else {
-                            friend.nickname
-                        },
-                        isUserMe = imMessage.fromId == me.uuid,
-                        timestamp = TimeUtils.millis2String(imMessage.timestamp),
-                        onAuthorClick = { name -> onAuthorClick(name) },
-                        resend = { resend(message) }
-                    )
-                    DayHeader(TimeUtils.millis2String(imMessage.timestamp))
-                }
+    pager?.let {
+        val lazyPagingItems = it.flow.collectAsLazyPagingItems()
+        var itemCount by remember { mutableStateOf(lazyPagingItems.itemCount) }
+        val scope = rememberCoroutineScope()
+        Box(modifier = modifier) {
+            LazyColumn(
+                reverseLayout = true,
+                state = scrollState,
+                modifier = Modifier
+                    .testTag(ConversationTestTag)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                itemsIndexed(
+                    items = lazyPagingItems,
+                    // The key is important so the Lazy list can remember your
+                    // scroll position when more items are fetched!
+                    key = { _, message -> message.id }
+                ) { _, message ->
+                    Log.i("TAG", "KtChatMessages: message $message")
+                    if (message != null) {
+                        val imMessage = message.toIMMessage()
+                        KtChatIMMessage(
+                            imMessage = imMessage,
+                            message.sent,
+                            avatar = if (imMessage.fromId == me.uuid) {
+                                me.avatar
+                            } else {
+                                friend.avatar
+                            },
+                            name = if (imMessage.fromId == me.uuid) {
+                                me.nickname
+                            } else {
+                                friend.nickname
+                            },
+                            isUserMe = imMessage.fromId == me.uuid,
+                            timestamp = TimeUtils.millis2String(imMessage.timestamp),
+                            onAuthorClick = { name -> onAuthorClick(name) },
+                            resend = { resend(message) }
+                        )
+                        DayHeader(TimeUtils.millis2String(imMessage.timestamp))
+                    }
 
-            }
-        }
-        Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
-        if (itemCount == lazyPagingItems.itemCount) {
-            scope.launch {
-                Log.i(
-                    "TAG",
-                    "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} "
-                )
-                if (scrollState.firstVisibleItemIndex != 0) {
-                    scrollState.animateScrollToItem(0)
                 }
             }
+            Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
+            if (itemCount == lazyPagingItems.itemCount) {
+                scope.launch {
+                    Log.i(
+                        "TAG",
+                        "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} "
+                    )
+                    if (scrollState.firstVisibleItemIndex != 0) {
+                        scrollState.animateScrollToItem(0)
+                    }
+                }
+            }
+            itemCount = lazyPagingItems.itemCount
         }
-        itemCount = lazyPagingItems.itemCount
     }
+
 }
 
 @Preview

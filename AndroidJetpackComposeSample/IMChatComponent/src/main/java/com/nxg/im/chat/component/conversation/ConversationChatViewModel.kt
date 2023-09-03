@@ -1,6 +1,5 @@
 package com.nxg.im.chat.component.conversation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -19,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -43,22 +41,7 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
     // The UI collects from this StateFlow to get its state updates
     val uiState: StateFlow<ConversationChatUiState> = _uiState.asStateFlow()
 
-    val messagePager = Pager(
-        config = PagingConfig(pageSize = 50)
-    ) {
-        KtChatDatabase.getInstance(Utils.getApp()).messageDao().pagingSource()
-    }
-
-    init {
-        viewModelScope.launch {
-
-            messagePager.flow.collect {
-
-                logger.debug { "loadConversationChat messagePager.flow update " }
-
-            }
-        }
-    }
+    var messagePager: Pager<Int, Message>? = null
 
     /**
      * 创建会话（从通信点击进入聊天的情况需要创建会话）
@@ -136,7 +119,16 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
                                     )
                                 )
                             )
+                            messagePager = Pager(config = PagingConfig(pageSize = 50)) {
+                                KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                                    .pagingSource(
+                                        fromId = friend.friendId,
+                                        toId = it.user.uuid,
+                                        chatType
+                                    )
+                            }
                         }
+
                 }
             }
         }

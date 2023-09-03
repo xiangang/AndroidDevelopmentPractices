@@ -58,18 +58,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
 
     private suspend fun doSendMessage(message: Message) {
         logger.debug { "message: $message" }
-        //生成protobuf
-        val body = message.msgContent.toByteArray()
-        val imCoreMessage = IMCoreMessage.newBuilder().apply {
-            version = 1
-            cmd = "chat"
-            subCmd = "text"
-            type = 0
-            logId = 0
-            seqId = message.id
-            bodyLen = body.size
-            bodyData = com.google.protobuf.ByteString.copyFrom(body)
-        }.build()
+
         if (message.uuid == 0L) {
             //获取uuid
             val uuid = generateUid()
@@ -82,6 +71,18 @@ object ChatServiceImpl : ChatService, SimpleLogger {
             KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                 .updateMessage(message)
         }
+        //生成protobuf
+        val body = message.msgContent.toByteArray()
+        val imCoreMessage = IMCoreMessage.newBuilder().apply {
+            version = 1
+            cmd = "chat"
+            subCmd = "text"
+            type = 0
+            logId = message.id
+            seqId = message.uuid
+            bodyLen = body.size
+            bodyData = com.google.protobuf.ByteString.copyFrom(body)
+        }.build()
         //通过WebSocket发送
         val result = IMWebSocket.send(imCoreMessage.toByteArray().toByteString())
         logger.debug { "doSendMessage: result $result" }
@@ -119,8 +120,8 @@ object ChatServiceImpl : ChatService, SimpleLogger {
             cmd = "chat"
             subCmd = "text"
             type = 0
-            logId = 0
-            seqId = message.id
+            logId = message.id
+            seqId = message.uuid
             bodyLen = body.size
             bodyData = com.google.protobuf.ByteString.copyFrom(body)
         }.build()
@@ -280,14 +281,14 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                         "chat" -> {
                             when (imCoreMessage.subCmd) {
                                 "text" -> {
-                                    //acknowledge
+                                    //acknowledge（发送方处理）
                                     if (imCoreMessage.type == 1) {
                                         logger.debug { "handleReceiveMessage cancel ${imCoreMessage.seqId} job and remove!" }
                                         //移除ACK队列中的超时任务
                                         ackMap[imCoreMessage.seqId]?.cancel()
                                         logger.debug { "handleReceiveMessage: ${imCoreMessage.seqId} " + ackMap[imCoreMessage.seqId] }
                                         ackMap.remove(imCoreMessage.seqId)
-                                        //更新uuid和状态
+                                        //更新状态
                                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                                             .queryMessage(
                                                 imCoreMessage.seqId,
@@ -302,12 +303,12 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                                     .messageDao().updateMessage(it)
                                             }
                                     }
-                                    //notify
+                                    //notify（接收方处理）
                                     if (imCoreMessage.type == 2) {
                                         val currentTime = System.currentTimeMillis()
                                         val message = Message(
                                             0,
-                                            0,
+                                            uuid = imCoreMessage.seqId,
                                             fromId = imMessage.fromId,
                                             toId = imMessage.toId,
                                             chatType = imMessage.chatType,
@@ -318,7 +319,6 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                         )
                                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                                             .insertMessage(message)
-
                                         //单聊，如果没有会话，则创建
                                         if (imMessage.chatType == 0) {
                                             AuthServiceImpl.getLoginData()?.let {
