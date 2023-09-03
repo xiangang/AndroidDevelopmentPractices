@@ -14,7 +14,7 @@ sealed class IMMessage {
 
 @Serializable
 @SerialName("Text")
-data class TextMessage(
+data class TextMessage constructor(
     override val fromId: Long,
     override val toId: Long,
     override val chatType: Int,
@@ -76,6 +76,8 @@ data class LocationMessage(
 sealed class MessageContent
 
 fun MessageContent.toJson(): String = Json.encodeToString(MessageContent.serializer(), this)
+
+fun String.parseMessageContent(): MessageContent = Json.decodeFromString(MessageContent.serializer(), this)
 
 @Serializable
 @SerialName("Text")

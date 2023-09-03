@@ -1,5 +1,6 @@
 package com.nxg.im.core.http
 
+import com.nxg.im.core.data.bean.OfflineMsg
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.module.auth.LoginData
 import com.nxg.im.core.module.auth.RegisterData
@@ -10,6 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface IMApiService {
 
@@ -27,5 +29,18 @@ interface IMApiService {
 
     @GET("/api/v1/myFriends")
     suspend fun myFriends(@Header("Authorization") token: String): ApiResult<List<Friend>>
+
+    @GET("/api/v1/offlineMsg")
+    suspend fun offlineMsg(
+        @Header("Authorization") token: String,
+        @Query("fromId") fromId: String,
+        @Query("pageIndex") pageIndex: Int = 0,
+        @Query("pageSize") pageSize: Int = 10
+    ): ApiResult<OfflineMsg>
+
+
+    @GET("/api/v1/generateUid")
+    suspend fun generateUid(@Header("Authorization") token: String): ApiResult<Long>
+
 
 }

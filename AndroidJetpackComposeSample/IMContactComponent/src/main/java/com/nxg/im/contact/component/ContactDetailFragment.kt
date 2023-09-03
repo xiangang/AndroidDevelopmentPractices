@@ -179,7 +179,7 @@ fun ContactUserInfoCompose(
                 .height(48.dp),
             onClick = {
                 val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/0?chatId=${contactDetail.friend.uuid}".toUri())
+                    .fromUri("android-app://com.nxg.app/conversation_chat_fragment/0?chatId=${contactDetail.friend.friendId}".toUri())
                     .build()
                 navController?.navigate(request)
             },

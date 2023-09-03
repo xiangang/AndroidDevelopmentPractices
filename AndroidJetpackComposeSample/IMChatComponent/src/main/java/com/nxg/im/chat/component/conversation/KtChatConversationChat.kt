@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -155,10 +154,12 @@ fun KtChatClickableMessage(
                 true
             )
         }
+
         is LocationMessage -> {}
         is TextMessage -> {
             KtChatTextMessage(imMessage.content.text, isUserMe, authorClicked)
         }
+
         is VideoMessage -> {}
         else -> {}
     }
@@ -200,7 +201,7 @@ fun KtChatItemBubble(
             when (sent) {
                 IM_SEND_REQUEST -> {
                     // 创建一个 [InfiniteTransition] 实列用来管理子动画
-                    val infiniteTransition = rememberInfiniteTransition()
+                    val infiniteTransition = rememberInfiniteTransition(label = "")
                     // 创建一个float类型的子动画
                     val angle by infiniteTransition.animateFloat(
                         initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
@@ -208,7 +209,7 @@ fun KtChatItemBubble(
                         animationSpec = infiniteRepeatable(
                             //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
                             animation = tween(1000, easing = LinearEasing),
-                        )
+                        ), label = ""
                     )
                     Icon(
                         modifier = Modifier
@@ -220,6 +221,7 @@ fun KtChatItemBubble(
                         contentDescription = null,
                     )
                 }
+
                 IM_SEND_FAILED -> {
                     // 状态
                     Icon(
@@ -259,6 +261,7 @@ fun KtChatItemBubble(
                         contentDescription = null,
                     )
                 }
+
                 IM_SEND_FAILED -> {
                     // 状态
                     Image(
@@ -522,6 +525,7 @@ fun KtChatIMMessages(
                 // scroll position when more items are fetched!
                 key = { _, message -> message.id }
             ) { _, message ->
+                Log.i("TAG", "KtChatMessages: message $message")
                 if (message != null) {
                     val imMessage = message.toIMMessage()
                     KtChatIMMessage(

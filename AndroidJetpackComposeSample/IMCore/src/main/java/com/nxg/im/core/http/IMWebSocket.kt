@@ -2,7 +2,6 @@ package com.nxg.im.core.http
 
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.IMConstants
-import com.nxg.im.core.IMCoreMessage
 import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.delay
@@ -50,7 +49,7 @@ object IMWebSocket : SimpleLogger {
                                 override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                                     super.onMessage(webSocket, bytes)
                                     //处理收到的消息
-                                    IMClient.chatService.onReceiveMessage(bytes)
+                                    IMClient.chatService.onReceiveMessage(bytes.toByteArray())
                                 }
 
                                 override fun onClosing(
@@ -91,12 +90,12 @@ object IMWebSocket : SimpleLogger {
     }
 
     fun send(text: String): Boolean {
-        logger.debug { "sendMessage $text" }
+        logger.debug { "sendMessage $connected $text" }
         return webSocket?.send(text) ?: false
     }
 
     fun send(bytes: ByteString): Boolean {
-        logger.debug { "sendMessage $bytes" }
+        logger.debug { "sendMessage $connected $bytes " }
         return webSocket?.send(bytes) ?: false
     }
 

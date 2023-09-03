@@ -21,7 +21,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.fragment.findNavController
 import coil.compose.AsyncImage
 import com.nxg.commonui.theme.ColorBackground
 import com.nxg.im.commonui.theme.JetchatTheme

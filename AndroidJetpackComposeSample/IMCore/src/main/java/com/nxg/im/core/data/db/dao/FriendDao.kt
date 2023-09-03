@@ -10,10 +10,10 @@ interface FriendDao : IBaseDao<Friend, Long> {
     override val tableName: String
         get() = "friend"
 
-    @Query("SELECT * from friend WHERE uuid =:uuid")
-    suspend fun getFriend(uuid: Long): Friend
+    @Query("SELECT * from friend WHERE user_id =:userId AND friend_id=:friendId ")
+    suspend fun getFriend(userId: Long, friendId: Long): Friend?
 
-    @Query("SELECT * from friend")
-    fun flowFriendList(): Flow<List<Friend>>
+    @Query("SELECT * from friend WHERE user_id =:userId")
+    fun flowFriendList(userId: Long): Flow<List<Friend>>
 
 }
