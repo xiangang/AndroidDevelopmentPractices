@@ -15,11 +15,12 @@ import java.io.IOException
 object UserServiceImpl : UserService, SimpleLogger {
 
     override suspend fun getMe(): Result<User> {
+        logger.debug { "getMe:" }
         return try {
             IMClient.authService.getApiToken()?.let { it ->
                 val apiResult =
                     IMHttpManger.imApiService.me(it)
-                logger.debug { "me: apiResult $apiResult" }
+                logger.debug { "getMe: apiResult $apiResult" }
                 apiResult.data?.let {
                     Result.Success(it)
                 } ?: Result.Error(IMException.ApiException(apiResult.message))

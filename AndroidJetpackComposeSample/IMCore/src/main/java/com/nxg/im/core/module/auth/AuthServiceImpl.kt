@@ -5,7 +5,6 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.Utils
-import com.nxg.im.core.IMConstants
 import com.nxg.im.core.IMConstants.Api.Me
 import com.nxg.im.core.IMConstants.Api.MediaTypeJson
 import com.nxg.im.core.IMConstants.Api.SecretSharedPrefs
@@ -93,7 +92,7 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         userLoginData?.let {
             userLoginData = null
             saveLoginData(null)
-            saveUserToken("")
+            saveApiToken("")
             //TODO 暂时不需要通过服务器接口来登出
             /*try {
                 val requestBody = GsonUtils.toJson(LoginOutForm(it.token))
@@ -123,16 +122,14 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         return userLoginData
     }
 
-    override suspend fun saveUserToken(token: String) {
+    override suspend fun saveApiToken(token: String) {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString(Token, token)
         editor.apply()
     }
 
     override suspend fun getApiToken(): String? {
-        return userLoginData?.token?.let {
-            "${IMConstants.Api.Bearer} $it"
-        } ?: let { null }
+        return userLoginData?.getApiToken()
     }
 
     override suspend fun getWebSocketToken(): String? {

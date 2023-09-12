@@ -80,6 +80,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
                                                         )
                                                     }
                                                 }
+
                                                 is Result.Success -> {
                                                     withContext(Dispatchers.Main) {
                                                         logger.debug { "currentDestination: " + findNavController().currentDestination }
@@ -112,6 +113,9 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         var time by remember {
             mutableStateOf(countDownSec)
         }
+        var finish by remember {
+            mutableStateOf(false)
+        }
         //倒计时动画，匀速，从countDownSec->0
         val anim = remember {
             TargetBasedAnimation(
@@ -122,14 +126,19 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
             )
         }
         var playTime by remember { mutableStateOf(0L) }
-
+        logger.debug { "Splash: $playTime" }
         LaunchedEffect(anim) {
             val startTime = withFrameNanos { it }
             do {
                 playTime = withFrameNanos { it } - startTime
                 time = anim.getValueFromNanos(playTime)
+                logger.debug { "navigationTo: $time" }
                 if (time == 0) {
-                    navigationTo()
+                    if (!finish) {
+                        finish = true
+                        logger.debug { "navigationTo" }
+                        navigationTo()
+                    }
                 }
             } while (!anim.isFinishedFromNanos(playTime))
         }

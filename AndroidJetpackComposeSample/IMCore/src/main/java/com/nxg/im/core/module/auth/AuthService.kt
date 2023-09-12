@@ -19,7 +19,7 @@ interface AuthService : IMService {
 
     fun getLoginData(): LoginData?
 
-    suspend fun saveUserToken(token: String)
+    suspend fun saveApiToken(token: String)
 
     suspend fun getApiToken(): String?
 

@@ -9,7 +9,6 @@ import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.TextMessage
 import com.nxg.im.core.data.bean.TextMsgContent
 import com.nxg.im.core.data.db.KtChatDatabase
-import com.nxg.im.core.data.db.entity.Conversation
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.module.user.User
@@ -48,54 +47,10 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
      */
     fun insertOrReplaceConversation(chatId: Long, chatType: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            IMClient.authService.getLoginData()?.let { loginData ->
-                KtChatDatabase.getInstance(Utils.getApp().applicationContext).friendDao()
-                    .getFriend(loginData.user.uuid, chatId)?.let { friend ->
-                        IMClient.conversationService.loadConversations(
-                            loginData.user.uuid,
-                            chatId,
-                            chatType
-                        )?.let { conversation ->
-                            IMClient.conversationService.updateConversations(
-                                conversation.copy(
-                                    userId = loginData.user.uuid,
-                                    chatId = chatId,
-                                    chatType = chatType,
-                                    name = friend.nickname,
-                                    coverImage = friend.avatar,
-                                    backgroundImage = "",
-                                    lastMsgId = 0,
-                                    lastMsgContent = "",
-                                    updateTime = System.currentTimeMillis(),
-                                    unreadCount = 0,
-                                    draft = "",
-                                    top = false,
-                                    sticky = false,
-                                    remind = false,
-                                )
-                            )
-                        } ?: let {
-                            val conversation = Conversation(
-                                userId = loginData.user.uuid,
-                                chatId = chatId,
-                                chatType = chatType,
-                                name = friend.nickname,
-                                coverImage = friend.avatar,
-                                backgroundImage = "",
-                                lastMsgId = 0,
-                                lastMsgContent = "",
-                                createTime = System.currentTimeMillis(),
-                                updateTime = System.currentTimeMillis(),
-                                unreadCount = 0,
-                                draft = "",
-                                top = false,
-                                sticky = false,
-                                remind = false,
-                            )
-                            IMClient.conversationService.insertConversations(conversation)
-                        }
-                    }
-            }
+            IMClient.conversationService.insertOrReplaceConversation(
+                chatId,
+                chatType
+            )
         }
     }
 

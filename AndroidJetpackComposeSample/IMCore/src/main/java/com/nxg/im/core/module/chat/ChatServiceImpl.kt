@@ -11,7 +11,6 @@ import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.exception.IMException
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.http.IMWebSocket
-import com.nxg.im.core.module.auth.AuthServiceImpl
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -57,8 +56,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     }
 
     private suspend fun doSendMessage(message: Message) {
-        logger.debug { "message: $message" }
-
+        logger.debug { "doSendMessage: $message" }
         if (message.uuid == 0L) {
             //获取uuid
             val uuid = generateUid()
@@ -231,12 +229,22 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     override fun getOfflineMessage(fromId: String) {
         IMCoroutineScope.launch {
             try {
-                IMClient.authService.getApiToken()?.let { it ->
+                IMClient.authService.getLoginData()?.let { it ->
                     //分页获取离线消息
                     val pageIndex = 0
-                    val pageSize = 10
+                    val pageSize = 20
+                    val lastMessage = KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                        .lastMessage(fromId = fromId.toLong(), toId = it.user.uuid, 0)
+                    logger.debug { "getOfflineMessage: token ${it.getApiToken()}" }
+                    logger.debug { "getOfflineMessage: lastMessage uuid ${lastMessage?.uuid}" }
                     val apiResult =
-                        IMHttpManger.imApiService.offlineMsg(it, fromId, pageIndex, pageSize)
+                        IMHttpManger.imApiService.offlineMsg(
+                            token = it.getApiToken(),
+                            fromId = fromId,
+                            messageId = lastMessage?.uuid ?: 0L,
+                            pageIndex = pageIndex,
+                            pageSize = pageSize
+                        )
                     logger.debug { "getOfflineMessage: apiResult $apiResult" }
                     apiResult.data?.let {
                         Result.Success(it)
@@ -305,79 +313,51 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                     }
                                     //notify（接收方处理）
                                     if (imCoreMessage.type == 2) {
-                                        val currentTime = System.currentTimeMillis()
-                                        val message = Message(
-                                            0,
-                                            uuid = imCoreMessage.seqId,
-                                            fromId = imMessage.fromId,
-                                            toId = imMessage.toId,
-                                            chatType = imMessage.chatType,
-                                            msgContent = imMessageJson,
-                                            msgTime = imMessage.timestamp,
-                                            createTime = currentTime,
-                                            updateTime = currentTime,
-                                        )
+                                        //去重
                                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
-                                            .insertMessage(message)
+                                            .queryMessage(
+                                                imCoreMessage.seqId,
+                                                imMessage.fromId,
+                                                imMessage.toId,
+                                                imMessage.chatType
+                                            )?.let {
+                                                logger.debug { "handleReceiveMessage: update before $it" }
+                                                it.sent = IM_SEND_RESPONSE
+                                                logger.debug { "handleReceiveMessage: update after $it" }
+                                                KtChatDatabase.getInstance(Utils.getApp())
+                                                    .messageDao().updateMessage(it)
+                                            } ?: let {
+                                            val currentTime = System.currentTimeMillis()
+                                            val message = Message(
+                                                0,
+                                                uuid = imCoreMessage.seqId,
+                                                fromId = imMessage.fromId,
+                                                toId = imMessage.toId,
+                                                chatType = imMessage.chatType,
+                                                msgContent = imMessageJson,
+                                                msgTime = imMessage.timestamp,
+                                                createTime = currentTime,
+                                                updateTime = currentTime,
+                                            )
+                                            KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                                                .insertMessage(message)
+                                        }
                                         //单聊，如果没有会话，则创建
                                         if (imMessage.chatType == 0) {
-                                            AuthServiceImpl.getLoginData()?.let {
-                                                KtChatDatabase.getInstance(Utils.getApp().applicationContext)
-                                                    .friendDao()
-                                                    .getFriend(it.user.uuid, imMessage.fromId)
-                                                    ?.let { friend ->
-                                                        IMClient.conversationService.loadConversations(
-                                                            imMessage.toId,
-                                                            imMessage.fromId,
-                                                            imMessage.chatType
-                                                        )?.let { conversation ->
-                                                            IMClient.conversationService.insertConversations(
-                                                                conversation.copy(
-                                                                    userId = imMessage.toId,
-                                                                    chatId = imMessage.fromId,
-                                                                    chatType = imMessage.chatType,
-                                                                    name = friend.nickname,
-                                                                    coverImage = friend.avatar,
-                                                                    backgroundImage = "",
-                                                                    lastMsgId = 0,
-                                                                    lastMsgContent = "",
-                                                                    updateTime = System.currentTimeMillis(),
-                                                                    unreadCount = 0,
-                                                                    draft = "",
-                                                                    top = false,
-                                                                    sticky = false,
-                                                                    remind = false,
-                                                                )
-                                                            )
-                                                        } ?: let {
-                                                            val conversation = Conversation(
-                                                                imMessage.toId,
-                                                                imMessage.fromId,
-                                                                chatType = imMessage.chatType,
-                                                                name = friend.nickname,
-                                                                coverImage = friend.avatar,
-                                                                backgroundImage = "",
-                                                                lastMsgId = 0,
-                                                                lastMsgContent = "",
-                                                                createTime = System.currentTimeMillis(),
-                                                                updateTime = System.currentTimeMillis(),
-                                                                unreadCount = 0,
-                                                                draft = "",
-                                                                top = false,
-                                                                sticky = false,
-                                                                remind = false,
-                                                            )
-                                                            IMClient.conversationService.insertConversations(
-                                                                conversation
-                                                            )
-                                                        }
-                                                    }
-                                            }
+                                            IMClient.conversationService.insertOrReplaceConversation(
+                                                imMessage.fromId,
+                                                imMessage.chatType
+                                            )
                                         }
+                                        //回调消息
                                         IMClient.onMessageCallback?.onMessage(imMessageJson)
                                     }
                                 }
                             }
+                        }
+                        //视频通话
+                        "video" -> {
+
                         }
                     }
 

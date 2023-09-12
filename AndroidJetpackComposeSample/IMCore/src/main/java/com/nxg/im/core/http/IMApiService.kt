@@ -34,8 +34,9 @@ interface IMApiService {
     suspend fun offlineMsg(
         @Header("Authorization") token: String,
         @Query("fromId") fromId: String,
+        @Query("messageId") messageId: Long,
         @Query("pageIndex") pageIndex: Int = 0,
-        @Query("pageSize") pageSize: Int = 10
+        @Query("pageSize") pageSize: Int = 20,
     ): ApiResult<OfflineMsg>
 
 
