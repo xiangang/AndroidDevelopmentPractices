@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Search
@@ -22,19 +20,15 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.nxg.androidsample.R
 import com.nxg.im.chat.component.MainViewModel
 import com.nxg.im.chat.component.conversation.ConversationChatViewModel
-import com.nxg.im.chat.component.conversation.ConversationContent
-import com.nxg.im.chat.component.data.exampleUiState
 import com.nxg.im.commonui.components.JetchatIcon
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.contact.component.ContactListCompose
@@ -45,6 +39,7 @@ import com.nxg.im.conversation.component.ConversationViewModel
 import com.nxg.im.conversation.component.ConversationViewModelFactory
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.callback.OnMessageCallback
+import com.nxg.im.core.data.bean.IMMessage
 import com.nxg.im.discover.component.DiscoverListCompose
 import com.nxg.im.discover.component.DiscoverViewModel
 import com.nxg.im.user.component.login.LoginViewModel
@@ -104,7 +99,7 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         //获取好友列表
         contactViewModel.getMyFriends()
         IMClient.onMessageCallback = object : OnMessageCallback {
-            override fun onMessage(message: String) {
+            override fun onReceiveMessage(message: IMMessage) {
                 logger.debug { "onMessage: $message" }
                 conversationChatViewModel.onMessage(message)
             }

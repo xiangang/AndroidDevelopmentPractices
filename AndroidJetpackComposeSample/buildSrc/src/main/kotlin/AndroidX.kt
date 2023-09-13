@@ -52,7 +52,7 @@ object AndroidX {
 }
 
 object Compose {
-    const val bom = "androidx.compose:compose-bom:2023.04.01"
+    const val bom = "androidx.compose:compose-bom:2023.09.00"
     private const val version = ""
     const val kotlinCompilerExtensionVersion = "1.4.3"
     const val ui = "androidx.compose.ui:ui:$version"

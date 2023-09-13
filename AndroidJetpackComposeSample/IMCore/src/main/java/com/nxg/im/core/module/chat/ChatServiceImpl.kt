@@ -350,7 +350,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                             )
                                         }
                                         //回调消息
-                                        IMClient.onMessageCallback?.onMessage(imMessageJson)
+                                        IMClient.onMessageCallback?.onReceiveMessage(imMessage)
                                     }
                                 }
                             }

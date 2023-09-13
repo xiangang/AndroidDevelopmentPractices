@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.blankj.utilcode.util.Utils
+import com.nxg.im.chat.component.notification.NotificationService
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.data.bean.IMMessage
 import com.nxg.im.core.data.bean.TextMessage
 import com.nxg.im.core.data.bean.TextMsgContent
 import com.nxg.im.core.data.db.KtChatDatabase
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 
 
 data class ConversationChat(
@@ -41,6 +44,8 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
     val uiState: StateFlow<ConversationChatUiState> = _uiState.asStateFlow()
 
     var messagePager: Pager<Int, Message>? = null
+
+    val notificationId = AtomicInteger(1)
 
     /**
      * 创建会话（从通信点击进入聊天的情况需要创建会话）
@@ -125,8 +130,21 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
     /**
      * 接收聊天信息
      */
-    fun onMessage(text: String) {
+    fun onMessage(imMessage: IMMessage) {
         viewModelScope.launch(Dispatchers.IO) {
+            val friend = KtChatDatabase.getInstance(Utils.getApp()).friendDao()
+                .getFriend(imMessage.toId, imMessage.fromId)
+            when (imMessage) {
+                is TextMessage -> {
+                    NotificationService.notifyChatMessage(
+                        Utils.getApp(),
+                        notificationId.getAndIncrement(),
+                        friend?.nickname ?: "聊天消息",
+                        imMessage.content.text,
+                    )
+                }
+                else -> {}
+            }
 
         }
     }

@@ -1,7 +1,9 @@
 package com.nxg.im.core.callback
 
+import com.nxg.im.core.data.bean.IMMessage
+
 interface OnMessageCallback {
 
-    fun onMessage(message: String)
+    fun onReceiveMessage(message: IMMessage)
 
 }
