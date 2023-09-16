@@ -13,17 +13,14 @@ import com.nxg.im.core.module.conversation.ConversationServiceImpl
 import com.nxg.im.core.module.user.UserService
 import com.nxg.im.core.module.user.UserServiceImpl
 import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * IM客户端
  */
 object IMClient {
 
-    val mapIMClientService = ConcurrentHashMap<String, IMService>()
-
-    inline fun <reified T : IMService> getService(): T? {
-        return mapIMClientService[T::class.java.name] as? T
+    inline fun <reified T : IMService> getService(): T {
+        return T::class.objectInstance!!
     }
 
 

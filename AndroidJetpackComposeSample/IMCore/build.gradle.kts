@@ -107,5 +107,6 @@ dependencies {
     implementation("com.netease.yunxin.kit.chat:chatkit-ui:9.0.0")
     // 搜索功能组件
     implementation("com.netease.yunxin.kit.search:searchkit-ui:9.0.0")*/
+    implementation(kotlin("reflect"))
 }
 

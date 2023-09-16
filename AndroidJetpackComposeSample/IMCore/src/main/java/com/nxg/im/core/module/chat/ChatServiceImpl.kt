@@ -11,6 +11,7 @@ import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.exception.IMException
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.http.IMWebSocket
+import com.nxg.im.core.module.auth.AuthService
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -229,7 +230,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     override fun getOfflineMessage(fromId: String) {
         IMCoroutineScope.launch {
             try {
-                IMClient.authService.getLoginData()?.let { it ->
+                IMClient.getService<AuthService>().getLoginData()?.let { it ->
                     //分页获取离线消息
                     val pageIndex = 0
                     val pageSize = 20
