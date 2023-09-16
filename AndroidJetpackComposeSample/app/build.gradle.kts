@@ -125,5 +125,7 @@ dependencies {
     implementation(project(mapOf("path" to ":SocketIOStudyComponent")))
     implementation(project(mapOf("path" to ":IMUserComponent")))
     implementation(project(mapOf("path" to ":SettingComponent")))
+    debugImplementation("io.github.didi.dokit:dokitx:3.5.0")
+
 
 }

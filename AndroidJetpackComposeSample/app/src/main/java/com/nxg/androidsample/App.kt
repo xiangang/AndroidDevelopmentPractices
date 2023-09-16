@@ -3,6 +3,7 @@ package com.nxg.androidsample
 import android.app.Activity
 import android.os.Bundle
 import com.blankj.utilcode.util.Utils
+import com.didichuxing.doraemonkit.DoKit
 import com.nxg.im.core.IMClient
 import com.nxg.mvvm.BaseViewModelApplication
 import com.nxg.mvvm.logger.SimpleLogger
@@ -40,6 +41,8 @@ class App : BaseViewModelApplication(), SimpleLogger,
         super.onCreate()
         INSTANCE = this
         Utils.init(this)
+        DoKit.Builder(this)
+            .build()
         IMClient.init(this)
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
