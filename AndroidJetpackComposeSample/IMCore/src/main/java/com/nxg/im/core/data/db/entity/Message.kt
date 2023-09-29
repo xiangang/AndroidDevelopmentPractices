@@ -4,10 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.nxg.im.core.data.bean.IMMessage
-import com.nxg.im.core.data.bean.MessageContent
-import com.nxg.im.core.data.bean.parseIMMessage
-import com.nxg.im.core.data.bean.parseMessageContent
+import com.nxg.im.core.data.bean.ChatMessage
+import com.nxg.im.core.data.bean.parseChatMessage
 
 typealias IMSendStatus = Int
 
@@ -36,7 +34,7 @@ data class Message constructor(
     @Ignore
     var retryCount = 0 //失败尝试次数
 
-    fun toIMMessage(): IMMessage {
-        return msgContent.parseIMMessage()
+    fun toChatMessage(): ChatMessage {
+        return msgContent.parseChatMessage()
     }
 }

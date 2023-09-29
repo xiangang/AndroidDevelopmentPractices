@@ -141,23 +141,23 @@ fun KtChatAuthorNameTimestampPreview() {
 
 @Composable
 fun KtChatClickableMessage(
-    imMessage: IMMessage,
+    chatMessage: ChatMessage,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit = {}
 ) {
-    when (imMessage) {
+    when (chatMessage) {
         is AudioMessage -> {}
         is FileMessage -> {}
         is ImageMessage -> {
             KtChatImageMessage(
-                imMessage.content.url,
+                chatMessage.content.url,
                 true
             )
         }
 
         is LocationMessage -> {}
         is TextMessage -> {
-            KtChatTextMessage(imMessage.content.text, isUserMe, authorClicked)
+            KtChatTextMessage(chatMessage.content.text, isUserMe, authorClicked)
         }
 
         is VideoMessage -> {}
@@ -184,7 +184,7 @@ private val KtChatBubbleShapeUserMe = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.
 
 @Composable
 fun KtChatItemBubble(
-    imMessage: IMMessage,
+    chatMessage: ChatMessage,
     sent: IMSendStatus,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit = {},
@@ -243,7 +243,7 @@ fun KtChatItemBubble(
             shape = if (isUserMe) KtChatBubbleShapeUserMe else KtChatBubbleShape
         ) {
             KtChatClickableMessage(
-                imMessage = imMessage,
+                chatMessage = chatMessage,
                 isUserMe = isUserMe,
                 authorClicked = authorClicked
             )
@@ -295,7 +295,7 @@ fun KtChatItemBubblePreview() {
 
 @Composable
 fun KtChatAuthorAndTextMessage(
-    imMessage: IMMessage,
+    chatMessage: ChatMessage,
     sent: IMSendStatus,
     name: String,
     timestamp: String,
@@ -309,7 +309,13 @@ fun KtChatAuthorAndTextMessage(
         horizontalAlignment = if (isUserMe) Alignment.End else Alignment.Start
     ) {
         KtChatAuthorNameTimestamp(name, timestamp, isUserMe)
-        KtChatItemBubble(imMessage, sent, isUserMe, authorClicked = authorClicked, resend = resend)
+        KtChatItemBubble(
+            chatMessage,
+            sent,
+            isUserMe,
+            authorClicked = authorClicked,
+            resend = resend
+        )
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
@@ -339,7 +345,7 @@ fun KtChatAuthorAndTextMessagePreview() {
 
 @Composable
 fun KtChatIMMessage(
-    imMessage: IMMessage,
+    chatMessage: ChatMessage,
     sent: IMSendStatus,
     avatar: String,
     name: String,
@@ -358,7 +364,7 @@ fun KtChatIMMessage(
         Row(modifier = spaceBetweenAuthors, horizontalArrangement = Arrangement.End) {
             //消息
             KtChatAuthorAndTextMessage(
-                imMessage = imMessage,
+                chatMessage = chatMessage,
                 sent = sent,
                 isUserMe = isUserMe,
                 name = name,
@@ -373,7 +379,7 @@ fun KtChatIMMessage(
             AsyncImage(
                 modifier = Modifier
                     .clickable(onClick = {
-                        onAuthorClick("${imMessage.fromId}")
+                        onAuthorClick("${chatMessage.fromId}")
                     })
                     .padding(horizontal = 16.dp)
                     .size(42.dp)
@@ -392,7 +398,7 @@ fun KtChatIMMessage(
             AsyncImage(
                 modifier = Modifier
                     .clickable(onClick = {
-                        onAuthorClick("${imMessage.fromId}")
+                        onAuthorClick("${chatMessage.fromId}")
                     })
                     .padding(horizontal = 16.dp)
                     .size(42.dp)
@@ -406,7 +412,7 @@ fun KtChatIMMessage(
             )
             //消息
             KtChatAuthorAndTextMessage(
-                imMessage = imMessage,
+                chatMessage = chatMessage,
                 sent = sent,
                 isUserMe = isUserMe,
                 name = name,
@@ -528,26 +534,26 @@ fun KtChatIMMessages(
                 ) { _, message ->
                     Log.i("TAG", "KtChatMessages: message $message")
                     if (message != null) {
-                        val imMessage = message.toIMMessage()
+                        val chatMessage = message.toChatMessage()
                         KtChatIMMessage(
-                            imMessage = imMessage,
+                            chatMessage = chatMessage,
                             message.sent,
-                            avatar = if (imMessage.fromId == me.uuid) {
+                            avatar = if (chatMessage.fromId == me.uuid) {
                                 me.avatar
                             } else {
                                 friend.avatar
                             },
-                            name = if (imMessage.fromId == me.uuid) {
+                            name = if (chatMessage.fromId == me.uuid) {
                                 me.nickname
                             } else {
                                 friend.nickname
                             },
-                            isUserMe = imMessage.fromId == me.uuid,
-                            timestamp = TimeUtils.millis2String(imMessage.timestamp),
+                            isUserMe = chatMessage.fromId == me.uuid,
+                            timestamp = TimeUtils.millis2String(chatMessage.timestamp),
                             onAuthorClick = { name -> onAuthorClick(name) },
                             resend = { resend(message) }
                         )
-                        DayHeader(TimeUtils.millis2String(imMessage.timestamp))
+                        DayHeader(TimeUtils.millis2String(chatMessage.timestamp))
                     }
 
                 }
@@ -671,7 +677,12 @@ fun KtChatConversationContent(
                 // navigation bar
                 modifier = Modifier
                     .navigationBarsPadding()
-                    .imePadding()
+                    .imePadding(),
+                onVideoCall = {
+                    conversationChatUiState.value.conversationChat?.let {
+                        conversationChatViewModel.videoCallService.call(it.friend.friendId)
+                    }
+                }
             )
         }
     }

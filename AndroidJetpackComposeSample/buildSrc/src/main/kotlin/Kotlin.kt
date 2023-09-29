@@ -4,7 +4,8 @@ object Kotlin {
     //Kotlin 1.4 以后，您不再需要在 gradle 上声明 stdlib
     var stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     val test = "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    val plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    val gradle_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    val reflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //协程
     object Coroutines {

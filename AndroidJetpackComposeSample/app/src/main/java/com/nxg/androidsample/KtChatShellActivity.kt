@@ -22,6 +22,8 @@ import androidx.navigation.fragment.NavHostFragment
 import com.nxg.androidsample.databinding.FragmentKtChatShellBinding
 import com.nxg.im.chat.component.MainViewModel
 import com.nxg.im.commonui.components.JetchatDrawer
+import com.nxg.im.core.module.signaling.SignalingType
+import com.nxg.im.core.module.state.VideoCallStateMachine
 import com.nxg.im.user.component.login.LoginViewModel
 import com.nxg.im.user.component.login.LoginViewModelFactory
 import com.nxg.mvvm.logger.SimpleLogger
@@ -116,6 +118,10 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        logger.debug { "onBackPressed ${VideoCallStateMachine.isIdle()} " }
+        if (!VideoCallStateMachine.isIdle()) {
+            return false
+        }
         return findNavController().navigateUp() || super.onSupportNavigateUp()
     }
 
@@ -126,6 +132,14 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
+    }
+
+    override fun onBackPressed() {
+        logger.debug { "onBackPressed ${VideoCallStateMachine.isIdle()} " }
+        if (!VideoCallStateMachine.isIdle()) {
+            return
+        }
+        super.onBackPressed()
     }
 
 }

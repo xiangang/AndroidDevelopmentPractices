@@ -7,13 +7,14 @@ import androidx.paging.PagingConfig
 import com.blankj.utilcode.util.Utils
 import com.nxg.im.chat.component.notification.NotificationService
 import com.nxg.im.core.IMClient
-import com.nxg.im.core.data.bean.IMMessage
+import com.nxg.im.core.data.bean.ChatMessage
 import com.nxg.im.core.data.bean.TextMessage
 import com.nxg.im.core.data.bean.TextMsgContent
 import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.data.db.entity.Message
 import com.nxg.im.core.module.user.User
+import com.nxg.im.core.module.videocall.VideoCallService
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +46,9 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
 
     var messagePager: Pager<Int, Message>? = null
 
-    val notificationId = AtomicInteger(1)
+    private val notificationId = AtomicInteger(1)
+
+    val videoCallService: VideoCallService = IMClient.videoCallService
 
     /**
      * 创建会话（从通信点击进入聊天的情况需要创建会话）
@@ -130,19 +133,20 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
     /**
      * 接收聊天信息
      */
-    fun onMessage(imMessage: IMMessage) {
+    fun onMessage(chatMessage: ChatMessage) {
         viewModelScope.launch(Dispatchers.IO) {
             val friend = KtChatDatabase.getInstance(Utils.getApp()).friendDao()
-                .getFriend(imMessage.toId, imMessage.fromId)
-            when (imMessage) {
+                .getFriend(chatMessage.toId, chatMessage.fromId)
+            when (chatMessage) {
                 is TextMessage -> {
                     NotificationService.notifyChatMessage(
                         Utils.getApp(),
                         notificationId.getAndIncrement(),
                         friend?.nickname ?: "聊天消息",
-                        imMessage.content.text,
+                        chatMessage.content.text,
                     )
                 }
+
                 else -> {}
             }
 
@@ -158,6 +162,7 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
             IMClient.chatService.getOfflineMessage(fromId)
         }
     }
+
 
 }
 

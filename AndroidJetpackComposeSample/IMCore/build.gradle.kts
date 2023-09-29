@@ -87,6 +87,7 @@ dependencies {
     testImplementation(TestLib.androidJunit)
     testImplementation(TestLib.espresso)
     implementation(project(mapOf("path" to ":FastMvvm")))
+    implementation(project(mapOf("path" to ":KtStateMachine")))
     implementation("androidx.security:security-crypto:1.0.0")
     // For Identity Credential APIs
     implementation("androidx.security:security-identity-credential:1.0.0-alpha03")
@@ -107,6 +108,6 @@ dependencies {
     implementation("com.netease.yunxin.kit.chat:chatkit-ui:9.0.0")
     // 搜索功能组件
     implementation("com.netease.yunxin.kit.search:searchkit-ui:9.0.0")*/
-    implementation(kotlin("reflect"))
+    api(Kotlin.reflect)
 }
 

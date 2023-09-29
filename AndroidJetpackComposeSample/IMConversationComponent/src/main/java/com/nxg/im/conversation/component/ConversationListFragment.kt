@@ -121,7 +121,7 @@ fun ConversationItemCompose(
         Spacer(modifier = Modifier.size(10.dp))
         Column {
             Text(conversation.name)
-            conversation.lastIMMessage?.let {
+            conversation.lastChatMessage?.let {
                 when (val content = it.content) {
                     is AudioMsgContent -> {}
                     is FileMsgContent -> {}

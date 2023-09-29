@@ -10,12 +10,12 @@ object IMConstants {
     /**
      * IM服务http请求端口，默认8080
      */
-    const val IM_SERVER_HTTP_PORT = "8080"
+    const val IM_SERVER_HTTP_PORT = "8050"
 
     /**
      * IM服务https请求端口，默认8081
      */
-    const val IM_SERVER_HTTPS_PORT = "8081"
+    const val IM_SERVER_HTTPS_PORT = "8051"
 
     /**
      * IM服务器http接口
@@ -34,4 +34,25 @@ object IMConstants {
         const val Token = "token"
         const val SecretSharedPrefs = "secret_shared_prefs"
     }
+
+    object Protocol {
+        const val Version = 0
+        const val TYPE_REQ = 0
+        const val TYPE_ACK = 1
+        const val TYPE_NOTIFY = 2
+
+        object Cmd {
+            const val Chat = "chat"
+            const val Signaling = "signaling"
+        }
+
+        object SubCmd {
+            const val Text = "text"
+            const val VideoCall = "video_call"
+            const val AudioCall = "audio_call"
+        }
+
+    }
+
+
 }

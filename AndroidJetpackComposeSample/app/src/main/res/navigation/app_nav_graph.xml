@@ -10,6 +10,7 @@
     <include app:graph="@navigation/im_contact_nav_graph" />
     <include app:graph="@navigation/im_discover_nav_graph" />
     <include app:graph="@navigation/im_user_nav_graph" />
+    <include app:graph="@navigation/im_call_nav_graph" />
 
     <fragment
         android:id="@+id/main_fragment"
@@ -72,6 +73,7 @@
         <deepLink app:uri="android-app://com.nxg.app/kt_chat_shell_fragment" />
 
     </fragment>
+
 
     <fragment
         android:id="@+id/conversation_fragment"

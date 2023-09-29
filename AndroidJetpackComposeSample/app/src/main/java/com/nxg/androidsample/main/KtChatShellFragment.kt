@@ -21,6 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,7 +42,9 @@ import com.nxg.im.conversation.component.ConversationViewModel
 import com.nxg.im.conversation.component.ConversationViewModelFactory
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.callback.OnMessageCallback
-import com.nxg.im.core.data.bean.IMMessage
+import com.nxg.im.core.data.bean.ChatMessage
+import com.nxg.im.core.module.state.VideoCallState
+import com.nxg.im.core.module.state.VideoCallStateMachine
 import com.nxg.im.discover.component.DiscoverListCompose
 import com.nxg.im.discover.component.DiscoverViewModel
 import com.nxg.im.user.component.login.LoginViewModel
@@ -99,9 +104,49 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
         //获取好友列表
         contactViewModel.getMyFriends()
         IMClient.onMessageCallback = object : OnMessageCallback {
-            override fun onReceiveMessage(message: IMMessage) {
+            override fun onReceiveMessage(message: ChatMessage) {
                 logger.debug { "onMessage: $message" }
                 conversationChatViewModel.onMessage(message)
+            }
+        }
+        // 由于 repeatOnLifecycle 是一个挂起函数，
+        // 因此从 lifecycleScope 中创建新的协程
+        lifecycleScope.launch {
+            // 直到 lifecycle 进入 DESTROYED 状态前都将当前协程挂起。
+            // repeatOnLifecycle 每当生命周期处于 CREATED 或以后的状态时会在新的协程中
+            // 启动执行代码块，并在生命周期进入 STOPPED 时取消协程。
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                // 当生命周期处于 STARTED 时安全地从 locations 中获取数据
+                // 当生命周期进入 STOPPED 时停止收集数据
+                VideoCallStateMachine.stateFlow.collect {
+                    logger.debug { "stateFlow collect VideoCallState -> $it" }
+                }
+                // 注意：运行到此处时，生命周期已经处于 DESTROYED 状态！
+            }
+        }
+        lifecycleScope.launch {
+            VideoCallStateMachine.stateFlow.collect {
+                logger.debug { "stateFlow collect VideoCallState 2 -> $it" }
+                when (it) {
+                    is VideoCallState.CallOut -> {
+                        val sessionId = it.session.sessionId
+                        val request = NavDeepLinkRequest.Builder
+                            .fromUri("android-app://com.nxg.app/video_call_fragment/${sessionId}".toUri())
+//                            .fromUri("android-app://com.nxg.app/LiveStreamingFragment".toUri())
+                            .build()
+                        findNavController().navigate(request)
+                    }
+
+                    is VideoCallState.CallIn -> {
+                        val sessionId = it.session.sessionId
+                        val request = NavDeepLinkRequest.Builder
+                            .fromUri("android-app://com.nxg.app/video_call_fragment/${sessionId}".toUri())
+                            .build()
+                        findNavController().navigate(request)
+                    }
+
+                    else -> {}
+                }
             }
         }
     }

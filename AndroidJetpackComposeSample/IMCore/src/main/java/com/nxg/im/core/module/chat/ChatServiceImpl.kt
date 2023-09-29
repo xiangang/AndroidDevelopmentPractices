@@ -3,6 +3,7 @@ package com.nxg.im.core.module.chat
 import android.util.ArrayMap
 import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.IMConstants
 import com.nxg.im.core.IMCoreMessage
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.KtChatDatabase
@@ -11,7 +12,8 @@ import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.exception.IMException
 import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.http.IMWebSocket
-import com.nxg.im.core.module.auth.AuthService
+import com.nxg.im.core.module.signaling.SignalingServiceImpl
+import com.nxg.im.core.module.signaling.parseSignaling
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -26,7 +28,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     /**
      *  发送消息队列
      */
-    private val sendMessageChannel = Channel<IMMessage> { }
+    private val sendMessageChannel = Channel<ChatMessage> { }
 
     /**
      *  接收消息队列
@@ -50,9 +52,9 @@ object ChatServiceImpl : ChatService, SimpleLogger {
         handleReceiveMessage()
     }
 
-    override fun sendMessage(imMessage: IMMessage) {
+    override fun sendMessage(chatMessage: ChatMessage) {
         IMCoroutineScope.launch {
-            sendMessageChannel.send(imMessage)
+            sendMessageChannel.send(chatMessage)
         }
     }
 
@@ -115,10 +117,10 @@ object ChatServiceImpl : ChatService, SimpleLogger {
         val imCoreMessage = imCoreMessageRetry ?: IMCoreMessage.newBuilder().apply {
             //生成protobuf
             val body = message.msgContent.toByteArray()
-            version = 1
-            cmd = "chat"
-            subCmd = "text"
-            type = 0
+            version = IMConstants.Protocol.Version
+            cmd = IMConstants.Protocol.Cmd.Chat
+            subCmd = IMConstants.Protocol.SubCmd.Text
+            type = IMConstants.Protocol.TYPE_REQ
             logId = message.id
             seqId = message.uuid
             bodyLen = body.size
@@ -183,9 +185,9 @@ object ChatServiceImpl : ChatService, SimpleLogger {
 
     private fun handleSendMessageQueue() {
         IMCoroutineScope.launch {
-            for (imMessage in sendMessageChannel) {
+            for (chatMessage in sendMessageChannel) {
                 //处理不同的消息
-                when (imMessage) {
+                when (chatMessage) {
                     is AudioMessage -> {}
                     is FileMessage -> {}
                     is ImageMessage -> {}
@@ -198,10 +200,10 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                 val message = Message(
                     0,
                     0,//uuid后面从发号服务器获取
-                    fromId = imMessage.fromId,
-                    toId = imMessage.toId,
+                    fromId = chatMessage.fromId,
+                    toId = chatMessage.toId,
                     chatType = 0,
-                    msgContent = imMessage.toJson(),
+                    msgContent = chatMessage.toJson(),
                     msgTime = currentTime,
                     createTime = currentTime,
                     updateTime = currentTime,
@@ -230,7 +232,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     override fun getOfflineMessage(fromId: String) {
         IMCoroutineScope.launch {
             try {
-                IMClient.getService<AuthService>().getLoginData()?.let { it ->
+                IMClient.authService.getLoginData()?.let { it ->
                     //分页获取离线消息
                     val pageIndex = 0
                     val pageSize = 20
@@ -282,12 +284,12 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                     //处理收到的消息
                     val imCoreMessage = IMCoreMessage.parseFrom(byteArray)
                     logger.debug { "handleReceiveMessage imCoreMessage $imCoreMessage" }
-                    val imMessageJson = imCoreMessage.bodyData.toStringUtf8()
-                    logger.debug { "handleReceiveMessage imMessageJson $imMessageJson" }
-                    val imMessage = imMessageJson.parseIMMessage()
-                    logger.debug { "handleReceiveMessage imMessage $imMessageJson" }
+                    val imCoreMessageBody = imCoreMessage.bodyData.toStringUtf8()
+                    logger.debug { "handleReceiveMessage imCoreMessageBody $imCoreMessageBody" }
                     when (imCoreMessage.cmd) {
                         "chat" -> {
+                            val chatMessage = imCoreMessageBody.parseChatMessage()
+                            logger.debug { "handleReceiveMessage chatMessage $chatMessage" }
                             when (imCoreMessage.subCmd) {
                                 "text" -> {
                                     //acknowledge（发送方处理）
@@ -301,9 +303,9 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                                             .queryMessage(
                                                 imCoreMessage.seqId,
-                                                imMessage.fromId,
-                                                imMessage.toId,
-                                                imMessage.chatType
+                                                chatMessage.fromId,
+                                                chatMessage.toId,
+                                                chatMessage.chatType
                                             )?.let {
                                                 logger.debug { "handleReceiveMessage: update before $it" }
                                                 it.sent = IM_SEND_RESPONSE
@@ -318,9 +320,9 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                         KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                                             .queryMessage(
                                                 imCoreMessage.seqId,
-                                                imMessage.fromId,
-                                                imMessage.toId,
-                                                imMessage.chatType
+                                                chatMessage.fromId,
+                                                chatMessage.toId,
+                                                chatMessage.chatType
                                             )?.let {
                                                 logger.debug { "handleReceiveMessage: update before $it" }
                                                 it.sent = IM_SEND_RESPONSE
@@ -332,11 +334,11 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                             val message = Message(
                                                 0,
                                                 uuid = imCoreMessage.seqId,
-                                                fromId = imMessage.fromId,
-                                                toId = imMessage.toId,
-                                                chatType = imMessage.chatType,
-                                                msgContent = imMessageJson,
-                                                msgTime = imMessage.timestamp,
+                                                fromId = chatMessage.fromId,
+                                                toId = chatMessage.toId,
+                                                chatType = chatMessage.chatType,
+                                                msgContent = imCoreMessageBody,
+                                                msgTime = chatMessage.timestamp,
                                                 createTime = currentTime,
                                                 updateTime = currentTime,
                                             )
@@ -344,21 +346,23 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                                                 .insertMessage(message)
                                         }
                                         //单聊，如果没有会话，则创建
-                                        if (imMessage.chatType == 0) {
+                                        if (chatMessage.chatType == 0) {
                                             IMClient.conversationService.insertOrReplaceConversation(
-                                                imMessage.fromId,
-                                                imMessage.chatType
+                                                chatMessage.fromId,
+                                                chatMessage.chatType
                                             )
                                         }
                                         //回调消息
-                                        IMClient.onMessageCallback?.onReceiveMessage(imMessage)
+                                        IMClient.onMessageCallback?.onReceiveMessage(chatMessage)
                                     }
                                 }
                             }
                         }
                         //视频通话
-                        "video" -> {
-
+                        "signaling" -> {
+                            val signaling = imCoreMessageBody.parseSignaling()
+                            logger.debug { "handleReceiveMessage signaling $signaling" }
+                            SignalingServiceImpl.onReceiveSignaling(imCoreMessage, signaling)
                         }
                     }
 

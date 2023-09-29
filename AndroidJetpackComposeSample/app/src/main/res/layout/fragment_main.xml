@@ -42,14 +42,4 @@
         app:subtitleCentered="true"
         />
 
-    <!--<androidx.compose.ui.platform.ComposeView
-        android:id="@+id/toolbar"
-        style="@style/Widget.Material3.Toolbar.Surface"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/app_menu_toolbar" />-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

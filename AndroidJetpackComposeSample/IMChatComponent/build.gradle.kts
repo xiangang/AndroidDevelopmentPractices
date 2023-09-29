@@ -65,4 +65,5 @@ dependencies {
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":IMCore")))
     implementation(project(mapOf("path" to ":IMCommonUI")))
+    implementation(project(mapOf("path" to ":KtStateMachine")))
 }

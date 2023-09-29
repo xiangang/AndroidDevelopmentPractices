@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 //WebRTC调度器
 val WebRTCDispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor { runnable ->
-    Thread(runnable, "SdkDataBaseDispatcher")
+    Thread(runnable, "WebRTCDispatcher")
 }.asCoroutineDispatcher()
 
 
@@ -44,7 +44,7 @@ class WebRtcHelper private constructor() :
     private var cameraVideoCapturer: VideoCapturer? = null
     private var surfaceTextureHelper: SurfaceTextureHelper? = null
     private var play: AtomicBoolean = AtomicBoolean(false)
-    private var streamurl: String = ""
+    private var streamUrl: String = ""
 
 
     companion object {
@@ -298,8 +298,8 @@ class WebRtcHelper private constructor() :
      * 释放资源
      */
     fun dispose() {
-        //cameraVideoCapturer?.dispose()
-        //surfaceViewRenderer.clearImage()
+        cameraVideoCapturer?.dispose()
+        surfaceViewRenderer.clearImage()
         surfaceTextureHelper?.dispose()
         peerConnection.dispose()
         peerConnectionFactory.dispose()
@@ -309,6 +309,7 @@ class WebRtcHelper private constructor() :
      * 推流
      */
     fun publish(streamUrl: String) {
+        logger.debug { "publish: streamUrl $streamUrl" }
         if (play.get()) {
             logger.error { "Support play only!" }
             return
@@ -320,6 +321,7 @@ class WebRtcHelper private constructor() :
      * 拉流
      */
     fun play(streamUrl: String) {
+        logger.debug { "play: streamUrl $streamUrl" }
         if (!play.get()) {
             logger.error { "Support publish only!" }
             return
@@ -332,21 +334,21 @@ class WebRtcHelper private constructor() :
      */
     private fun createOffer(streamUrl: String) {
         logger.debug { "createOffer: $streamUrl" }
-        this.streamurl = streamUrl
+        this.streamUrl = streamUrl
         //创建Offer，成功后onCreateSuccess回调开始播放
         peerConnection.createOffer(this, MediaConstraints())
     }
 
     private fun doRequest(sdp: String) {
         logger.debug { "doRequest: $sdp" }
-        logger.debug { "doRequest: $streamurl, ${play.get()}" }
+        logger.debug { "doRequest: streamurl $streamUrl, play ${play.get()}" }
         val srsRequestBean = SrsRequestBean()
         srsRequestBean.api =
-            if (play.get()) "${SrsConstant.SRS_SERVER_HTTPS}/rtc/v1/play" else "${SrsConstant.SRS_SERVER_HTTP}/rtc/v1/publish"
-        srsRequestBean.streamurl = streamurl
+            if (play.get()) "${SrsConstant.SRS_SERVER_HTTPS}/rtc/v1/play" else "${SrsConstant.SRS_SERVER_HTTPS}/rtc/v1/publish"
+        srsRequestBean.streamurl = streamUrl
         srsRequestBean.sdp = sdp
         logger.debug { "doRequest: $srsRequestBean" }
-        launchExceptionHandler(WebRTCScope, Dispatchers.Default, {
+        launchExceptionHandler(WebRTCScope, Dispatchers.IO, {
             val mediaType = MEDIA_TYPE_JSON.toMediaType()
             val requestBody = GsonUtils.toJson(srsRequestBean).toRequestBody(mediaType)
             val srsResponseBean = if (play.get()) {
@@ -364,10 +366,10 @@ class WebRtcHelper private constructor() :
 
         }, onError = {
             logger.error {
-                "onError:${it.message}"
+                "doRequest: onError:${it.message}"
             }
         }, onComplete = {
-            logger.debug { "onComplete" }
+            logger.debug { "doRequest: onComplete" }
         })
     }
 

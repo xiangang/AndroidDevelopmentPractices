@@ -2,6 +2,7 @@ package com.nxg.androidsample.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nxg.im.core.module.state.VideoCallStateMachine
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,6 @@ class KtChatViewModel : ViewModel(), SimpleLogger {
 
         viewModelScope.launch {
             logger.debug { "init" }
-
         }
     }
 
