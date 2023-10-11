@@ -14,6 +14,7 @@ dependencyResolutionManagement {
         mavenCentral()
         mavenLocal()
         maven { setUrl("https://jitpack.io") }
+        maven { setUrl("https://mirrors.tencent.com/nexus/repository/maven-public/") }
     }
 }
 rootProject.name = "AndroidJetpackComposeSample"
@@ -40,5 +41,5 @@ include(":IMUserComponent")
 include(":SettingComponent")
 include(":CommonUIComponent")
 include(":WebrtcMobile")
-//include(":LocalAAR:WebRTC")
+include(":LocalAAR:WebRTC")
 include(":KtStateMachine")

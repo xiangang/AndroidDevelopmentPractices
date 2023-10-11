@@ -98,9 +98,9 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
     }
 
     /**
-     * 发送聊天信息
+     * 发送聊天文本信息
      */
-    fun sendMessage(text: String) {
+    fun sendChatTextMessage(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             IMClient.authService.getLoginData()?.let { loginData ->
                 _uiState.value.conversationChat?.let { conversationChat ->

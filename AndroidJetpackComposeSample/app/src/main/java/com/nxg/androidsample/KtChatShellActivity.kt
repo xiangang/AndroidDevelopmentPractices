@@ -55,50 +55,51 @@ class KtChatShellActivity : BaseViewModelActivity(), SimpleLogger {
             ComposeView(this).apply {
                 consumeWindowInsets = false
                 setContent {
-                    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                    val drawerOpen by viewModel.drawerShouldBeOpened
-                        .collectAsStateWithLifecycle()
-
-                    if (drawerOpen) {
-                        // Open drawer and reset state in VM.
-                        LaunchedEffect(Unit) {
-                            // wrap in try-finally to handle interruption whiles opening drawer
-                            try {
-                                drawerState.open()
-                            } finally {
-                                viewModel.resetOpenDrawerAction()
-                            }
-                        }
-                    }
-
-                    // Intercepts back navigation when the drawer is open
-                    val scope = rememberCoroutineScope()
-                    if (drawerState.isOpen) {
-                        BackHandler {
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
-                    }
-
-                    JetchatDrawer(
-                        drawerState = drawerState,
-                        onChatClicked = {
-                            //findNavController().popBackStack(R.id.nav_home, false)
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        },
-                        onProfileClicked = {
-                            val bundle = bundleOf("userId" to it)
-                            //findNavController().navigate(R.id.nav_profile, bundle)
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
-                    ) {
-                        AndroidViewBinding(FragmentKtChatShellBinding::inflate)
-                    }
+//                    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//                    val drawerOpen by viewModel.drawerShouldBeOpened
+//                        .collectAsStateWithLifecycle()
+//
+//                    if (drawerOpen) {
+//                        // Open drawer and reset state in VM.
+//                        LaunchedEffect(Unit) {
+//                            // wrap in try-finally to handle interruption whiles opening drawer
+//                            try {
+//                                drawerState.open()
+//                            } finally {
+//                                viewModel.resetOpenDrawerAction()
+//                            }
+//                        }
+//                    }
+//
+//                    // Intercepts back navigation when the drawer is open
+//                    val scope = rememberCoroutineScope()
+//                    if (drawerState.isOpen) {
+//                        BackHandler {
+//                            scope.launch {
+//                                drawerState.close()
+//                            }
+//                        }
+//                    }
+//
+//                    JetchatDrawer(
+//                        drawerState = drawerState,
+//                        onChatClicked = {
+//                            //findNavController().popBackStack(R.id.nav_home, false)
+//                            scope.launch {
+//                                drawerState.close()
+//                            }
+//                        },
+//                        onProfileClicked = {
+//                            val bundle = bundleOf("userId" to it)
+//                            //findNavController().navigate(R.id.nav_profile, bundle)
+//                            scope.launch {
+//                                drawerState.close()
+//                            }
+//                        }
+//                    ) {
+//
+//                    }
+                    AndroidViewBinding(FragmentKtChatShellBinding::inflate)
                 }
             }
         )

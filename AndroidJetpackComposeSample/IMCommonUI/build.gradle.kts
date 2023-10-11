@@ -53,5 +53,6 @@ dependencies {
     implementation(Compose.viewbinding)
     implementation(Compose.googlefonts)
     implementation(Compose.accompanistSystemUiController)
+    implementation(Compose.activity)
     implementation(Lifecycle.runtimeCompose)
 }

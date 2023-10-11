@@ -22,15 +22,6 @@ import org.webrtc.RendererCommon.RendererEvents
 
 class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragment), SimpleLogger {
 
-    companion object {
-        var PERMISSIONS_REQUIRED = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
-    }
-
     private val binding by viewBinding(LiveStreamingFragmentBinding::bind)
     private val eglBase: EglBase by lazy {
         EglBase.create()
@@ -117,12 +108,12 @@ class LiveStreamingFragment : BaseBusinessFragment(R.layout.live_streaming_fragm
 
     }
 
-    override fun doWhenPermissionNotGranted() {
-        Toast.makeText(context, "权限被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
+    override fun doWhenPermissionNotGranted(permission: String) {
+        Toast.makeText(context, "权限${permission}被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
         findMainActivityNavController().navigateUp()
     }
 
-    override fun doWhenPermissionGranted() {
+    override fun doWhenPermissionGranted(permission: String) {
         logger.debug { "doWhenPermissionGranted" }
     }
 

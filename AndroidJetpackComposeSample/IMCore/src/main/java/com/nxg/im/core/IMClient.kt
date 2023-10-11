@@ -1,6 +1,7 @@
 package com.nxg.im.core
 
 import android.content.Context
+import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.callback.OnMessageCallback
 import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.dispatcher.IMCoroutineScope
@@ -10,6 +11,8 @@ import com.nxg.im.core.module.chat.ChatService
 import com.nxg.im.core.module.chat.ChatServiceImpl
 import com.nxg.im.core.module.conversation.ConversationService
 import com.nxg.im.core.module.conversation.ConversationServiceImpl
+import com.nxg.im.core.module.map.MapService
+import com.nxg.im.core.module.map.MapServiceImpl
 import com.nxg.im.core.module.mediaplayer.MediaPlayerService
 import com.nxg.im.core.module.mediaplayer.MediaPlayerServiceImpl
 import com.nxg.im.core.module.ring.RingService
@@ -42,13 +45,13 @@ object IMClient : SimpleLogger {
             RingService::class -> RingServiceImpl as T
             MediaPlayerService::class -> MediaPlayerServiceImpl as T
             SoundPoolService::class -> SoundPoolServiceImpl as T
+            MapService::class -> MapServiceImpl as T
             else -> {
                 throw IllegalArgumentException("Can't find instance of the ${T::class.java} implementation class!")
             }
         }
 
     }
-
 
     val authService: AuthService by lazy {
         AuthServiceImpl
@@ -82,8 +85,9 @@ object IMClient : SimpleLogger {
     fun init(context: Context) {
         KtChatDatabase.getInstance(context.applicationContext)
         IMCoroutineScope.launch {
-            authService.init()
-            SoundPoolServiceImpl.init()
+            getService<AuthService>().init()
+            getService<SoundPoolService>().init()
+            getService<MapService>().init(Utils.getApp())
         }
     }
 

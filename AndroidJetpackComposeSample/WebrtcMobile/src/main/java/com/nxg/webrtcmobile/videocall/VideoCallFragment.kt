@@ -21,14 +21,6 @@ import org.webrtc.RendererCommon.RendererEvents
 
 class VideoCallFragment : BaseBusinessFragment(R.layout.video_call_fragment), SimpleLogger {
 
-    companion object {
-        var PERMISSIONS_REQUIRED = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-    }
-
     private val binding by viewBinding(VideoCallFragmentBinding::bind)
     private val eglBase: EglBase by lazy {
         EglBase.create()
@@ -122,13 +114,10 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.video_call_fragment), Si
         super.onDestroyView()
     }
 
-    override fun doWhenPermissionNotGranted() {
-        Toast.makeText(context, "权限被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
+    override fun doWhenPermissionNotGranted(permission: String) {
+        Toast.makeText(context, "权限${permission}被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
         findMainActivityNavController().navigateUp()
     }
 
-    override fun doWhenPermissionGranted() {
-        logger.debug { "doWhenPermissionGranted" }
-    }
 
 }

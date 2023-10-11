@@ -13,7 +13,9 @@ import com.nxg.mvvm.logger.SimpleLogger
 var PERMISSIONS_REQUIRED = arrayOf(
     Manifest.permission.CAMERA,
     Manifest.permission.RECORD_AUDIO,
-    Manifest.permission.WRITE_EXTERNAL_STORAGE
+    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    Manifest.permission.ACCESS_COARSE_LOCATION,
+    Manifest.permission.ACCESS_FINE_LOCATION,
 )
 
 open class BaseBusinessFragment : BaseViewModelFragment, SimpleLogger {
@@ -31,26 +33,28 @@ open class BaseBusinessFragment : BaseViewModelFragment, SimpleLogger {
             logger.debug { "activityResultLauncher:" }
             var permissionGranted = true
             permissions.entries.forEach {
-                if (it.key in PERMISSIONS_REQUIRED && !it.value)
-                    permissionGranted = false
-            }
-            logger.debug { "activityResultLauncher: permissionGranted $permissionGranted" }
-            if (permissionGranted) {
-                doWhenPermissionGranted()
-            } else {
-                doWhenPermissionNotGranted()
+                if (it.key in PERMISSIONS_REQUIRED) {
+                    if (it.value) {
+                        doWhenPermissionGranted(it.key)
+                    } else {
+                        doWhenPermissionNotGranted(it.key)
+                    }
+                }
             }
         }
 
-    open fun doWhenPermissionNotGranted() {
-        Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
+    /**
+     * 获取权限被禁止
+     */
+    open fun doWhenPermissionNotGranted(permission: String) {
+        Toast.makeText(context, "Permission $permission request denied", Toast.LENGTH_LONG).show()
     }
 
     /**
      * 获取权限后需要执行的逻辑
      */
-    open fun doWhenPermissionGranted() {
-        logger.debug { "doWhenPermissionGranted" }
+    open fun doWhenPermissionGranted(permission: String) {
+        logger.debug { "doWhenPermissionGranted: Permission $permission request granted" }
     }
 
     /**

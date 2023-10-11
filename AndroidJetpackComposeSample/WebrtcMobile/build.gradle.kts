@@ -58,8 +58,8 @@ dependencies {
     implementation(Hilt.navigation_fragment)
     kapt(Hilt.android_compiler)
     implementation(project(mapOf("path" to ":FastMvvm")))
-    api("org.webrtc:google-webrtc:1.0.32006")
-//    api(project(mapOf("path" to ":LocalAAR:WebRTC")))
+//    api("org.webrtc:google-webrtc:1.0.32006")
+    api(project(mapOf("path" to ":LocalAAR:WebRTC")))
     api("com.github.shenbengit:WebRTCExtension:1.0.1")
     implementation("com.google.code.gson:gson:2.9.0")
 }

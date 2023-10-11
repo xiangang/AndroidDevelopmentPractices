@@ -1,6 +1,9 @@
 package com.nxg.im.call.component
 
 import android.Manifest
+import android.content.Context
+import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -71,13 +74,15 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
 
     private var streamUrlRemote = "webrtc://${SrsConstant.SRS_SERVER_IP}/live/%s"
 
+    private val audioManager by lazy {
+        Utils.getApp().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "onViewCreated" }
         hideSystemBars()
-        requireActivity().supportFragmentManager.addOnBackStackChangedListener(
-            onBackStackChangedListener
-        );
+        setAudioModel(true)
         //初始化SurfaceViewRenderer
         binding.renderLocal.apply {
             init(eglBase.eglBaseContext, object : RendererCommon.RendererEvents {
@@ -240,6 +245,7 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
         );
         binding.renderRemote.release()
         binding.renderLocal.release()
+        //setAudioModel(false)
         webRtcHelperLocal?.dispose()
         webRtcHelperRemote?.dispose()
         webRtcHelperLocal = null
@@ -250,16 +256,35 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
         showStatusBars()
     }
 
-    override fun doWhenPermissionNotGranted() {
-        Toast.makeText(context, "权限被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
+    override fun doWhenPermissionNotGranted(permission: String) {
+        Toast.makeText(context, "权限${permission}被禁止，无法使用该功能！", Toast.LENGTH_LONG).show()
         findMainActivityNavController().navigateUp()
     }
 
-    override fun doWhenPermissionGranted() {
+    override fun doWhenPermissionGranted(permission: String) {
         logger.debug { "doWhenPermissionGranted" }
     }
 
-    private val onBackStackChangedListener = FragmentManager.OnBackStackChangedListener { logger.debug { "onBackStackChanged" } }
+    private val onBackStackChangedListener =
+        FragmentManager.OnBackStackChangedListener { logger.debug { "onBackStackChanged" } }
 
 
+    /**
+     * 外放模式和听筒模式切换
+     *
+     * @param on
+     */
+    fun setAudioModel(on: Boolean) {
+        if (on) { //外放模式
+            audioManager.mode = AudioManager.MODE_NORMAL
+            audioManager.setSpeakerphoneOn(true)
+        } else { //听筒模式
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            } else {
+                audioManager.mode = AudioManager.MODE_IN_CALL
+            }
+            audioManager.setSpeakerphoneOn(false)
+        }
+    }
 }

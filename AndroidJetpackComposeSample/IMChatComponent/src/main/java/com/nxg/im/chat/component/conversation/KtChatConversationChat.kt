@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -532,7 +533,6 @@ fun KtChatIMMessages(
                     // scroll position when more items are fetched!
                     key = { _, message -> message.id }
                 ) { _, message ->
-                    Log.i("TAG", "KtChatMessages: message $message")
                     if (message != null) {
                         val chatMessage = message.toChatMessage()
                         KtChatIMMessage(
@@ -558,13 +558,9 @@ fun KtChatIMMessages(
 
                 }
             }
-            Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
+            //Log.i("TAG", "KtChatMessages: itemCount $itemCount, ${lazyPagingItems.itemCount} ")
             if (itemCount == lazyPagingItems.itemCount) {
                 scope.launch {
-                    Log.i(
-                        "TAG",
-                        "KtChatMessages:firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} "
-                    )
                     if (scrollState.firstVisibleItemIndex != 0) {
                         scrollState.animateScrollToItem(0)
                     }
@@ -590,8 +586,9 @@ fun KtChatConversationContent(
     modifier: Modifier = Modifier,
     onAuthorClick: (String) -> Unit,
     resend: (Message) -> Unit = {},
-    onMessageSent: (String) -> Unit,
-    onNavigateUp: () -> Unit,
+    onMessageSent: (String) -> Unit = {},
+    onNavigateUp: () -> Unit = {},
+    onSelectorChange: (InputSelector) -> Unit = {},
 ) {
     val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
@@ -682,7 +679,8 @@ fun KtChatConversationContent(
                     conversationChatUiState.value.conversationChat?.let {
                         conversationChatViewModel.videoCallService.call(it.friend.friendId)
                     }
-                }
+                },
+                onSelectorChange = onSelectorChange
             )
         }
     }

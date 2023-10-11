@@ -60,10 +60,12 @@ dependencies {
     implementation(Compose.googlefonts)
     implementation(Compose.paging)
     implementation(Lifecycle.runtimeCompose)
+    implementation(Google.accompanist_permissions)
     debugImplementation(Lifecycle.viewModelSavedState)
     debugImplementation(Compose.customViewPoolingContainer)
     implementation(project(mapOf("path" to ":FastMvvm")))
     implementation(project(mapOf("path" to ":IMCore")))
     implementation(project(mapOf("path" to ":IMCommonUI")))
     implementation(project(mapOf("path" to ":KtStateMachine")))
+    implementation ("io.github.TheMelody:gd_compose:1.0.2")
 }

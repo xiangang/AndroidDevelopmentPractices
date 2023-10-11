@@ -7,4 +7,9 @@ object Google {
 
     //扫码
     const val barcode_scanning = "com.google.mlkit:barcode-scanning:17.0.0"
+
+    //权限
+    const val accompanist_permissions = "com.google.accompanist:accompanist-permissions:0.31.5-beta"
+
+
 }

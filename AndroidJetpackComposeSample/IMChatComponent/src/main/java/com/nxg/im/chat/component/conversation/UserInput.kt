@@ -16,8 +16,6 @@
 
 package com.nxg.im.chat.component.conversation
 
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -80,7 +78,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
@@ -95,8 +92,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
+import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 
 enum class InputSelector {
     NONE,
@@ -125,6 +122,7 @@ fun UserInput(
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
     onVideoCall: () -> Unit = {},
+    onSelectorChange: (InputSelector) -> Unit = {},
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     val dismissKeyboard = { currentInputSelector = InputSelector.NONE }
@@ -162,6 +160,10 @@ fun UserInput(
             UserInputSelector(
                 onSelectorChange = {
                     when (it) {
+                        InputSelector.MAP -> {
+                            onSelectorChange.invoke(it)
+                        }
+
                         InputSelector.PHONE -> {
                             onVideoCall.invoke()
                         }
