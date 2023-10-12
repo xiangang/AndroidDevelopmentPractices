@@ -63,6 +63,9 @@ class DragDropSelectPointViewModel :
 
     private val sensorEventHelper = SensorEventHelper()
 
+    var name: String = ""
+    var address: String = ""
+
     override fun createInitialState(): DragDropSelectPointContract.State {
         return DragDropSelectPointContract.State(
             isClickForceStartLocation = false,
@@ -117,8 +120,12 @@ class DragDropSelectPointViewModel :
     }
 
     fun showSelectAddressInfo(poiItemV2: PoiItemV2) {
+        name = poiItemV2.toString()
+        address = poiItemV2.snippet
         setEffect {
-            Log.i("TAG", "showSelectAddressInfo: $poiItemV2")
+            Log.i("TAG", "showSelectAddressInfo: adName ${poiItemV2.adName}")
+            Log.i("TAG", "showSelectAddressInfo: cityName ${poiItemV2.cityName}")
+            Log.i("TAG", "showSelectAddressInfo: snippet ${poiItemV2.snippet}")
             DragDropSelectPointContract.Effect.Toast(
                 "选择的地址是：".plus(poiItemV2).plus("-").plus(poiItemV2.cityName ?: "")
                     .plus(poiItemV2.adName ?: "")
@@ -159,13 +166,17 @@ class DragDropSelectPointViewModel :
             setEffect { DragDropSelectPointContract.Effect.Toast("定位失败,请检查定位权限和网络....") }
             return
         }
+        Log.i("AMAP", "onLocationChanged: ${location.toStr()}")
+        Log.i("AMAP", "onLocationChanged: $location")
+        name = location.aoiName
+        address = location.address
         val latitude = location.latitude
         val longitude = location.longitude
-        setState { copy(currentLocation = LatLng(latitude,longitude)) }
+        setState { copy(currentLocation = LatLng(latitude, longitude)) }
         doSearchQueryPoi(LatLng(latitude, longitude))
     }
 
-    fun updateMarkLocation(latitude:Double,longitude:Double) {
+    fun updateMarkLocation(latitude: Double, longitude: Double) {
     }
 
     /**

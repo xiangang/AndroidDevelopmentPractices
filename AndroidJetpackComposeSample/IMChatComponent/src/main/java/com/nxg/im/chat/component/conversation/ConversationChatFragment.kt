@@ -53,6 +53,7 @@ import com.melody.map.gd_compose.poperties.MapUiSettings
 import com.melody.map.gd_compose.position.rememberCameraPositionState
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.module.chat.ChatService
 import com.nxg.im.core.module.map.MapService
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
@@ -112,6 +113,14 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
             composable("location") {
                 DragDropSelectPointScreen(onNavigateUp = {
+                    navController.navigateUp()
+                }, onLocationSend = { latitude: Double, longitude: Double, name: String, address ->
+                    conversationChatViewModel.sendChatLocationMessage(
+                        latitude,
+                        longitude,
+                        name,
+                        address
+                    )
                     navController.navigateUp()
                 })
                 //AMapScreen(navController)

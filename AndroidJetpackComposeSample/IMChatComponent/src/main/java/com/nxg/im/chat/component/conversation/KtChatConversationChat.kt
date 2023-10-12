@@ -1,7 +1,6 @@
 package com.nxg.im.chat.component.conversation
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,9 +20,12 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,17 +39,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.compose.ui.unit.sp
 import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
+import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.model.BitmapDescriptorFactory
+import com.amap.api.maps.model.LatLng
 import com.blankj.utilcode.util.TimeUtils
+import com.melody.map.gd_compose.GDMap
+import com.melody.map.gd_compose.overlay.Marker
+import com.melody.map.gd_compose.overlay.rememberMarkerState
+import com.melody.map.gd_compose.poperties.MapUiSettings
+import com.melody.map.gd_compose.position.rememberCameraPositionState
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.commonui.components.SymbolAnnotationType
+import com.nxg.im.commonui.components.UIMarkerInScreenCenter
 import com.nxg.im.commonui.components.messageFormatter
 import com.nxg.im.commonui.theme.BlueGrey30
 import com.nxg.im.commonui.theme.Red40
@@ -156,7 +167,60 @@ fun KtChatClickableMessage(
             )
         }
 
-        is LocationMessage -> {}
+        is LocationMessage -> {
+            var isMapLoaded by rememberSaveable { mutableStateOf(false) }
+            val dragDropAnimatable = remember { Animatable(Size.Zero, Size.VectorConverter) }
+            val cameraPositionState = rememberCameraPositionState()
+            val currentLocation =
+                remember { LatLng(chatMessage.content.latitude, chatMessage.content.longitude) }
+            val markerState = rememberMarkerState(position = currentLocation)
+            LaunchedEffect(chatMessage.content) {
+                cameraPositionState.move(
+                    CameraUpdateFactory.newLatLngZoom(
+                        markerState.position,
+                        17F
+                    )
+                )
+            }
+            Column(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = chatMessage.content.name,
+                    fontSize = 12.sp
+                )
+                Text(
+                    modifier = Modifier.padding(4.dp, 0.dp, 4.dp, 4.dp),
+                    text = chatMessage.content.address,
+                    fontSize = 10.sp
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .background(Color.Green)
+                ) {
+                    GDMap(
+                        modifier = Modifier.matchParentSize(),
+                        cameraPositionState = cameraPositionState,
+                        uiSettings = MapUiSettings(
+                            isZoomGesturesEnabled = false,
+                            isScrollGesturesEnabled = false,
+                        ),
+                        onMapLoaded = {
+                            isMapLoaded = true
+                        }
+                    )
+                    if (isMapLoaded) {
+                        // 地图加载出来之后，再显示出来选点的图标
+                        UIMarkerInScreenCenter(R.drawable.purple_pin) {
+                            dragDropAnimatable.value
+                        }
+                    }
+
+                }
+            }
+        }
+
         is TextMessage -> {
             KtChatTextMessage(chatMessage.content.text, isUserMe, authorClicked)
         }
@@ -179,9 +243,9 @@ fun KtChatClickableMessagePreview() {
     KtChatClickableMessage(textMessage, true)
 }
 
-private val KtChatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
+private val KtChatBubbleShape = RoundedCornerShape(0.dp, 10.dp, 10.dp, 10.dp)
 
-private val KtChatBubbleShapeUserMe = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+private val KtChatBubbleShapeUserMe = RoundedCornerShape(10.dp, 0.dp, 10.dp, 10.dp)
 
 @Composable
 fun KtChatItemBubble(

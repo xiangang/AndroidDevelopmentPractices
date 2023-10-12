@@ -100,7 +100,12 @@ data class FileMsgContent(val url: String, val name: String, val size: Int) : Me
 
 @Serializable
 @SerialName("Location")
-data class LocationMsgContent(val latitude: Double, val longitude: Double, val address: String) :
+data class LocationMsgContent(
+    val latitude: Double,
+    val longitude: Double,
+    val name: String,
+    val address: String
+) :
     MessageContent()
 
 fun ChatMessage.toJson(): String = Json.encodeToString(ChatMessage.serializer(), this)

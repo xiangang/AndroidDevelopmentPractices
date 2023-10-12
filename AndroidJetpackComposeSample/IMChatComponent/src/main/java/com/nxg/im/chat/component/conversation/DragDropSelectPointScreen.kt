@@ -47,10 +47,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amap.api.location.AMapLocation
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.BitmapDescriptorFactory
-import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.melody.map.gd_compose.GDMap
@@ -83,7 +81,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DragDropSelectPointScreen(
     onNavigateUp: () -> Unit = {},
-    onLocationSend: (AMapLocation) -> Unit = {},
+    onLocationSend: (Double, Double, String, String) -> Unit
 ) {
     var isMapLoaded by rememberSaveable { mutableStateOf(false) }
     val dragDropAnimatable = remember { Animatable(Size.Zero, Size.VectorConverter) }
@@ -230,7 +228,14 @@ fun DragDropSelectPointScreen(
                         .wrapContentHeight(),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    Button(onClick = { onNavigateUp() }) {
+                    Button(onClick = {
+                        onLocationSend(
+                            cameraPositionState.position.target.latitude,
+                            cameraPositionState.position.target.longitude,
+                            viewModel.name,
+                            viewModel.address,
+                        )
+                    }) {
                         Text(text = "发送")
                     }
                 }
@@ -247,12 +252,6 @@ fun DragDropSelectPointScreen(
                             LatLng(it.latLonPoint.latitude, it.latLonPoint.longitude)
                         ), 500
                     )
-                    /*cameraPositionState.position = CameraPosition(
-                        LatLng(it.latLonPoint.latitude, it.latLonPoint.longitude),
-                        cameraPositionState.position.zoom,
-                        cameraPositionState.position.tilt,
-                        0f
-                    )*/
                 }
                 viewModel.showSelectAddressInfo(it)
             }

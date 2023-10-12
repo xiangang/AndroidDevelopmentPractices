@@ -8,6 +8,8 @@ import com.blankj.utilcode.util.Utils
 import com.nxg.im.chat.component.notification.NotificationService
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.ChatMessage
+import com.nxg.im.core.data.bean.LocationMessage
+import com.nxg.im.core.data.bean.LocationMsgContent
 import com.nxg.im.core.data.bean.TextMessage
 import com.nxg.im.core.data.bean.TextMsgContent
 import com.nxg.im.core.data.db.KtChatDatabase
@@ -112,6 +114,35 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
                                 conversationChat.chatId,
                                 conversationChat.chatType,
                                 TextMsgContent(text),
+                                System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 发送聊天位置信息
+     */
+    fun sendChatLocationMessage(
+        latitude: Double,
+        longitude: Double,
+        name: String,
+        address: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            IMClient.authService.getLoginData()?.let { loginData ->
+                _uiState.value.conversationChat?.let { conversationChat ->
+                    let {
+                        //发送位置消息
+                        IMClient.chatService.sendMessage(
+                            LocationMessage(
+                                loginData.user.uuid,
+                                conversationChat.chatId,
+                                conversationChat.chatType,
+                                LocationMsgContent(latitude, longitude, name, address),
                                 System.currentTimeMillis()
                             )
                         )
