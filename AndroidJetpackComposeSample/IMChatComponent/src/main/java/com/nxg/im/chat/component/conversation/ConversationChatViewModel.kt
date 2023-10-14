@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import java.util.concurrent.atomic.AtomicInteger
 
 
@@ -123,6 +124,8 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
         }
     }
 
+    val formatter = DecimalFormat("0.000000")
+
     /**
      * 发送聊天位置信息
      */
@@ -142,7 +145,12 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
                                 loginData.user.uuid,
                                 conversationChat.chatId,
                                 conversationChat.chatType,
-                                LocationMsgContent(latitude, longitude, name, address),
+                                LocationMsgContent(
+                                    formatter.format(latitude).toDouble(),
+                                    formatter.format(longitude).toDouble(),
+                                    name,
+                                    address
+                                ),
                                 System.currentTimeMillis()
                             )
                         )

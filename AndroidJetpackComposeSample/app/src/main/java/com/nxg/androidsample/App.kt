@@ -43,8 +43,7 @@ class App : BaseViewModelApplication(), SimpleLogger,
         INSTANCE = this
         Utils.init(this)
         SDKUtils.init(this)
-        DoKit.Builder(this)
-            .build()
+        //DoKit.Builder(this).build()
         IMClient.init(this)
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }

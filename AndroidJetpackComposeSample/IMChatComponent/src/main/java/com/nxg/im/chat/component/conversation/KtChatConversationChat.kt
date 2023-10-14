@@ -1,6 +1,9 @@
 package com.nxg.im.chat.component.conversation
 
 import android.annotation.SuppressLint
+import android.content.ComponentCallbacks
+import android.content.res.Configuration
+import android.os.Bundle
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +35,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -40,11 +46,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
+import com.amap.api.maps.AMapOptions
 import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.MapView
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.blankj.utilcode.util.TimeUtils
@@ -53,9 +64,11 @@ import com.melody.map.gd_compose.overlay.Marker
 import com.melody.map.gd_compose.overlay.rememberMarkerState
 import com.melody.map.gd_compose.poperties.MapUiSettings
 import com.melody.map.gd_compose.position.rememberCameraPositionState
+import com.nxg.commonui.compose.LogCompositions
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
+import com.nxg.im.chat.component.notification.NotificationService.logger
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.commonui.components.SymbolAnnotationType
 import com.nxg.im.commonui.components.UIMarkerInScreenCenter
@@ -168,13 +181,14 @@ fun KtChatClickableMessage(
         }
 
         is LocationMessage -> {
-            var isMapLoaded by rememberSaveable { mutableStateOf(false) }
             val dragDropAnimatable = remember { Animatable(Size.Zero, Size.VectorConverter) }
             val cameraPositionState = rememberCameraPositionState()
             val currentLocation =
                 remember { LatLng(chatMessage.content.latitude, chatMessage.content.longitude) }
             val markerState = rememberMarkerState(position = currentLocation)
-            LaunchedEffect(chatMessage.content) {
+            LogCompositions("KtChatClickableMessage", "LocationMessage  cameraPositionState.move")
+            LaunchedEffect(markerState.position) {
+                logger.debug { "LocationMessage  cameraPositionState.move ${markerState.position}" }
                 cameraPositionState.move(
                     CameraUpdateFactory.newLatLngZoom(
                         markerState.position,
@@ -182,6 +196,13 @@ fun KtChatClickableMessage(
                     )
                 )
             }
+            val staticMapUrl = remember {
+                val latitudeLongitude =
+                    "${chatMessage.content.longitude},${chatMessage.content.latitude}"
+                //"https://restapi.amap.com/v3/staticmap?location=${latitudeLongitude}&zoom=17&size=750*300&markers=large,0xFF0000,A:${latitudeLongitude}&key=4fe4aebd7a9a70facc42b5b9960d0c4c"
+                "https://restapi.amap.com/v3/staticmap?location=${latitudeLongitude}&zoom=17&size=750*300&key=4fe4aebd7a9a70facc42b5b9960d0c4c"
+            }
+            LogCompositions("KtChatClickableMessage", "staticMapUrl $staticMapUrl")
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
                     modifier = Modifier.padding(4.dp),
@@ -196,27 +217,22 @@ fun KtChatClickableMessage(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
+                        .wrapContentHeight()
                         .background(Color.Green)
                 ) {
-                    GDMap(
-                        modifier = Modifier.matchParentSize(),
-                        cameraPositionState = cameraPositionState,
-                        uiSettings = MapUiSettings(
-                            isZoomGesturesEnabled = false,
-                            isScrollGesturesEnabled = false,
-                        ),
-                        onMapLoaded = {
-                            isMapLoaded = true
-                        }
+                    // Avatar
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        model = staticMapUrl,
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null,
                     )
-                    if (isMapLoaded) {
-                        // 地图加载出来之后，再显示出来选点的图标
-                        UIMarkerInScreenCenter(R.drawable.purple_pin) {
-                            dragDropAnimatable.value
-                        }
-                    }
 
+                    // 地图加载出来之后，再显示出来选点的图标
+                    UIMarkerInScreenCenter(R.drawable.purple_pin) {
+                        dragDropAnimatable.value
+                    }
                 }
             }
         }
@@ -746,6 +762,52 @@ fun KtChatConversationContent(
                 },
                 onSelectorChange = onSelectorChange
             )
+        }
+    }
+}
+
+// 管理地图生命周期
+private fun MapView.lifecycleObserver(): LifecycleEventObserver =
+    LifecycleEventObserver { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_CREATE -> this.onCreate(Bundle())
+            Lifecycle.Event.ON_RESUME -> this.onResume() // 重新绘制加载地图
+            Lifecycle.Event.ON_PAUSE -> this.onPause()  // 暂停地图的绘制
+            Lifecycle.Event.ON_DESTROY -> this.onDestroy() // 销毁地图
+            else -> {}
+        }
+    }
+
+private fun MapView.componentCallbacks(): ComponentCallbacks =
+    object : ComponentCallbacks {
+        // 设备配置发生改变，组件还在运行时
+        override fun onConfigurationChanged(config: Configuration) {}
+
+        // 系统运行的内存不足时，可以通过实现该方法去释放内存或不需要的资源
+        override fun onLowMemory() {
+            // 调用地图的onLowMemory
+            this@componentCallbacks.onLowMemory()
+        }
+    }
+
+
+@Composable
+private fun MapLifecycle(mapView: MapView) {
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(context, lifecycle, mapView) {
+        val mapLifecycleObserver = mapView.lifecycleObserver()
+        val callbacks = mapView.componentCallbacks()
+        // 添加生命周期观察者
+        lifecycle.addObserver(mapLifecycleObserver)
+        // 注册ComponentCallback
+        context.registerComponentCallbacks(callbacks)
+
+        onDispose {
+            // 删除生命周期观察者
+            lifecycle.removeObserver(mapLifecycleObserver)
+            // 取消注册ComponentCallback
+            context.unregisterComponentCallbacks(callbacks)
         }
     }
 }
