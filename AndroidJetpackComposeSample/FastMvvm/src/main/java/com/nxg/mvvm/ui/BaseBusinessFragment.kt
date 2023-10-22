@@ -64,6 +64,14 @@ open class BaseBusinessFragment : BaseViewModelFragment, SimpleLogger {
         ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
 
+
+    /**
+     * 检查所有的权限是否已经拥有
+     */
+    fun checkSelfPermissions(context: Context, permissions: Array<String>) = permissions.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+
     /**
      * 检测指定的权限是否已经获取到
      */

@@ -28,9 +28,16 @@ data class ImageMessage(
     override val fromId: Long,
     override val toId: Long,
     override val chatType: Int,
-    override val content: ImageMsgContent,
+    override var content: ImageMsgContent,
     override val timestamp: Long
-) : ChatMessage()
+) : ChatMessage() {
+
+    @Transient
+    val upload: Boolean = false
+
+    @Transient
+    val uploadProgress: Int = 0
+}
 
 @Serializable
 @SerialName("Audio")
@@ -83,7 +90,12 @@ data class TextMsgContent(val text: String) : MessageContent()
 
 @Serializable
 @SerialName("Image")
-data class ImageMsgContent(val url: String, val width: Int, val height: Int) : MessageContent()
+data class ImageMsgContent(
+    var url: String,
+    var width: Int,
+    var height: Int,
+    var localImageFilePath: String = ""
+) : MessageContent()
 
 @Serializable
 @SerialName("Audio")

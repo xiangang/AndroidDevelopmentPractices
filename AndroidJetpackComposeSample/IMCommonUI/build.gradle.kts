@@ -55,4 +55,11 @@ dependencies {
     implementation(Compose.accompanistSystemUiController)
     implementation(Compose.activity)
     implementation(Lifecycle.runtimeCompose)
+    implementation(Coil.coil)
+    implementation(Coil.coilCompose)
+    implementation(Coil.coilGif)
+    implementation(Coil.coilSvg)
+    implementation(Coil.coilVideo)
+    implementation ("io.github.TheMelody:gd_compose:1.0.2")
+    implementation("com.github.leavesCZY:Matisse:1.0.4")
 }

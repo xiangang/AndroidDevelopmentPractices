@@ -21,7 +21,7 @@ interface AuthService : IMService {
 
     suspend fun saveApiToken(token: String)
 
-    suspend fun getApiToken(): String?
+    fun getApiToken(): String?
 
     suspend fun getWebSocketToken(): String?
 

@@ -23,11 +23,9 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -36,7 +34,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
@@ -46,23 +43,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
-import com.amap.api.maps.AMapOptions
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.MapView
-import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.blankj.utilcode.util.TimeUtils
-import com.melody.map.gd_compose.GDMap
-import com.melody.map.gd_compose.overlay.Marker
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.melody.map.gd_compose.overlay.rememberMarkerState
-import com.melody.map.gd_compose.poperties.MapUiSettings
 import com.melody.map.gd_compose.position.rememberCameraPositionState
 import com.nxg.commonui.compose.LogCompositions
 import com.nxg.im.chat.R
@@ -75,10 +67,16 @@ import com.nxg.im.commonui.components.UIMarkerInScreenCenter
 import com.nxg.im.commonui.components.messageFormatter
 import com.nxg.im.commonui.theme.BlueGrey30
 import com.nxg.im.commonui.theme.Red40
+import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.*
+import com.nxg.im.core.dispatcher.IMCoroutineScope
+import com.nxg.im.core.dispatcher.IMDispatcher
+import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -117,8 +115,9 @@ fun KtChatTextMessagePreview() {
 fun KtChatImageMessage(url: String, isUserMe: Boolean, authorClicked: (String) -> Unit = {}) {
     AsyncImage(
         modifier = Modifier
-            .size(100.dp),
+            .fillMaxSize(fraction = 0.4f),
         model = url,
+        contentScale = ContentScale.Crop,
         contentDescription = url
     )
 }
@@ -174,10 +173,97 @@ fun KtChatClickableMessage(
         is AudioMessage -> {}
         is FileMessage -> {}
         is ImageMessage -> {
-            KtChatImageMessage(
-                chatMessage.content.url,
-                true
-            )
+            val uploadProgressState = remember { mutableIntStateOf(-1) }
+            LaunchedEffect(Unit) {
+                withContext(IMDispatcher) {
+                    if (IMClient.getService<UploadService>()
+                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
+                    ) {
+                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
+                            val uploadProgress = IMClient.getService<UploadService>()
+                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
+                            if (uploadProgress < 0) {
+                                break
+                            }
+                            if (uploadProgress >= 100) {
+                                uploadProgressState.intValue = 100
+                                break
+                            }
+                            if (uploadProgressState.intValue != uploadProgress) {
+                                uploadProgressState.intValue = uploadProgress
+                            }
+                        }
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .wrapContentWidth()
+            ) {
+                LogCompositions(
+                    tag = "ImageMessage",
+                    msg = "chatMessage.content.localImageFilePath ${chatMessage.content.localImageFilePath}"
+                )
+                LogCompositions(
+                    tag = "ImageMessage",
+                    msg = "chatMessage.content.url ${chatMessage.content.url}"
+                )
+
+                val url = chatMessage.content.url
+                val localImageFilePath = chatMessage.content.localImageFilePath
+                if (url.isEmpty()) {
+                    if (localImageFilePath.isNotEmpty()) {
+                        KtChatImageMessage(
+                            chatMessage.content.localImageFilePath,
+                            true
+                        )
+                    }
+                } else {
+                    if (url.isNotEmpty()) {
+                        KtChatImageMessage(
+                            "${chatMessage.content.url}@400w_400h_100q",
+                            true
+                        )
+                    }
+                }
+
+                if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue in 0..100) {
+                    // 创建一个 [InfiniteTransition] 实列用来管理子动画
+                    val infiniteTransition = rememberInfiniteTransition(label = "")
+                    // 创建一个float类型的子动画
+                    val angle by infiniteTransition.animateFloat(
+                        initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
+                        targetValue = 360F,
+                        animationSpec = infiniteRepeatable(
+                            //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
+                            animation = tween(1500, easing = LinearEasing),
+                        ), label = ""
+                    )
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.Center)
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .graphicsLayer { rotationZ = angle }
+                                .size(60.dp)
+                                .align(Alignment.CenterHorizontally),
+                            painter = painterResource(id = R.drawable.ic_loading3),
+                            contentDescription = ""
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = "${uploadProgressState.intValue}%",
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+
         }
 
         is LocationMessage -> {
@@ -199,7 +285,6 @@ fun KtChatClickableMessage(
             val staticMapUrl = remember {
                 val latitudeLongitude =
                     "${chatMessage.content.longitude},${chatMessage.content.latitude}"
-                //"https://restapi.amap.com/v3/staticmap?location=${latitudeLongitude}&zoom=17&size=750*300&markers=large,0xFF0000,A:${latitudeLongitude}&key=4fe4aebd7a9a70facc42b5b9960d0c4c"
                 "https://restapi.amap.com/v3/staticmap?location=${latitudeLongitude}&zoom=17&size=750*300&key=4fe4aebd7a9a70facc42b5b9960d0c4c"
             }
             LogCompositions("KtChatClickableMessage", "staticMapUrl $staticMapUrl")
@@ -218,7 +303,7 @@ fun KtChatClickableMessage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .background(Color.Green)
+                        .background(Color.Transparent)
                 ) {
                     // Avatar
                     AsyncImage(
@@ -256,7 +341,7 @@ fun KtChatClickableMessagePreview() {
                 "applies) $EMOJI_POINTS https://goo.gle/jetnews",
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
-    KtChatClickableMessage(textMessage, true)
+    KtChatClickableMessage(textMessage, true)//@Preview
 }
 
 private val KtChatBubbleShape = RoundedCornerShape(0.dp, 10.dp, 10.dp, 10.dp)
@@ -279,7 +364,7 @@ fun KtChatItemBubble(
     Row {
         if (isUserMe) {
             // 状态
-            when (sent) {
+            when (sent) {//发送状态
                 IM_SEND_REQUEST -> {
                     // 创建一个 [InfiniteTransition] 实列用来管理子动画
                     val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -596,7 +681,7 @@ fun KtChatIMMessages(
 ) {
     pager?.let {
         val lazyPagingItems = it.flow.collectAsLazyPagingItems()
-        var itemCount by remember { mutableStateOf(lazyPagingItems.itemCount) }
+        var itemCount by remember { mutableIntStateOf(lazyPagingItems.itemCount) }
         val scope = rememberCoroutineScope()
         Box(modifier = modifier) {
             LazyColumn(
@@ -659,7 +744,7 @@ fun KtChatIMMessagesPreview() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun KtChatConversationContent(
     conversationChatViewModel: ConversationChatViewModel,
@@ -755,11 +840,6 @@ fun KtChatConversationContent(
                 modifier = Modifier
                     .navigationBarsPadding()
                     .imePadding(),
-                onVideoCall = {
-                    conversationChatUiState.value.conversationChat?.let {
-                        conversationChatViewModel.videoCallService.call(it.friend.friendId)
-                    }
-                },
                 onSelectorChange = onSelectorChange
             )
         }

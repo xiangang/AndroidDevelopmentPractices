@@ -8,6 +8,8 @@ import com.blankj.utilcode.util.Utils
 import com.nxg.im.chat.component.notification.NotificationService
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.ChatMessage
+import com.nxg.im.core.data.bean.ImageMessage
+import com.nxg.im.core.data.bean.ImageMsgContent
 import com.nxg.im.core.data.bean.LocationMessage
 import com.nxg.im.core.data.bean.LocationMsgContent
 import com.nxg.im.core.data.bean.TextMessage
@@ -15,6 +17,7 @@ import com.nxg.im.core.data.bean.TextMsgContent
 import com.nxg.im.core.data.db.KtChatDatabase
 import com.nxg.im.core.data.db.entity.Friend
 import com.nxg.im.core.data.db.entity.Message
+import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
 import com.nxg.im.core.module.videocall.VideoCallService
 import com.nxg.mvvm.logger.SimpleLogger
@@ -124,7 +127,31 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
         }
     }
 
-    val formatter = DecimalFormat("0.000000")
+    /**
+     * 发送聊天图片信息
+     */
+    fun sendChatImageMessage(filePath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            IMClient.authService.getLoginData()?.let { loginData ->
+                _uiState.value.conversationChat?.let { conversationChat ->
+                    let {
+                        //发送图片消息
+                        IMClient.chatService.sendMessage(
+                            ImageMessage(
+                                loginData.user.uuid,
+                                conversationChat.chatId,
+                                conversationChat.chatType,
+                                ImageMsgContent("", 0, 0, filePath),
+                                System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private val formatter = DecimalFormat("0.000000")
 
     /**
      * 发送聊天位置信息

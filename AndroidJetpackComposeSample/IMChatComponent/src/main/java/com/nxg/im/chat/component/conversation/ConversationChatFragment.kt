@@ -18,9 +18,11 @@ package com.nxg.im.chat.component.conversation
 
 import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,18 +50,32 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.LatLng
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.melody.map.gd_compose.GDMap
 import com.melody.map.gd_compose.poperties.MapUiSettings
 import com.melody.map.gd_compose.position.rememberCameraPositionState
+import com.nxg.im.chat.component.utils.requestMultiplePermission
+import com.nxg.im.commonui.components.coil.CoilImageEngine
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.module.chat.ChatService
 import com.nxg.im.core.module.map.MapService
+import com.nxg.im.core.module.upload.UploadService
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
+import github.leavesczy.matisse.DefaultMediaFilter
+import github.leavesczy.matisse.Matisse
+import github.leavesczy.matisse.MatisseContract
+import github.leavesczy.matisse.MediaResource
+import github.leavesczy.matisse.MimeType
+import github.leavesczy.matisse.SmartCaptureStrategy
 import kotlinx.coroutines.launch
 
 class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
+
+    companion object {
+        private const val TAG = "ConversationChat"
+    }
 
     private val conversationChatViewModel: ConversationChatViewModel by activityViewModels()
 
@@ -78,12 +94,49 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         }
     }
 
-
+    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     fun NavContent(conversationChatViewModel: ConversationChatViewModel) {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "chat") {
             composable("chat") {
+                val mediaPickerLauncher =
+                    rememberLauncherForActivityResult(contract = MatisseContract()) { result: List<MediaResource> ->
+                        if (result.isNotEmpty()) {
+                            val mediaResource = result[0]
+                            val uri = mediaResource.uri
+                            val path = mediaResource.path
+                            val name = mediaResource.name
+                            val mimeType = mediaResource.mimeType
+                            Log.i(TAG, "rememberLauncherForActivityResult: Matisse $mediaResource")
+                            conversationChatViewModel.sendChatImageMessage(path)
+                        }
+                    }
+
+                val onVideoCallSelected = remember { mutableStateOf(false) }
+                val requestVideCallPermission = requestMultiplePermission(
+                    permissions = listOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                    )
+                )
+                LaunchedEffect(
+                    onVideoCallSelected,
+                    requestVideCallPermission.allPermissionsGranted
+                ) {
+                    logger.debug { "requestVideCallPermission.allPermissionsGranted ${requestVideCallPermission.allPermissionsGranted}" }
+                    logger.debug { "onVideoCallSelected.value ${onVideoCallSelected.value}" }
+                    if (onVideoCallSelected.value) {
+                        if (!requestVideCallPermission.allPermissionsGranted) {
+                            requestVideCallPermission.launchMultiplePermissionRequest()
+                        } else {
+                            conversationChatViewModel.uiState.value.conversationChat?.let { chat ->
+                                conversationChatViewModel.videoCallService.call(chat.friend.friendId)
+                            }
+                            onVideoCallSelected.value = false
+                        }
+                    }
+                }
                 KtChatConversationContent(
                     conversationChatViewModel,
                     onAuthorClick = { user ->
@@ -99,10 +152,40 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     },
                     onNavigateUp = {
                         findNavController().navigateUp()
-                    }, onSelectorChange = {
+                    },
+                    onSelectorChange = {
                         when (it) {
+                            InputSelector.PICTURE -> {
+                                val matisse = Matisse(
+                                    maxSelectable = 1,
+                                    mediaFilter = DefaultMediaFilter(
+                                        supportedMimeTypes = MimeType.ofImage(
+                                            hasGif = true
+                                        )
+                                    ),
+                                    imageEngine = CoilImageEngine(),
+                                    captureStrategy = SmartCaptureStrategy("com.nxg.androidsample.authority")
+                                )
+                                mediaPickerLauncher.launch(matisse)
+                            }
+
                             InputSelector.MAP -> {
                                 navController.navigate("location")
+                            }
+
+                            InputSelector.PHONE -> {
+                                onVideoCallSelected.value = true
+
+                                logger.debug { "requestVideCallPermission.allPermissionsGranted ${requestVideCallPermission.allPermissionsGranted}" }
+                                if (requestVideCallPermission.allPermissionsGranted) {
+                                    conversationChatViewModel.uiState.value.conversationChat?.let { chat ->
+                                        conversationChatViewModel.videoCallService.call(chat.friend.friendId)
+                                    }
+                                    onVideoCallSelected.value = false
+                                } else {
+                                    //先检查权限
+                                    requestVideCallPermission.launchMultiplePermissionRequest()
+                                }
                             }
 
                             else -> {}
@@ -124,90 +207,6 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     navController.navigateUp()
                 })
                 //AMapScreen(navController)
-            }
-        }
-    }
-
-    @Composable
-    private fun AMapScreen(navController: NavHostController) {
-        val mapUiState by IMClient.getService<MapService>().getMapUiStateFlow()
-            .collectAsState()
-        // 高德地图
-        val cameraPositionState = rememberCameraPositionState()
-        val scope = rememberCoroutineScope()
-        val uiSettings by remember {
-            mutableStateOf(
-                MapUiSettings(
-                    isRotateGesturesEnabled = true,
-                    isScrollGesturesEnabled = true,
-                    isTiltGesturesEnabled = true,
-                    isZoomGesturesEnabled = true,
-                    isZoomEnabled = true,
-                    isCompassEnabled = true,
-                    myLocationButtonEnabled = true,
-                    isScaleControlsEnabled = true,
-                )
-            )
-        }
-        LaunchedEffect(Unit) {
-            //检查权限是否获取
-            if (!checkSelfPermissions(requireContext())) {
-                requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-            } else {
-                //启动一次定位
-                IMClient.getService<MapService>().startLocation()
-            }
-        }
-
-        GDMap(
-            modifier = Modifier.fillMaxSize(),
-            // 默认提供的位置在：天安门
-            cameraPositionState = cameraPositionState,
-            uiSettings = uiSettings,
-            onMapLoaded = { logger.debug { "onMapLoaded" } },
-            onMapClick = { logger.debug { "onMapClick" } },
-            onMapLongClick = { logger.debug { "onMapLongClick" } },
-            onMapPOIClick = {
-                logger.debug { "onMapPOIClick: ${it?.toString()}" }
-            },
-            onOnMapTouchEvent = {
-
-            },
-        )
-
-        LaunchedEffect(mapUiState) {
-            launch {
-                mapUiState.aMapLocation?.let {
-                    cameraPositionState.animate(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(
-                                it.latitude,
-                                it.longitude
-                            ), 13F
-                        )
-                    )
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(10.dp, 50.dp, 10.dp, 10.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-
-            ) {
-
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
-            ) {
-                Button(onClick = { navController.navigateUp() }) {
-                    Text(text = "取消")
-                }
             }
         }
     }

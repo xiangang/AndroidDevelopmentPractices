@@ -33,7 +33,7 @@ object IMHttpManger : SimpleLogger {
     /**
      * 构建IM服务器OkHttpClient实例
      */
-    private val imOkHttpClient: OkHttpClient by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+    val imOkHttpClient: OkHttpClient by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         val builder = OkHttpClient.Builder().apply {
             connectTimeout(5, TimeUnit.SECONDS)
             readTimeout(5, TimeUnit.SECONDS)

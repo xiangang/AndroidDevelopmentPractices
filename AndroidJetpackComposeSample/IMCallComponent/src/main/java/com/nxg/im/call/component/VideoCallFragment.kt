@@ -82,6 +82,14 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
         super.onViewCreated(view, savedInstanceState)
         logger.debug { "onViewCreated" }
         hideSystemBars()
+        if (!checkSelfPermissions(requireContext(), PERMISSIONS_REQUIRED)) {
+            requestPermission(PERMISSIONS_REQUIRED)
+            return
+        }
+        initView()
+    }
+
+    private fun initView() {
         setAudioModel(true)
         //初始化SurfaceViewRenderer
         binding.renderLocal.apply {
@@ -135,9 +143,7 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
                 IMClient.videoCallService.answer(session)
             }
         }
-        if (!checkSelfPermissions(requireContext())) {
-            requestPermission(PERMISSIONS_REQUIRED)
-        }
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 webRtcHelperLocal =
@@ -263,6 +269,9 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
 
     override fun doWhenPermissionGranted(permission: String) {
         logger.debug { "doWhenPermissionGranted" }
+        if (checkSelfPermissions(requireContext(), PERMISSIONS_REQUIRED)) {
+            initView()
+        }
     }
 
     private val onBackStackChangedListener =

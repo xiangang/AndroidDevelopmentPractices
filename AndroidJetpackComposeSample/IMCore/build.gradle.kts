@@ -37,11 +37,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
 
@@ -65,6 +65,7 @@ protobuf {
 }
 
 dependencies {
+    //implementation(files("/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/rt.jar"))
     implementation(AndroidX.appcompat)
     implementation(AndroidX.constraintlayout)
     implementation(AndroidX.cardview)
@@ -90,12 +91,16 @@ dependencies {
     implementation(project(mapOf("path" to ":KtStateMachine")))
     implementation("androidx.security:security-crypto:1.0.0")
     // For Identity Credential APIs
-    implementation("androidx.security:security-identity-credential:1.0.0-alpha03")
+    implementation("androidx.security:security-identity-credential:1.0.0-alpha03") {
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+    }
     // For App Authentication APIs
     implementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
     // For App Authentication API testing
     androidTestImplementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
     api(Kotlin.reflect)
-    implementation ("io.github.TheMelody:gd_compose:1.0.2")
+    implementation("io.github.TheMelody:gd_compose:1.0.2")
+    implementation("com.amazonaws:aws-android-sdk-s3:2.73.0")
+
 }
 

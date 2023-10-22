@@ -16,7 +16,9 @@
 
 package com.nxg.im.chat.component.conversation
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
@@ -92,8 +94,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LOG_TAG
+import com.nxg.commonui.compose.LogCompositions
 import com.nxg.im.chat.R
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
+import com.nxg.im.commonui.components.coil.CoilImageEngine
+import github.leavesczy.matisse.DefaultMediaFilter
+import github.leavesczy.matisse.Matisse
+import github.leavesczy.matisse.MatisseContract
+import github.leavesczy.matisse.MediaResource
+import github.leavesczy.matisse.MimeType
+import github.leavesczy.matisse.SmartCaptureStrategy
 
 enum class InputSelector {
     NONE,
@@ -121,7 +132,6 @@ fun UserInput(
     onMessageSent: (String) -> Unit,
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
-    onVideoCall: () -> Unit = {},
     onSelectorChange: (InputSelector) -> Unit = {},
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
@@ -138,6 +148,18 @@ fun UserInput(
 
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
+
+    val mediaPickerLauncher =
+        rememberLauncherForActivityResult(contract = MatisseContract()) { result: List<MediaResource> ->
+            if (result.isNotEmpty()) {
+                val mediaResource = result[0]
+                val uri = mediaResource.uri
+                val path = mediaResource.path
+                val name = mediaResource.name
+                val mimeType = mediaResource.mimeType
+                Log.i("TAG", "UserInput: Matisse ${mediaResource.toString()}")
+            }
+        }
 
     Surface(tonalElevation = 2.dp) {
         Column(modifier = modifier) {
@@ -160,16 +182,12 @@ fun UserInput(
             UserInputSelector(
                 onSelectorChange = {
                     when (it) {
-                        InputSelector.MAP -> {
+                        InputSelector.PICTURE, InputSelector.MAP, InputSelector.PHONE -> {
                             onSelectorChange.invoke(it)
                         }
 
-                        InputSelector.PHONE -> {
-                            onVideoCall.invoke()
-                        }
-
                         else -> {
-
+                            currentInputSelector = it
                         }
                     }
                 },
@@ -188,7 +206,6 @@ fun UserInput(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
                 currentSelector = currentInputSelector,
-                onVideoCall = onVideoCall
             )
         }
     }
@@ -213,7 +230,6 @@ private fun SelectorExpanded(
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
     onTextAdded: (String) -> Unit,
-    onVideoCall: () -> Unit
 ) {
     if (currentSelector == InputSelector.NONE) return
 
@@ -232,7 +248,7 @@ private fun SelectorExpanded(
             InputSelector.DM -> NotAvailablePopup(onCloseRequested)
             InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
             InputSelector.MAP -> FunctionalityNotAvailablePanel()
-            InputSelector.PHONE -> onVideoCall.invoke()
+            InputSelector.PHONE -> FunctionalityNotAvailablePanel()
             else -> {
                 throw NotImplementedError()
             }

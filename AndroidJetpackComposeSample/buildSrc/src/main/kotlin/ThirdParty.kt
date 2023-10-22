@@ -134,10 +134,12 @@ object Glide {
 
 //线圈（Kotlin 协程支持的 Android 图像加载库）
 object Coil {
-    const val coil = "io.coil-kt:coil:1.3.2"
-    const val coilCompose = "io.coil-kt:coil-compose:2.1.0"
-    const val coilGif = "io.coil-kt:coil-gif:2.1.0"
-    const val coilSvg = "io.coil-kt:coil-svg:2.1.0"
+    private const val version = "2.4.0"
+    const val coil = "io.coil-kt:coil:$version"
+    const val coilCompose = "io.coil-kt:coil-compose:$version"
+    const val coilGif = "io.coil-kt:coil-gif:$version"
+    const val coilSvg = "io.coil-kt:coil-svg:$version"
+    const val coilVideo= "io.coil-kt:coil-video:$version"
 
 }
 

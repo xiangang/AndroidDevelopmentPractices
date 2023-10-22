@@ -128,7 +128,7 @@ object AuthServiceImpl : AuthService, SimpleLogger {
         editor.apply()
     }
 
-    override suspend fun getApiToken(): String? {
+    override fun getApiToken(): String? {
         return userLoginData?.getApiToken()
     }
 

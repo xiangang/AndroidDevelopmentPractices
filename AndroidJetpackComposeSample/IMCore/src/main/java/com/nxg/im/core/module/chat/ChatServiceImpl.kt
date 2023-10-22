@@ -1,5 +1,6 @@
 package com.nxg.im.core.module.chat
 
+import android.graphics.BitmapFactory
 import android.util.ArrayMap
 import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
@@ -14,6 +15,7 @@ import com.nxg.im.core.http.IMHttpManger
 import com.nxg.im.core.http.IMWebSocket
 import com.nxg.im.core.module.signaling.SignalingServiceImpl
 import com.nxg.im.core.module.signaling.parseSignaling
+import com.nxg.im.core.module.upload.UploadService
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -53,13 +55,64 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     }
 
     override fun sendMessage(chatMessage: ChatMessage) {
+        logger.debug { "sendMessage: ${chatMessage.toJson()}" }
         IMCoroutineScope.launch {
             sendMessageChannel.send(chatMessage)
         }
     }
 
+    /**
+     * 真正通过WebSocket发送消息的方法
+     */
     private suspend fun doSendMessage(message: Message) {
         logger.debug { "doSendMessage: $message" }
+        //处理不同的消息
+        when (val chatMessage = message.toChatMessage()) {
+            is AudioMessage -> {}
+            is FileMessage -> {}
+            is ImageMessage -> {
+                val messageContent = chatMessage.content
+                if (messageContent.url.isEmpty()) {
+                    //先上传图片，同时回调上传进度
+                    var uploadFileUrl: String? = ""
+                    try {
+                        val option = BitmapFactory.Options()
+                        option.inJustDecodeBounds = true
+                        BitmapFactory.decodeFile(messageContent.localImageFilePath, option)
+                        option.inSampleSize = 1
+                        option.inJustDecodeBounds = false
+                        chatMessage.content.width = option.outWidth
+                        chatMessage.content.height = option.outHeight
+                        uploadFileUrl =
+                            IMClient.getService<UploadService>()
+                                .syncUpload(messageContent.localImageFilePath)
+                        logger.debug { "doSendMessage: uploadFileUrl $uploadFileUrl" }
+                    } catch (e: Exception) {
+                        logger.error {
+                            e.message
+                        }
+                    }
+                    //更新url
+                    if (uploadFileUrl.isNullOrEmpty()) {
+                        //处理上传失败的情况
+                        message.sent = IM_SEND_FAILED
+                        KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                            .updateMessage(message)
+                        return
+                    }
+                    chatMessage.content.url = uploadFileUrl
+                    chatMessage.content.localImageFilePath = ""
+                    message.msgContent = chatMessage.toJson()
+                    KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                        .updateMessage(message)
+                }
+            }
+
+            is LocationMessage -> {}
+            is TextMessage -> {}
+            is VideoMessage -> {}
+        }
+
         if (message.uuid == 0L) {
             //获取uuid
             val uuid = generateUid()
@@ -72,6 +125,8 @@ object ChatServiceImpl : ChatService, SimpleLogger {
             KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                 .updateMessage(message)
         }
+        logger.debug { "doSendMessage: message $message" }
+        logger.debug { "doSendMessage: message.msgContent ${message.msgContent}" }
         //生成protobuf
         val body = message.msgContent.toByteArray()
         val imCoreMessage = IMCoreMessage.newBuilder().apply {
@@ -86,6 +141,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
         }.build()
         //通过WebSocket发送
         val result = IMWebSocket.send(imCoreMessage.toByteArray().toByteString())
+        logger.debug { "doSendMessage: imCoreMessage $imCoreMessage" }
         logger.debug { "doSendMessage: result $result" }
         //发送成功
         if (!result) {
@@ -211,7 +267,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                 message.id =
                     KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                         .insertMessage(message)
-                doSendMessage(message)
+                doSendMessage(message)//处理队列消息
             }
         }
     }
@@ -219,7 +275,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
 
     override fun resendMessage(message: Message) {
         IMCoroutineScope.launch {
-            doSendMessage(message)
+            doSendMessage(message)//重发
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.nxg.im.core.data.bean.ChatMessage
 import com.nxg.im.core.data.bean.parseChatMessage
+import kotlinx.serialization.Transient
 
 typealias IMSendStatus = Int
 
@@ -23,7 +24,7 @@ data class Message constructor(
     @ColumnInfo(name = "from_id") val fromId: Long,//当前用户ID
     @ColumnInfo(name = "to_id") val toId: Long,//聊天ID，单聊时是用户ID，群聊是是群ID
     @ColumnInfo(name = "chat_type") val chatType: Int,//聊天类型：0单聊，1群聊
-    @ColumnInfo(name = "msg_content") val msgContent: String,//消息的内容（json
+    @ColumnInfo(name = "msg_content") var msgContent: String,//消息的内容（json
     @ColumnInfo(name = "msg_at") var msgAt: String = "",//@对象（json）
     @ColumnInfo(name = "msg_time") val msgTime: Long = System.currentTimeMillis(),//消息时间戳，如果是发送方的，则等于创建时间，如果是接收方则等于消息中的时间戳
     @ColumnInfo(name = "sent") var sent: Int = 0,//0发送成功，1发送中，2发送失败
@@ -37,4 +38,12 @@ data class Message constructor(
     fun toChatMessage(): ChatMessage {
         return msgContent.parseChatMessage()
     }
+
+    @Ignore
+    @Transient
+    val upload: Boolean = false
+
+    @Ignore
+    @Transient
+    val uploadProgress: Int = 0
 }

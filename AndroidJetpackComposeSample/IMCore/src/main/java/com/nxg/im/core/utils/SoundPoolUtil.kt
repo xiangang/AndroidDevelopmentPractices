@@ -6,7 +6,6 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
 import android.util.Log
-import com.nxg.commonui.utils.LogUtil
 
 /**
  * Android 多音频同时播放
@@ -50,7 +49,6 @@ class SoundPoolUtil private constructor(val context: Context) {
             if (status == 0) {
                 //play(sampleId)
             }
-            LogUtil.printLog(message = "setOnLoadCompleteListener status $status sampleId $sampleId")
         }
 
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager

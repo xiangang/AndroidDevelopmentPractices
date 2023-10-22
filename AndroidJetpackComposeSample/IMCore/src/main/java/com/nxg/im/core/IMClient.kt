@@ -21,6 +21,8 @@ import com.nxg.im.core.module.signaling.SignalingService
 import com.nxg.im.core.module.signaling.SignalingServiceImpl
 import com.nxg.im.core.module.soundpool.SoundPoolService
 import com.nxg.im.core.module.soundpool.SoundPoolServiceImpl
+import com.nxg.im.core.module.upload.UploadService
+import com.nxg.im.core.module.upload.UploadServiceOkHttp
 import com.nxg.im.core.module.user.UserService
 import com.nxg.im.core.module.user.UserServiceImpl
 import com.nxg.im.core.module.videocall.VideoCallService
@@ -46,6 +48,7 @@ object IMClient : SimpleLogger {
             MediaPlayerService::class -> MediaPlayerServiceImpl as T
             SoundPoolService::class -> SoundPoolServiceImpl as T
             MapService::class -> MapServiceImpl as T
+            UploadService::class -> UploadServiceOkHttp as T
             else -> {
                 throw IllegalArgumentException("Can't find instance of the ${T::class.java} implementation class!")
             }
@@ -88,6 +91,7 @@ object IMClient : SimpleLogger {
             getService<AuthService>().init()
             getService<SoundPoolService>().init()
             getService<MapService>().init(Utils.getApp())
+            getService<UploadService>().init(Utils.getApp())
         }
     }
 

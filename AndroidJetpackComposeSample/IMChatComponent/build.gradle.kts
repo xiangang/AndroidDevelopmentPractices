@@ -59,6 +59,7 @@ dependencies {
     implementation(Compose.viewbinding)
     implementation(Compose.googlefonts)
     implementation(Compose.paging)
+    implementation(Coil.coilCompose)
     implementation(Lifecycle.runtimeCompose)
     implementation(Google.accompanist_permissions)
     debugImplementation(Lifecycle.viewModelSavedState)
@@ -67,5 +68,7 @@ dependencies {
     implementation(project(mapOf("path" to ":IMCore")))
     implementation(project(mapOf("path" to ":IMCommonUI")))
     implementation(project(mapOf("path" to ":KtStateMachine")))
-    implementation ("io.github.TheMelody:gd_compose:1.0.2")
+    implementation("io.github.TheMelody:gd_compose:1.0.2")
+    implementation("com.github.leavesCZY:Matisse:1.0.4")
+    implementation("top.zibin:Luban:1.1.8")
 }
