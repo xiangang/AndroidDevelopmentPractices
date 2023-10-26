@@ -25,6 +25,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -115,7 +116,7 @@ fun KtChatTextMessagePreview() {
 fun KtChatImageMessage(url: String, isUserMe: Boolean, authorClicked: (String) -> Unit = {}) {
     AsyncImage(
         modifier = Modifier
-            .fillMaxSize(fraction = 0.4f),
+            .fillMaxSize(),
         model = url,
         contentScale = ContentScale.Crop,
         contentDescription = url
@@ -174,36 +175,37 @@ fun KtChatClickableMessage(
         is FileMessage -> {}
         is ImageMessage -> {
             val uploadProgressState = remember { mutableIntStateOf(-1) }
-            LaunchedEffect(Unit) {
-                withContext(IMDispatcher) {
-                    if (IMClient.getService<UploadService>()
-                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
-                    ) {
-                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
-                            val uploadProgress = IMClient.getService<UploadService>()
-                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
-                            if (uploadProgress < 0) {
-                                break
-                            }
-                            if (uploadProgress >= 100) {
-                                uploadProgressState.intValue = 100
-                                break
-                            }
-                            if (uploadProgressState.intValue != uploadProgress) {
-                                uploadProgressState.intValue = uploadProgress
-                            }
-                        }
-                    }
-                }
-            }
+//            LaunchedEffect(Unit) {
+//                withContext(IMDispatcher) {
+//                    if (IMClient.getService<UploadService>()
+//                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
+//                    ) {
+//                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
+//                            val uploadProgress = IMClient.getService<UploadService>()
+//                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
+//                            if (uploadProgress < 0) {
+//                                break
+//                            }
+//                            if (uploadProgress >= 100) {
+//                                uploadProgressState.intValue = 100
+//                                break
+//                            }
+//                            if (uploadProgressState.intValue != uploadProgress) {
+//                                uploadProgressState.intValue = uploadProgress
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             Box(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .wrapContentWidth()
+                    .background(Color.Black)
+                    .requiredWidth(100.dp)
+                    .requiredHeightIn((chatMessage.content.height * 100 / chatMessage.content.width).dp)
             ) {
                 LogCompositions(
                     tag = "ImageMessage",
-                    msg = "chatMessage.content.localImageFilePath ${chatMessage.content.localImageFilePath}"
+                    msg = "chatMessage.content.localImageFilePath ${chatMessage.content.localImageFilePath}，${chatMessage.content.width}x${chatMessage.content.height}"
                 )
                 LogCompositions(
                     tag = "ImageMessage",
@@ -211,40 +213,33 @@ fun KtChatClickableMessage(
                 )
 
                 val url = chatMessage.content.url
-                val localImageFilePath = chatMessage.content.localImageFilePath
-                if (url.isEmpty()) {
-                    if (localImageFilePath.isNotEmpty()) {
-                        KtChatImageMessage(
-                            chatMessage.content.localImageFilePath,
-                            true
-                        )
-                    }
-                } else {
-                    if (url.isNotEmpty()) {
-                        KtChatImageMessage(
-                            "${chatMessage.content.url}@400w_400h_100q",
-                            true
-                        )
-                    }
-                }
-
-                if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue in 0..100) {
-                    // 创建一个 [InfiniteTransition] 实列用来管理子动画
-                    val infiniteTransition = rememberInfiniteTransition(label = "")
-                    // 创建一个float类型的子动画
-                    val angle by infiniteTransition.animateFloat(
-                        initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
-                        targetValue = 360F,
-                        animationSpec = infiniteRepeatable(
-                            //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
-                            animation = tween(1500, easing = LinearEasing),
-                        ), label = ""
+                if (url.isNotEmpty()) {
+                    KtChatImageMessage(
+                        "${chatMessage.content.url}@400w_400h_60q",
+                        true
                     )
-                    Column(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.Center)
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center)
+                        .background(Color.Black)
+                        .alpha(0.5F),
+
                     ) {
+                    //if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue in 0..100) {
+                    if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty()) {
+                        // 创建一个 [InfiniteTransition] 实列用来管理子动画
+                        val infiniteTransition = rememberInfiniteTransition(label = "")
+                        // 创建一个float类型的子动画
+                        val angle by infiniteTransition.animateFloat(
+                            initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
+                            targetValue = 360F,
+                            animationSpec = infiniteRepeatable(
+                                //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
+                                animation = tween(1500, easing = LinearEasing),
+                            ), label = ""
+                        )
                         Image(
                             modifier = Modifier
                                 .graphicsLayer { rotationZ = angle }
@@ -257,11 +252,13 @@ fun KtChatClickableMessage(
                             modifier = Modifier
                                 .padding(4.dp)
                                 .align(Alignment.CenterHorizontally),
-                            text = "${uploadProgressState.intValue}%",
+                            text = "发送中...",
                             fontSize = 14.sp
                         )
                     }
+
                 }
+
             }
 
         }

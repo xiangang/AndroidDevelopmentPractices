@@ -1,5 +1,6 @@
 package com.nxg.im.chat.component.conversation
 
+import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -136,15 +137,31 @@ class ConversationChatViewModel : ViewModel(), SimpleLogger {
                 _uiState.value.conversationChat?.let { conversationChat ->
                     let {
                         //发送图片消息
-                        IMClient.chatService.sendMessage(
-                            ImageMessage(
-                                loginData.user.uuid,
-                                conversationChat.chatId,
-                                conversationChat.chatType,
-                                ImageMsgContent("", 0, 0, filePath),
-                                System.currentTimeMillis()
+                        try {
+                            //获取图片宽高，TODO 压缩图片
+                            val option = BitmapFactory.Options()
+                            option.inJustDecodeBounds = true
+                            BitmapFactory.decodeFile(filePath, option)
+                            option.inSampleSize = 1
+                            option.inJustDecodeBounds = false
+                            val width = option.outWidth
+                            val height = option.outHeight
+                            logger.debug { "sendChatImageMessage: filePath $filePath, width = $width, height  = $height" }
+                            IMClient.chatService.sendMessage(
+                                ImageMessage(
+                                    loginData.user.uuid,
+                                    conversationChat.chatId,
+                                    conversationChat.chatType,
+                                    ImageMsgContent("", width, height, filePath),
+                                    System.currentTimeMillis()
+                                )
                             )
-                        )
+                        } catch (e: Exception) {
+                            logger.error {
+                                e.message
+                            }
+                        }
+
                     }
                 }
             }

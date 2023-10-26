@@ -76,13 +76,6 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                     //先上传图片，同时回调上传进度
                     var uploadFileUrl: String? = ""
                     try {
-                        val option = BitmapFactory.Options()
-                        option.inJustDecodeBounds = true
-                        BitmapFactory.decodeFile(messageContent.localImageFilePath, option)
-                        option.inSampleSize = 1
-                        option.inJustDecodeBounds = false
-                        chatMessage.content.width = option.outWidth
-                        chatMessage.content.height = option.outHeight
                         uploadFileUrl =
                             IMClient.getService<UploadService>()
                                 .syncUpload(messageContent.localImageFilePath)
