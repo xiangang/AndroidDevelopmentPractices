@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.commonui
+package com.nxg.im.chat.component.jetchat
 
 import android.os.SystemClock
 import androidx.compose.foundation.Indication
@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import github.leavesczy.matisse.MediaResource
 import github.leavesczy.matisse.MimeType
 
 @Composable
@@ -115,3 +116,6 @@ internal val MimeType.isImage: Boolean
 
 internal val MimeType.isVideo: Boolean
     get() = type.startsWith(prefix = "video/")
+
+internal val MediaResource.isVideo: Boolean
+    get() = mimeType.startsWith(prefix = "video/")

@@ -23,4 +23,15 @@
 
     </fragment>
 
+
+    <fragment
+        android:id="@+id/ConversationFragment"
+        android:name="com.nxg.im.chat.component.jetchat.conversation.ConversationFragment"
+        android:label="聊天">
+
+
+        <deepLink app:uri="android-app://com.nxg.app/ConversationFragment" />
+
+    </fragment>
+
 </navigation>

@@ -18,8 +18,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home"
+    app:startDestination="@+id/nav_conversation"
     tools:ignore="ResourceName">
+
+
+    <fragment
+        android:id="@+id/nav_conversation"
+        android:name="com.nxg.im.chat.component.jetchat.conversation.ConversationFragment"
+        android:label="Conversation" />
 
     <fragment
         android:id="@+id/nav_home"

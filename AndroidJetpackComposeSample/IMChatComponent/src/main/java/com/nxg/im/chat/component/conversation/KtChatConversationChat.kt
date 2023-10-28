@@ -61,6 +61,7 @@ import com.nxg.commonui.compose.LogCompositions
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
+import com.nxg.im.chat.component.jetchat.CoilImageEngine
 import com.nxg.im.chat.component.notification.NotificationService.logger
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.commonui.components.SymbolAnnotationType
@@ -75,6 +76,10 @@ import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.dispatcher.IMDispatcher
 import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
+import github.leavesczy.matisse.DefaultMediaFilter
+import github.leavesczy.matisse.Matisse
+import github.leavesczy.matisse.MimeType
+import github.leavesczy.matisse.NothingCaptureStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -175,28 +180,28 @@ fun KtChatClickableMessage(
         is FileMessage -> {}
         is ImageMessage -> {
             val uploadProgressState = remember { mutableIntStateOf(-1) }
-//            LaunchedEffect(Unit) {
-//                withContext(IMDispatcher) {
-//                    if (IMClient.getService<UploadService>()
-//                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
-//                    ) {
-//                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
-//                            val uploadProgress = IMClient.getService<UploadService>()
-//                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
-//                            if (uploadProgress < 0) {
-//                                break
-//                            }
-//                            if (uploadProgress >= 100) {
-//                                uploadProgressState.intValue = 100
-//                                break
-//                            }
-//                            if (uploadProgressState.intValue != uploadProgress) {
-//                                uploadProgressState.intValue = uploadProgress
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            LaunchedEffect(Unit) {
+                withContext(IMDispatcher) {
+                    if (IMClient.getService<UploadService>()
+                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
+                    ) {
+                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
+                            val uploadProgress = IMClient.getService<UploadService>()
+                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
+                            if (uploadProgress < 0) {
+                                break
+                            }
+                            if (uploadProgress >= 100) {
+                                uploadProgressState.intValue = 100
+                                break
+                            }
+                            if (uploadProgressState.intValue != uploadProgress) {
+                                uploadProgressState.intValue = uploadProgress
+                            }
+                        }
+                    }
+                }
+            }
             Box(
                 modifier = Modifier
                     .background(Color.Black)
@@ -223,7 +228,7 @@ fun KtChatClickableMessage(
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.Center)
-                        .background(Color.Black)
+                        .background(Color.Black.copy(alpha = 0.5f))
                         .alpha(0.5F),
 
                     ) {
@@ -252,7 +257,7 @@ fun KtChatClickableMessage(
                             modifier = Modifier
                                 .padding(4.dp)
                                 .align(Alignment.CenterHorizontally),
-                            text = "发送中...",
+                            text = "发送中${uploadProgressState.intValue}%",
                             fontSize = 14.sp
                         )
                     }
@@ -823,7 +828,7 @@ fun KtChatConversationContent(
                     scrollState = scrollState
                 )
             }
-            UserInput(
+            com.nxg.im.chat.component.jetchat.conversation.UserInput(
                 onMessageSent = { content ->
                     onMessageSent(content)
                 },

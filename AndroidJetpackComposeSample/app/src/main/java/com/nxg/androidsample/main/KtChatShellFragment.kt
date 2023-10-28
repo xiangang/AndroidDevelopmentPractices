@@ -272,6 +272,9 @@ class KtChatShellFragment : BaseViewModelFragment(), SimpleLogger {
                                     val request = NavDeepLinkRequest.Builder
                                         .fromUri("android-app://com.nxg.app/conversation_chat_fragment/${conversation.chatType}?chatId=${conversation.chatId}".toUri())
                                         .build()
+                                    /*val request = NavDeepLinkRequest.Builder
+                                        .fromUri("android-app://com.nxg.app/ConversationFragment".toUri())
+                                        .build()*/
                                     navController.navigate(request)
                                 }
                             }

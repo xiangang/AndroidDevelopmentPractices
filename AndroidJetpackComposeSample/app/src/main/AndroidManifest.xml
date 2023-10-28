@@ -39,7 +39,7 @@
 
         <activity
             android:name=".KtChatShellActivity"
-            android:allowBackup="true"
+            android:allowBackup="false"
             android:exported="true"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize">
@@ -51,6 +51,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.nxg.im.chat.component.jetchat.NavActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
 
         <activity

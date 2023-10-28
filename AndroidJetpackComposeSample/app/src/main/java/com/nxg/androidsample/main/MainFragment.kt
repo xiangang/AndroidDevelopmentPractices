@@ -38,8 +38,8 @@ class MainFragment : Fragment(), SimpleLogger {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        showStatusBars()
-        hideNavigationBars()
+//        showStatusBars()
+//        hideNavigationBars()
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val navView: BottomNavigationView = binding.appBottomNavMainFragment

@@ -63,7 +63,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
         return ComposeView(requireContext()).apply {
             setContent {
                 JetchatTheme {
-                    hideSystemBars()
+                    //hideSystemBars()
                     Surface {
                         val scope = rememberCoroutineScope()
                         Splash {
@@ -105,7 +105,7 @@ class LaunchFragment : BaseViewModelFragment(), SimpleLogger {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        showStatusBars()
+        //showStatusBars()
     }
 
     @Composable

@@ -41,11 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.amap.api.maps.CameraUpdateFactory
@@ -54,6 +56,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.melody.map.gd_compose.GDMap
 import com.melody.map.gd_compose.poperties.MapUiSettings
 import com.melody.map.gd_compose.position.rememberCameraPositionState
+import com.nxg.im.chat.R
+import com.nxg.im.chat.component.jetchat.MainViewModel
+import com.nxg.im.chat.component.jetchat.data.exampleUiState
 import com.nxg.im.chat.component.utils.requestMultiplePermission
 import com.nxg.im.commonui.components.coil.CoilImageEngine
 import com.nxg.im.commonui.theme.JetchatTheme
@@ -77,6 +82,8 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         private const val TAG = "ConversationChat"
     }
 
+    private val activityViewModel: MainViewModel by activityViewModels()
+
     private val conversationChatViewModel: ConversationChatViewModel by activityViewModels()
 
     private val safeArgs: ConversationChatFragmentArgs by navArgs()
@@ -86,7 +93,10 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = ComposeView(inflater.context).apply {
-
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
         setContent {
             JetchatTheme {
                 NavContent(conversationChatViewModel)

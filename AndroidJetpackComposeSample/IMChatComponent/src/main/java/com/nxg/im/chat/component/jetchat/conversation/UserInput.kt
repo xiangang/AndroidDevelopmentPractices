@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nxg.im.chat.component.conversation
+package com.nxg.im.chat.component.jetchat.conversation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -92,22 +92,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nxg.im.chat.component.jetchat.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
-import com.nxg.im.commonui.FunctionalityNotAvailablePopup
+import com.nxg.im.chat.component.conversation.EmojiStickerSelector
+import com.nxg.im.chat.component.conversation.InputSelector
 
-enum class InputSelector {
-    NONE,
-    MAP,
-    DM,
-    EMOJI,
-    PHONE,
-    PICTURE
-}
-
-enum class EmojiStickerSelector {
-    EMOJI,
-    STICKER
-}
+//enum class InputSelector {
+//    NONE,
+//    MAP,
+//    DM,
+//    EMOJI,
+//    PHONE,
+//    PICTURE
+//}
+//
+//enum class EmojiStickerSelector {
+//    EMOJI,
+//    STICKER
+//}
 
 @Preview
 @Composable
@@ -138,10 +140,9 @@ fun UserInput(
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
-    Surface(tonalElevation = 2.dp, modifier = modifier) {
+    Surface(tonalElevation = 2.dp) {
         Column(modifier = modifier) {
             UserInputText(
-                keyboardType = KeyboardType.Text,
                 textFieldValue = textState,
                 onTextChanged = { textState = it },
                 // Only show the keyboard if there's no input selector and text field has focus
@@ -182,7 +183,7 @@ fun UserInput(
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
-                currentSelector = currentInputSelector,
+                currentSelector = currentInputSelector
             )
         }
     }
@@ -206,7 +207,7 @@ private fun TextFieldValue.addText(newString: String): TextFieldValue {
 private fun SelectorExpanded(
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
-    onTextAdded: (String) -> Unit,
+    onTextAdded: (String) -> Unit
 ) {
     if (currentSelector == InputSelector.NONE) return
 
@@ -433,7 +434,7 @@ private fun UserInputText(
                     ),
                     maxLines = 1,
                     cursorBrush = SolidColor(LocalContentColor.current),
-                    textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
+                    textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
                 )
 
                 val disableContentColor =
@@ -443,7 +444,7 @@ private fun UserInputText(
                         modifier = Modifier
                             .align(Alignment.CenterStart)
                             .padding(start = 32.dp),
-                        text = "",
+                        text = stringResource(id = R.string.textfield_hint),
                         style = MaterialTheme.typography.bodyLarge.copy(color = disableContentColor)
                     )
                 }
