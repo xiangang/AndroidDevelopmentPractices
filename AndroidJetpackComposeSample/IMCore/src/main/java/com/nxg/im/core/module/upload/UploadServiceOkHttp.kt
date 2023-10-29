@@ -53,9 +53,7 @@ object UploadServiceOkHttp : UploadService, SimpleLogger {
 
                 is UploadState.Progress -> {
                     val progress = (s.current.toFloat() / s.totalNum) * 100
-                    if (s.current % 10 == 0L) {
-                        logger.debug { "UploadService upload $filePath 上传中  ${progress}%" }
-                    }
+                    logger.debug { "UploadService upload $filePath 上传中  $progress%" }
                     setUploadingFileProgress(filePath, progress.toInt())
                 }
 
@@ -172,13 +170,13 @@ object UploadServiceOkHttp : UploadService, SimpleLogger {
 
 
     override fun setUploadingFileProgress(filePath: String, progress: Int) {
-        logger.debug { "setUploadingFileProgress: $filePath -> $progress" }
+        //logger.debug { "setUploadingFileProgress: $filePath -> $progress" }
         uploadingFileProgressMap[filePath] = progress
     }
 
     override fun getUploadingFileProgress(filePath: String): Int {
         val progress = uploadingFileProgressMap[filePath] ?: -1
-        logger.debug { "getUploadingFileProgress: $filePath -> $progress" }
+        //logger.debug { "getUploadingFileProgress: $filePath -> $progress" }
         return uploadingFileProgressMap[filePath] ?: -1
     }
 

@@ -138,10 +138,9 @@ fun UserInput(
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
-    Surface(tonalElevation = 2.dp, modifier = modifier) {
+    Surface(tonalElevation = 2.dp) {
         Column(modifier = modifier) {
             UserInputText(
-                keyboardType = KeyboardType.Text,
                 textFieldValue = textState,
                 onTextChanged = { textState = it },
                 // Only show the keyboard if there's no input selector and text field has focus

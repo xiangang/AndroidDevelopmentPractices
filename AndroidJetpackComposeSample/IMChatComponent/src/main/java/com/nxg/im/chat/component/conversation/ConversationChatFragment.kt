@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -50,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.navArgument
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.LatLng
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -63,6 +65,7 @@ import com.nxg.im.chat.component.utils.requestMultiplePermission
 import com.nxg.im.commonui.components.coil.CoilImageEngine
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
+import com.nxg.im.core.data.bean.ImageMessage
 import com.nxg.im.core.module.chat.ChatService
 import com.nxg.im.core.module.map.MapService
 import com.nxg.im.core.module.upload.UploadService
@@ -108,6 +111,10 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
     @Composable
     fun NavContent(conversationChatViewModel: ConversationChatViewModel) {
         val navController = rememberNavController()
+
+        // 全屏显示图片
+        var fullScreenImageUrl by remember { mutableStateOf("") }
+
         NavHost(navController = navController, startDestination = "chat") {
             composable("chat") {
                 val mediaPickerLauncher =
@@ -200,6 +207,17 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
                             else -> {}
                         }
+                    }, onChatMessageItemClick = {
+                        when (it) {
+                            is ImageMessage -> {
+                                fullScreenImageUrl = it.content.url
+                                navController.navigate("image")
+                            }
+
+                            else -> {
+
+                            }
+                        }
                     }
                 )
             }
@@ -217,6 +235,15 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     navController.navigateUp()
                 })
                 //AMapScreen(navController)
+            }
+
+            composable(
+                "image"
+            ) {
+                FullScreenImage(url = fullScreenImageUrl) {
+                    // 点击图片关闭显示
+                    navController.navigateUp()
+                }
             }
         }
     }

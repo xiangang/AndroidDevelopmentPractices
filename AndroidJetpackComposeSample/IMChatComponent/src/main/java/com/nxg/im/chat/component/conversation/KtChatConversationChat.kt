@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,6 +51,9 @@ import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
@@ -61,7 +65,6 @@ import com.nxg.commonui.compose.LogCompositions
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.data.EMOJIS
 import com.nxg.im.chat.component.data.EMOJIS.EMOJI_POINTS
-import com.nxg.im.chat.component.jetchat.CoilImageEngine
 import com.nxg.im.chat.component.notification.NotificationService.logger
 import com.nxg.im.commonui.FunctionalityNotAvailablePopup
 import com.nxg.im.commonui.components.SymbolAnnotationType
@@ -72,15 +75,9 @@ import com.nxg.im.commonui.theme.Red40
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.*
-import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.dispatcher.IMDispatcher
 import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
-import github.leavesczy.matisse.DefaultMediaFilter
-import github.leavesczy.matisse.Matisse
-import github.leavesczy.matisse.MimeType
-import github.leavesczy.matisse.NothingCaptureStrategy
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -123,9 +120,37 @@ fun KtChatImageMessage(url: String, isUserMe: Boolean, authorClicked: (String) -
         modifier = Modifier
             .fillMaxSize(),
         model = url,
+        //placeholder = painterResource(R.drawable.ic_launcher_monochrome),
+        contentScale = ContentScale.Crop,
+        contentDescription = url,
+    )
+
+    /*SubcomposeAsyncImage(
+        modifier = Modifier
+            .fillMaxSize(),
+        model = url,
+        loading = {
+            CircularProgressIndicator()
+        },
         contentScale = ContentScale.Crop,
         contentDescription = url
-    )
+    )*/
+
+    /*SubcomposeAsyncImage(
+        modifier = Modifier
+            .fillMaxSize(),
+        model = url,
+        contentScale = ContentScale.Crop,
+        contentDescription = url
+    ) {
+        val state = painter.state
+        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+            CircularProgressIndicator()
+        } else {
+            SubcomposeAsyncImageContent()
+        }
+    }*/
+
 }
 
 @Preview
@@ -188,6 +213,10 @@ fun KtChatClickableMessage(
                         while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
                             val uploadProgress = IMClient.getService<UploadService>()
                                 .getUploadingFileProgress(chatMessage.content.localImageFilePath)
+                            Log.i(
+                                "ImageMessage",
+                                "uploadProgress: ${chatMessage.content.localImageFilePath} $uploadProgress"
+                            )
                             if (uploadProgress < 0) {
                                 break
                             }
@@ -521,6 +550,7 @@ fun KtChatIMMessage(
     isUserMe: Boolean,
     onAuthorClick: (String) -> Unit = {},
     resend: () -> Unit = {},
+    onChatMessageItemClick: (ChatMessage) -> Unit = {},
 ) {
     val borderColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
@@ -542,6 +572,9 @@ fun KtChatIMMessage(
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .weight(1f)
+                    .clickable {
+                        onChatMessageItemClick(chatMessage)
+                    }
             )
             // Avatar
             AsyncImage(
@@ -590,6 +623,9 @@ fun KtChatIMMessage(
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .weight(1f)
+                    .clickable {
+                        onChatMessageItemClick(chatMessage)
+                    }
             )
         }
     }
@@ -679,7 +715,8 @@ fun KtChatIMMessages(
     onAuthorClick: (String) -> Unit,
     resend: (Message) -> Unit = {},
     scrollState: LazyListState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onChatMessageItemClick: (ChatMessage) -> Unit = {},
 ) {
     pager?.let {
         val lazyPagingItems = it.flow.collectAsLazyPagingItems()
@@ -718,7 +755,8 @@ fun KtChatIMMessages(
                             isUserMe = chatMessage.fromId == me.uuid,
                             timestamp = TimeUtils.millis2String(chatMessage.timestamp),
                             onAuthorClick = { name -> onAuthorClick(name) },
-                            resend = { resend(message) }
+                            resend = { resend(message) },
+                            onChatMessageItemClick = onChatMessageItemClick
                         )
                         DayHeader(TimeUtils.millis2String(chatMessage.timestamp))
                     }
@@ -756,6 +794,7 @@ fun KtChatConversationContent(
     onMessageSent: (String) -> Unit = {},
     onNavigateUp: () -> Unit = {},
     onSelectorChange: (InputSelector) -> Unit = {},
+    onChatMessageItemClick: (ChatMessage) -> Unit = {},
 ) {
     val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
@@ -825,10 +864,11 @@ fun KtChatConversationContent(
                     onAuthorClick = onAuthorClick,
                     resend = resend,
                     modifier = Modifier.weight(1f),
-                    scrollState = scrollState
+                    scrollState = scrollState,
+                    onChatMessageItemClick = onChatMessageItemClick,
                 )
             }
-            com.nxg.im.chat.component.jetchat.conversation.UserInput(
+            UserInput(
                 onMessageSent = { content ->
                     onMessageSent(content)
                 },
