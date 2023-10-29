@@ -240,10 +240,10 @@ object DI {
 
 
 object Log {
-    //https://github.com/MicroUtils/kotlin-logging
+    //https://github.com/oshai/kotlin-logging
     const val kotlinLoggingWithAndroid = "io.github.oshai:kotlin-logging-jvm:4.0.0-beta-15"
 
-    //https://github.com/oshai/kotlin-logging
+    //https://github.com/MicroUtils/kotlin-logging
     const val kotlinLogging = "io.github.microutils:kotlin-logging:3.0.5"
     const val slf4jApi = "org.slf4j:slf4j-api:2.0.7"
     const val slf4jSimple = "org.slf4j:slf4j-simple:2.0.7"

@@ -235,7 +235,7 @@ fun KtChatClickableMessage(
                 modifier = Modifier
                     .background(Color.Black)
                     .requiredWidth(100.dp)
-                    .requiredHeightIn((chatMessage.content.height * 100 / chatMessage.content.width).dp)
+                    .requiredHeightIn(min = if (chatMessage.content.width == 0) 100.dp else (chatMessage.content.height * 100 / chatMessage.content.width).dp)
             ) {
                 LogCompositions(
                     tag = "ImageMessage",
