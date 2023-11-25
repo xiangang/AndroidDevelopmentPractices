@@ -51,9 +51,6 @@ import androidx.paging.Pager
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
@@ -276,6 +273,7 @@ fun KtChatClickableMessage(
                         )
                         Image(
                             modifier = Modifier
+                                .alpha(if (uploadProgressState.intValue > 0) 1f else 0f)
                                 .graphicsLayer { rotationZ = angle }
                                 .size(60.dp)
                                 .align(Alignment.CenterHorizontally),
@@ -284,6 +282,7 @@ fun KtChatClickableMessage(
                         )
                         Text(
                             modifier = Modifier
+                                .alpha(if (uploadProgressState.intValue > 0) 1f else 0f)
                                 .padding(4.dp)
                                 .align(Alignment.CenterHorizontally),
                             text = "发送中${uploadProgressState.intValue}%",
@@ -294,7 +293,100 @@ fun KtChatClickableMessage(
                 }
 
             }
+        }
 
+        is VideoMessage -> {
+            val uploadProgressState = remember { mutableIntStateOf(-1) }
+            val showLoadingUI =
+                chatMessage.content.localVideoFilePath.isNotEmpty() && chatMessage.content.url.isEmpty()
+            Box(
+                modifier = Modifier
+                    .background(Color.Black)
+                    .requiredWidth(100.dp)
+                    .requiredHeightIn(min = if (chatMessage.content.width == 0) 100.dp else (chatMessage.content.height * 100 / chatMessage.content.width).dp)
+            ) {
+                LogCompositions(
+                    tag = "VideoMessage",
+                    msg = "$chatMessage"
+                )
+                val localVideoFilePath = chatMessage.content.localVideoFilePath
+                if (localVideoFilePath.isNotEmpty()) {
+                    KtChatImageMessage(
+                        localVideoFilePath,
+                        true
+                    )
+                }
+                //视频封面缩略图
+                if (chatMessage.content.thumbnail.isNotEmpty()) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxSize(),
+                        model = chatMessage.content.thumbnail,
+                        contentDescription = null
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .align(Alignment.Center)
+                        .background(Color.Black.copy(alpha = 0.2f))
+                ) {
+                    if (showLoadingUI) {
+                        // 创建一个 [InfiniteTransition] 实列用来管理子动画
+                        val infiniteTransition = rememberInfiniteTransition(label = "")
+                        // 创建一个float类型的子动画
+                        val angle by infiniteTransition.animateFloat(
+                            initialValue = 0F, //动画创建后，会从[initialValue] 执行至[targetValue]，
+                            targetValue = 360F,
+                            animationSpec = infiniteRepeatable(
+                                //tween是补间动画，使用线性[LinearEasing]曲线无限重复1000 ms的补间动画
+                                animation = tween(1500, easing = LinearEasing),
+                            ), label = "Uploading"
+                        )
+                        LaunchedEffect(angle) {
+                            if (IMClient.getService<UploadService>()
+                                    .getUploadingFileProgress(chatMessage.content.localVideoFilePath) > 0
+                            ) {
+                                val uploadProgress = IMClient.getService<UploadService>()
+                                    .getUploadingFileProgress(chatMessage.content.localVideoFilePath)
+                                Log.i(
+                                    "VideoMessage",
+                                    "uploadProgress: ${chatMessage.content.localVideoFilePath} $uploadProgress"
+                                )
+                                if (uploadProgressState.intValue != uploadProgress) {
+                                    uploadProgressState.intValue = uploadProgress
+                                }
+                            }
+                        }
+                        Image(
+                            modifier = Modifier
+                                .alpha(1f)
+                                .graphicsLayer { rotationZ = angle }
+                                .size(60.dp)
+                                .align(Alignment.CenterHorizontally),
+                            painter = painterResource(id = R.drawable.ic_loading3),
+                            contentDescription = ""
+                        )
+                        val uploadingText = if (uploadProgressState.intValue <= 0) {
+                            ""
+                        } else if (uploadProgressState.intValue == 100) {
+                            "发送中"
+                        } else {
+                            "${uploadProgressState.intValue}%"
+                        }
+                        Text(
+                            modifier = Modifier
+                                .alpha(1f)
+                                .padding(4.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = uploadingText,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
         }
 
         is LocationMessage -> {
@@ -357,7 +449,6 @@ fun KtChatClickableMessage(
             KtChatTextMessage(chatMessage.content.text, isUserMe, authorClicked)
         }
 
-        is VideoMessage -> {}
         else -> {}
     }
 }

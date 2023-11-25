@@ -37,6 +37,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.jetchat.components.JetchatDrawer
 import com.nxg.im.chat.databinding.ContentMainBinding
+import com.nxg.im.commonui.components.coil.CoilInit
 import kotlinx.coroutines.launch
 
 /**
@@ -48,7 +49,7 @@ class NavActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        CoilManager.initCoil(applicationContext)
+        CoilInit.init(applicationContext)
         // Turn off the decor fitting system windows, which allows us to handle insets,
         // including IME animations
         WindowCompat.setDecorFitsSystemWindows(window, false)

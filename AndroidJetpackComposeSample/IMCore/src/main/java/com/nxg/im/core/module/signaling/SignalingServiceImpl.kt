@@ -140,6 +140,7 @@ object SignalingServiceImpl : SignalingService, SimpleLogger {
                     "bye" -> {
                         //acknowledge（发送方处理）
                         if (imCoreMessage.type == TYPE_ACK) {
+                            VideoCallStateMachine.hangup(Session(signaling.id, signaling))
                             VideoCallStateMachine.disconnect(Session(signaling.id, signaling))
                         }
                         //notify（接收方处理）

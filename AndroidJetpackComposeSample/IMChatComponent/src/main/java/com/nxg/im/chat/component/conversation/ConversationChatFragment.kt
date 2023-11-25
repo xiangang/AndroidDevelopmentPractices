@@ -23,52 +23,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.navArgument
-import com.amap.api.maps.CameraUpdateFactory
-import com.amap.api.maps.model.LatLng
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.melody.map.gd_compose.GDMap
-import com.melody.map.gd_compose.poperties.MapUiSettings
-import com.melody.map.gd_compose.position.rememberCameraPositionState
-import com.nxg.im.chat.R
 import com.nxg.im.chat.component.jetchat.MainViewModel
-import com.nxg.im.chat.component.jetchat.data.exampleUiState
 import com.nxg.im.chat.component.utils.requestMultiplePermission
 import com.nxg.im.commonui.components.coil.CoilImageEngine
 import com.nxg.im.commonui.theme.JetchatTheme
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.ImageMessage
-import com.nxg.im.core.module.chat.ChatService
+import com.nxg.im.core.data.bean.VideoMessage
 import com.nxg.im.core.module.map.MapService
-import com.nxg.im.core.module.upload.UploadService
 import com.nxg.mvvm.logger.SimpleLogger
 import com.nxg.mvvm.ui.BaseBusinessFragment
 import github.leavesczy.matisse.DefaultMediaFilter
@@ -77,7 +53,6 @@ import github.leavesczy.matisse.MatisseContract
 import github.leavesczy.matisse.MediaResource
 import github.leavesczy.matisse.MimeType
 import github.leavesczy.matisse.SmartCaptureStrategy
-import kotlinx.coroutines.launch
 
 class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
@@ -118,15 +93,24 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         NavHost(navController = navController, startDestination = "chat") {
             composable("chat") {
                 val mediaPickerLauncher =
-                    rememberLauncherForActivityResult(contract = MatisseContract()) { result: List<MediaResource> ->
-                        if (result.isNotEmpty()) {
-                            val mediaResource = result[0]
-                            val uri = mediaResource.uri
-                            val path = mediaResource.path
-                            val name = mediaResource.name
-                            val mimeType = mediaResource.mimeType
-                            Log.i(TAG, "rememberLauncherForActivityResult: Matisse $mediaResource")
-                            conversationChatViewModel.sendChatImageMessage(path)
+                    rememberLauncherForActivityResult(contract = MatisseContract()) { result: List<MediaResource>? ->
+                        if (!result.isNullOrEmpty()) {
+                            result.forEach {
+                                val mediaResource = it
+                                val uri = mediaResource.uri
+                                val path = mediaResource.path
+                                val name = mediaResource.name
+                                val mimeType = mediaResource.mimeType
+                                Log.i(
+                                    TAG,
+                                    "rememberLauncherForActivityResult: Matisse $mediaResource"
+                                )
+                                if (mediaResource.isImage) {
+                                    conversationChatViewModel.sendChatImageMessage(mediaResource)
+                                } else if (mediaResource.isVideo) {
+                                    conversationChatViewModel.sendChatVideoMessage(mediaResource)
+                                }
+                            }
                         }
                     }
 
@@ -174,14 +158,14 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                         when (it) {
                             InputSelector.PICTURE -> {
                                 val matisse = Matisse(
-                                    maxSelectable = 1,
+                                    maxSelectable = 9,
                                     mediaFilter = DefaultMediaFilter(
-                                        supportedMimeTypes = MimeType.ofImage(
+                                        supportedMimeTypes = MimeType.ofAll(
                                             hasGif = true
                                         )
                                     ),
                                     imageEngine = CoilImageEngine(),
-                                    captureStrategy = SmartCaptureStrategy("com.nxg.androidsample.authority")
+                                    captureStrategy = SmartCaptureStrategy("com.nxg.androidsample.provider")
                                 )
                                 mediaPickerLauncher.launch(matisse)
                             }
@@ -212,6 +196,11 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                             is ImageMessage -> {
                                 fullScreenImageUrl = it.content.url
                                 navController.navigate("image")
+                            }
+
+                            is VideoMessage -> {
+                                fullScreenImageUrl = it.content.url
+                                //TODO 全屏播放视频
                             }
 
                             else -> {

@@ -37,9 +37,9 @@ object IMConstants {
 
     object Protocol {
         const val Version = 0
-        const val TYPE_REQ = 0
-        const val TYPE_ACK = 1
-        const val TYPE_NOTIFY = 2
+        const val TYPE_REQ = 0 //发送方
+        const val TYPE_ACK = 1 //服务器应答
+        const val TYPE_NOTIFY = 2 //服务器转发
 
         object Cmd {
             const val Chat = "chat"

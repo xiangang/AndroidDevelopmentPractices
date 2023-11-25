@@ -9,7 +9,8 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 
 object CoilInit {
-    private fun initCoil(context: Context) {
+
+    fun init(context: Context) {
         val imageLoader = ImageLoader.Builder(context = context)
             .components {
                 //可选，需要展示 Gif 则引入
@@ -24,4 +25,5 @@ object CoilInit {
             .build()
         Coil.setImageLoader(imageLoader)
     }
+
 }

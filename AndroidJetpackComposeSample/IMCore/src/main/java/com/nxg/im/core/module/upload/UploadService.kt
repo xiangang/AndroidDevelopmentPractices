@@ -1,6 +1,7 @@
 package com.nxg.im.core.module.upload
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.nxg.im.core.IMService
 
 interface UploadService : IMService {
@@ -8,6 +9,7 @@ interface UploadService : IMService {
     fun init(context: Context)
 
     fun syncUpload(filePath: String): String?
+    fun syncUpload(byteArray: ByteArray,fileName:String): String?
 
     fun asyncUpload(filePath: String)
 

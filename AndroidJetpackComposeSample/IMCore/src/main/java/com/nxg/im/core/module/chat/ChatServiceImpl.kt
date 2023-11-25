@@ -1,7 +1,11 @@
 package com.nxg.im.core.module.chat
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.ArrayMap
+import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toBitmap
 import com.blankj.utilcode.util.Utils
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.IMConstants
@@ -16,6 +20,7 @@ import com.nxg.im.core.http.IMWebSocket
 import com.nxg.im.core.module.signaling.SignalingServiceImpl
 import com.nxg.im.core.module.signaling.parseSignaling
 import com.nxg.im.core.module.upload.UploadService
+import com.nxg.im.core.utils.VideoUtils
 import com.nxg.mvvm.logger.SimpleLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -23,6 +28,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import okio.ByteString.Companion.toByteString
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.nio.charset.StandardCharsets
 
 object ChatServiceImpl : ChatService, SimpleLogger {
@@ -101,9 +108,72 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                 }
             }
 
+            is VideoMessage -> {
+                val messageContent = chatMessage.content
+                if (messageContent.url.isEmpty()) {
+                    logger.debug { "doSendMessage: localVideoFilePath ${messageContent.localVideoFilePath}" }
+                    //先上传视频封面
+                    var uploadVideoThumbnailFileUrl: String? = ""
+                    val file = File(messageContent.localVideoFilePath)
+                    logger.debug { "doSendMessage: file ${file.absolutePath}" }
+                    val videoUri: Uri = FileProvider.getUriForFile(
+                        Utils.getApp(),
+                        "com.nxg.androidsample.provider",
+                        file
+                    )
+                    logger.debug { "doSendMessage: videoUri $videoUri" }
+                    try {
+                        VideoUtils.videoFrameDecoder.decode(messageContent.localVideoFilePath).drawable.toBitmap()
+                            .let { videoThumbnail ->
+                                logger.debug { "doSendMessage: videoThumbnail ${videoThumbnail.width} x ${videoThumbnail.height}" }
+                                val stream = ByteArrayOutputStream()
+                                videoThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                val byteArray = stream.toByteArray()
+                                videoThumbnail.recycle()
+                                uploadVideoThumbnailFileUrl =
+                                    IMClient.getService<UploadService>()
+                                        .syncUpload(
+                                            byteArray,
+                                            file.name.replace(".mp4", "_thumbnail.png")
+                                        )
+                                logger.debug { "doSendMessage: uploadVideoThumbnailFileUrl $uploadVideoThumbnailFileUrl" }
+                            }
+                    } catch (e: Exception) {
+                        logger.error {
+                            e.message
+                        }
+                    }
+                    //先上传视频，同时回调上传进度
+                    var uploadFileUrl: String? = ""
+                    try {
+                        uploadFileUrl =
+                            IMClient.getService<UploadService>()
+                                .syncUpload(messageContent.localVideoFilePath)
+                        logger.debug { "doSendMessage: uploadFileUrl $uploadFileUrl" }
+                    } catch (e: Exception) {
+                        logger.error {
+                            e.message
+                        }
+                    }
+                    //更新url
+                    if (uploadFileUrl.isNullOrEmpty()) {
+                        //处理上传失败的情况
+                        message.sent = IM_SEND_FAILED
+                        KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                            .updateMessage(message)
+                        return
+                    }
+                    chatMessage.content.url = uploadFileUrl
+                    chatMessage.content.thumbnail = uploadVideoThumbnailFileUrl ?: ""
+                    chatMessage.content.localVideoFilePath = ""
+                    message.msgContent = chatMessage.toJson()
+                    KtChatDatabase.getInstance(Utils.getApp()).messageDao()
+                        .updateMessage(message)
+                }
+            }
+
             is LocationMessage -> {}
             is TextMessage -> {}
-            is VideoMessage -> {}
         }
 
         if (message.uuid == 0L) {

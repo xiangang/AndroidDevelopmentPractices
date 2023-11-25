@@ -91,10 +91,7 @@ data class TextMsgContent(val text: String) : MessageContent()
 @Serializable
 @SerialName("Image")
 data class ImageMsgContent(
-    var url: String,
-    var width: Int,
-    var height: Int,
-    var localImageFilePath: String = ""
+    var url: String, var width: Int, var height: Int, var localImageFilePath: String = ""
 ) : MessageContent()
 
 @Serializable
@@ -103,8 +100,14 @@ data class AudioMsgContent(val url: String, val duration: Int) : MessageContent(
 
 @Serializable
 @SerialName("Video")
-data class VideoMsgContent(val url: String, val duration: Int, val width: Int, val height: Int) :
-    MessageContent()
+data class VideoMsgContent(
+    var url: String,
+    val duration: Int,
+    val width: Int,
+    val height: Int,
+    var thumbnail: String = "",
+    var localVideoFilePath: String = "",
+) : MessageContent()
 
 @Serializable
 @SerialName("File")
@@ -113,12 +116,8 @@ data class FileMsgContent(val url: String, val name: String, val size: Int) : Me
 @Serializable
 @SerialName("Location")
 data class LocationMsgContent(
-    val latitude: Double,
-    val longitude: Double,
-    val name: String,
-    val address: String
-) :
-    MessageContent()
+    val latitude: Double, val longitude: Double, val name: String, val address: String
+) : MessageContent()
 
 fun ChatMessage.toJson(): String = Json.encodeToString(ChatMessage.serializer(), this)
 

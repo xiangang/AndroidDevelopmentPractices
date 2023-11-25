@@ -84,13 +84,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.nxg.im.chat.component.jetchat.CoilImageEngine
 import com.nxg.im.chat.component.jetchat.FunctionalityNotAvailablePopup
 import com.nxg.im.chat.R
 import com.nxg.im.chat.component.conversation.InputSelector
 import com.nxg.im.chat.component.jetchat.components.JetchatAppBar
 import com.nxg.im.chat.component.jetchat.data.exampleUiState
 import com.nxg.im.chat.component.jetchat.theme.JetchatTheme
+import com.nxg.im.commonui.components.coil.CoilImageEngine
 import github.leavesczy.matisse.DefaultMediaFilter
 import github.leavesczy.matisse.Matisse
 import github.leavesczy.matisse.MatisseContract

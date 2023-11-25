@@ -1,6 +1,5 @@
 package com.nxg.webrtcmobile.videocall
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast

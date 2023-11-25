@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2021 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,5 +14,28 @@
   ~ limitations under the License.
   -->
 <paths>
-    <files-path name="files" path="."/>
+    <files-path
+        name="files"
+        path="." />
+    <external-path
+        name="external_storage_root"
+        path="." /> <!-- 对应Environment.getExternalStorageDirectory() -->
+    <cache-path
+        name="cache_files"
+        path="." /> <!-- 对应应用程序内部存储区域的cache子目录中的文件Context.getCacheDir() -->
+    <external-files-path
+        name="external_files"
+        path="." /> <!-- 对应应用程序外部存储区根目录中的文件Context.getExternalFilesDir(null -->
+    <external-cache-path
+        name="external_cache_files"
+        path="." /> <!-- 对应应用程序外部缓存区域根目录中的文件Context.getExternalCacheDir() -->
+    <files-path
+        name="path_files"
+        path="." /> <!-- 对应应用程序内部存储区域的子目录中的文件Context.getFilesDir() -->
+    <external-media-path
+        name="external_media_path"
+        path="." /><!-- 对应代表应用程序外部媒体区域根目录中的文件Context.getExternalMediaDirs() -->
+    <root-path
+        name="external_999_root"
+        path="." />
 </paths>

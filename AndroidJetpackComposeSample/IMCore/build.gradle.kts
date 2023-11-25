@@ -65,7 +65,6 @@ protobuf {
 }
 
 dependencies {
-    //implementation(files("/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/rt.jar"))
     implementation(AndroidX.appcompat)
     implementation(AndroidX.constraintlayout)
     implementation(AndroidX.cardview)
@@ -99,6 +98,7 @@ dependencies {
     // For App Authentication API testing
     androidTestImplementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
     api(Kotlin.reflect)
+    implementation(Coil.coilVideo)
     implementation("io.github.TheMelody:gd_compose:1.0.2")
     implementation("com.amazonaws:aws-android-sdk-s3:2.73.0")
 

@@ -1,6 +1,7 @@
 package com.nxg.im.core.module.upload
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.dispatcher.IMCoroutineScope
 import com.nxg.im.core.http.IMHttpManger
@@ -17,9 +18,11 @@ import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Companion.FORM
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
 import okio.BufferedSink
 import okio.source
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -69,6 +72,15 @@ object UploadServiceOkHttp : UploadService, SimpleLogger {
             }
         }
     }
+
+    override fun syncUpload(byteArray: ByteArray, fileName: String): String? {
+        return multipartUploadProgress(
+            url = "http://192.168.1.5:8050/api/v1/upload",
+            byteArray = byteArray,
+            fileName = fileName,
+        )
+    }
+
 
     override fun asyncUpload(filePath: String) {
         IMCoroutineScope.launch {
@@ -131,6 +143,49 @@ object UploadServiceOkHttp : UploadService, SimpleLogger {
         return ""
     }
 
+    private fun multipartUploadProgress(
+        url: String,
+        byteArray: ByteArray,
+        fileName: String,
+        params: Map<String, String>? = null,
+    ): String? {
+        val body = MultipartBody.Builder()
+            .also {
+                params?.forEach { (k, v) ->
+                    it.addFormDataPart(k, v)
+                }
+            }.also {
+                it.addFormDataPart(
+                    "file",
+                    fileName,
+                    byteArray.asProgressRequestBody()
+                )
+            }.setType(FORM).build()
+        IMClient.getService<AuthService>().getApiToken()?.let {
+            val request = Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Authorization", it)
+                .build()
+            try {
+                val response = IMHttpManger.imOkHttpClient.newCall(request).execute()
+                logger.debug { "multipartUploadProgress: response $response" }
+                val responseBody = response.body?.string()
+                logger.debug { "multipartUploadProgress: responseBody $responseBody" }
+                if (!responseBody.isNullOrEmpty()) {
+                    val result: ApiResult<String> =
+                        GsonUtils.fromJson(responseBody, String::class.java)
+                    logger.debug { "multipartUploadProgress: url ${result.data}" }
+                    return result.data
+                }
+
+            } catch (e: Exception) {
+                logger.debug { "multipartUploadProgress: ${e.message}" }
+            }
+        }
+        return ""
+    }
+
     /**
      * 带进度条上传的功能
      */
@@ -168,6 +223,12 @@ object UploadServiceOkHttp : UploadService, SimpleLogger {
         }
     }
 
+
+    private fun ByteArray.asProgressRequestBody(
+        contentType: MediaType? = null
+    ): RequestBody {
+        return this@asProgressRequestBody.toRequestBody(contentType)
+    }
 
     override fun setUploadingFileProgress(filePath: String, progress: Int) {
         //logger.debug { "setUploadingFileProgress: $filePath -> $progress" }

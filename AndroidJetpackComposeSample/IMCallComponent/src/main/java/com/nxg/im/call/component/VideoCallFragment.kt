@@ -122,6 +122,7 @@ class VideoCallFragment : BaseBusinessFragment(R.layout.im_call_fragment_video_c
             setZOrderMediaOverlay(true)
         }
         binding.btnHangup.setOnClickListener {
+            logger.debug { "btnHangup: ${VideoCallStateMachine.state}" }
             if (VideoCallStateMachine.state is VideoCallState.CallOut) {
                 logger.debug { "cancel: ${VideoCallStateMachine.state}" }
                 IMClient.videoCallService.getSession(safeArgs.uuid)?.let { session ->
