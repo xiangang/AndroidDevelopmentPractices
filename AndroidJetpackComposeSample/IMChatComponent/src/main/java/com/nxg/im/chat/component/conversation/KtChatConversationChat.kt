@@ -252,7 +252,7 @@ fun KtChatClickableMessage(
                 }
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .wrapContentSize()
                         .align(Alignment.Center)
                         .background(Color.Black.copy(alpha = 0.5f))
                         .alpha(0.5F),
@@ -325,13 +325,21 @@ fun KtChatClickableMessage(
                         model = chatMessage.content.thumbnail,
                         contentDescription = null
                     )
+                    Image(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .alpha(0.8f)
+                            .align(Alignment.Center),
+                        painter = painterResource(id = R.drawable.ic_play_video_white),
+                        contentDescription = ""
+                    )
                 }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .align(Alignment.Center)
-                        .background(Color.Black.copy(alpha = 0.2f))
+                    //.background(Color.Black.copy(alpha = 0.2f))
                 ) {
                     if (showLoadingUI) {
                         // 创建一个 [InfiniteTransition] 实列用来管理子动画
@@ -1005,7 +1013,7 @@ private fun MapView.componentCallbacks(): ComponentCallbacks =
 
 
 @Composable
-private fun MapLifecycle(mapView: MapView) {
+private fun PlayerViewLifecycle(mapView: MapView) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(context, lifecycle, mapView) {

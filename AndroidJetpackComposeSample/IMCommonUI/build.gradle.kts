@@ -62,4 +62,6 @@ dependencies {
     api(Coil.coilVideo)
     api("io.github.TheMelody:gd_compose:1.0.2")
     api("io.github.leavesczy:matisse:1.1.3")
+    api("com.google.android.exoplayer:exoplayer-core:2.18.5")
+    api("com.google.android.exoplayer:exoplayer-ui:2.18.5")
 }

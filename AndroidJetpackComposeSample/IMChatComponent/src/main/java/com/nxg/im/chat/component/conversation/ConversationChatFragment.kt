@@ -86,9 +86,8 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
     @Composable
     fun NavContent(conversationChatViewModel: ConversationChatViewModel) {
         val navController = rememberNavController()
-
-        // 全屏显示图片
-        var fullScreenImageUrl by remember { mutableStateOf("") }
+        // 全屏显示URL
+        var fullScreenUrl by remember { mutableStateOf("") }
 
         NavHost(navController = navController, startDestination = "chat") {
             composable("chat") {
@@ -194,13 +193,13 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
                     }, onChatMessageItemClick = {
                         when (it) {
                             is ImageMessage -> {
-                                fullScreenImageUrl = it.content.url
+                                fullScreenUrl = it.content.url
                                 navController.navigate("image")
                             }
 
                             is VideoMessage -> {
-                                fullScreenImageUrl = it.content.url
-                                //TODO 全屏播放视频
+                                fullScreenUrl = it.content.url
+                                navController.navigate("video")
                             }
 
                             else -> {
@@ -229,8 +228,17 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
             composable(
                 "image"
             ) {
-                FullScreenImage(url = fullScreenImageUrl) {
-                    // 点击图片关闭显示
+                FullScreenImage(url = fullScreenUrl) {
+                    // 关闭按钮
+                    navController.navigateUp()
+                }
+            }
+
+            composable(
+                "video"
+            ) {
+                FullScreenVideo(url = fullScreenUrl) {
+                    // 关闭按钮
                     navController.navigateUp()
                 }
             }

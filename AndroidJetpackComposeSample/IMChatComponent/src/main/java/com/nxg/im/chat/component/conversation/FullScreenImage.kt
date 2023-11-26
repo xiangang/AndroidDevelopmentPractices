@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -14,10 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -30,7 +27,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -106,18 +102,6 @@ fun FullScreenImage(
             color = Color.White
         )*/
 
-        Icon(
-            imageVector = Icons.Outlined.Close,
-            tint = Color.White,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .clickable(onClick = {
-                    onClick()
-                })
-                .padding(horizontal = 16.dp, vertical = 60.dp)
-                .height(32.dp),
-            contentDescription = stringResource(id = R.string.close)
-        )
         Image(
             painter = rememberAsyncImagePainter(url),
             contentDescription = "",
@@ -157,6 +141,20 @@ fun FullScreenImage(
                     Log.i("TAG", "FullScreenImage: coordinates")
                     imageRect.value = coordinates.boundsInParent()
                 }
+        )
+
+
+        Icon(
+            imageVector = Icons.Filled.Close,
+            tint = Color.White,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .clickable(onClick = {
+                    onClick()
+                })
+                .padding(horizontal = 16.dp, vertical = 50.dp)
+                .height(50.dp),
+            contentDescription = stringResource(id = R.string.close)
         )
     }
 
