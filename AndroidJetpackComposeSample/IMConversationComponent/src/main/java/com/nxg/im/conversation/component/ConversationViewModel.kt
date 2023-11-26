@@ -32,7 +32,7 @@ class ConversationViewModel(val conversationRepository: ConversationRepository) 
             val conversations = IMClient.conversationService.getConversationList()
             logger.debug { "conversations: $conversations" }
             conversations.forEach {
-                it.updateLastIMMessage()
+                it.updateLastChatMessage()
             }
             _uiState.emit(_uiState.value.copy(conversations = conversations))
         }

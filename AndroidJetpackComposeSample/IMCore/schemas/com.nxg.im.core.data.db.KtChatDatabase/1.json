@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fa2faca01b0dda55cfcd4791013ff865",
+    "identityHash": "94b265f5f7c556f53134896f10158b14",
     "entities": [
       {
         "tableName": "Conversation",
@@ -263,7 +263,7 @@
       },
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` INTEGER NOT NULL, `from_id` INTEGER NOT NULL, `to_id` INTEGER NOT NULL, `chat_type` INTEGER NOT NULL, `msg_content` TEXT NOT NULL, `msg_at` TEXT NOT NULL, `msg_time` INTEGER NOT NULL, `sent` INTEGER NOT NULL, `status` INTEGER NOT NULL, `create_time` INTEGER NOT NULL, `update_time` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` INTEGER NOT NULL, `from_id` INTEGER NOT NULL, `to_id` INTEGER NOT NULL, `chat_type` INTEGER NOT NULL, `msg_content` TEXT NOT NULL, `msg_at` TEXT NOT NULL, `msg_time` INTEGER NOT NULL, `effect_content` TEXT NOT NULL, `sent` INTEGER NOT NULL, `status` INTEGER NOT NULL, `create_time` INTEGER NOT NULL, `update_time` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -314,6 +314,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "effectContent",
+            "columnName": "effect_content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "sent",
             "columnName": "sent",
             "affinity": "INTEGER",
@@ -351,7 +357,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa2faca01b0dda55cfcd4791013ff865')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94b265f5f7c556f53134896f10158b14')"
     ]
   }
 }

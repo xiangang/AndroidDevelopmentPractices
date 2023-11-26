@@ -3,16 +3,10 @@ package com.nxg.im.core.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
-import coil.decode.VideoFrameDecoder
-import coil.size.Dimension
-import coil.size.Scale
-import coil.size.Size
-import coil.size.isOriginal
-import coil.size.pxOrElse
 import com.blankj.utilcode.util.Utils
+import java.io.IOException
 
 object VideoUtils {
 
@@ -25,9 +19,58 @@ object VideoUtils {
      */
     @JvmStatic
     fun getVideoThumbnail(context: Context, uri: Uri): Bitmap? {
-        val media = MediaMetadataRetriever()
-        media.setDataSource(context, uri)
-        return media.frameAtTime
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(context, uri)
+        return mediaMetadataRetriever.frameAtTime
+    }
+
+
+    /**
+     * 获取视频时长,这里获取的是毫秒
+     */
+    @JvmStatic
+    fun getVideoDuration(context: Context, uri: Uri): Int {
+        try {
+            val mediaPlayer = MediaPlayer()
+            mediaPlayer.setDataSource(context, uri)
+            mediaPlayer.prepare()
+            return mediaPlayer.duration
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return 0
+    }
+
+    /**
+     * 获取视频时长,这里获取的是毫秒
+     *
+     * @return
+     */
+    @JvmStatic
+    fun getVideoDuration(videoPath: String): Int {
+        var duration = 0
+        try {
+            val mediaMetadataRetriever = MediaMetadataRetriever()
+            mediaMetadataRetriever.setDataSource(videoPath)
+            duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return duration
+    }
+
+    @JvmStatic
+    fun getVideoSizeBitrate(context: Context, uri: Uri): Pair<android.util.Size, Int> {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(context, uri)
+        val originWidth =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toInt() ?: 0
+        val originHeight =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt()
+                ?: 0
+        val bitrate =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toInt() ?: 0
+        return Pair(android.util.Size(originWidth, originHeight), bitrate)
     }
 
     /**

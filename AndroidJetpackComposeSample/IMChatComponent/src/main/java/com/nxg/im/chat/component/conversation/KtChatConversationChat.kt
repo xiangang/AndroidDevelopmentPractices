@@ -72,12 +72,10 @@ import com.nxg.im.commonui.theme.Red40
 import com.nxg.im.core.IMClient
 import com.nxg.im.core.data.bean.*
 import com.nxg.im.core.data.db.entity.*
-import com.nxg.im.core.dispatcher.IMDispatcher
 import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
 import com.nxg.im.core.utils.VideoUtils
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -194,6 +192,7 @@ fun KtChatAuthorNameTimestampPreview() {
 
 @Composable
 fun KtChatClickableMessage(
+    message: Message,
     chatMessage: ChatMessage,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit = {}
@@ -203,32 +202,8 @@ fun KtChatClickableMessage(
         is FileMessage -> {}
         is ImageMessage -> {
             val uploadProgressState = remember { mutableIntStateOf(-1) }
-            LaunchedEffect(Unit) {
-                withContext(IMDispatcher) {
-                    if (IMClient.getService<UploadService>()
-                            .getUploadingFileProgress(chatMessage.content.localImageFilePath) > 0
-                    ) {
-                        while (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue < 100) {
-                            val uploadProgress = IMClient.getService<UploadService>()
-                                .getUploadingFileProgress(chatMessage.content.localImageFilePath)
-                            Log.i(
-                                "ImageMessage",
-                                "uploadProgress: ${chatMessage.content.localImageFilePath} $uploadProgress"
-                            )
-                            if (uploadProgress < 0) {
-                                break
-                            }
-                            if (uploadProgress >= 100) {
-                                uploadProgressState.intValue = 100
-                                break
-                            }
-                            if (uploadProgressState.intValue != uploadProgress) {
-                                uploadProgressState.intValue = uploadProgress
-                            }
-                        }
-                    }
-                }
-            }
+            val uploadFilePath = message.uploadFilePath
+            val showLoadingUI = chatMessage.content.url.isEmpty()
             Box(
                 modifier = Modifier
                     .background(Color.Black)
@@ -237,30 +212,20 @@ fun KtChatClickableMessage(
             ) {
                 LogCompositions(
                     tag = "ImageMessage",
-                    msg = "chatMessage.content.localImageFilePath ${chatMessage.content.localImageFilePath}，${chatMessage.content.width}x${chatMessage.content.height}"
+                    msg = "chatMessage.content.url ${chatMessage.content.url}，${chatMessage.content.width}x${chatMessage.content.height}"
                 )
-                LogCompositions(
-                    tag = "ImageMessage",
-                    msg = "chatMessage.content.url ${chatMessage.content.url}"
-                )
-
-                val url = chatMessage.content.url
-                if (url.isNotEmpty()) {
+                if (!showLoadingUI) {
                     KtChatImageMessage(
                         "${chatMessage.content.url}@400w_400h_60q",
                         true
                     )
                 }
-                Column(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.Center)
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .alpha(0.5F),
-
+                if (showLoadingUI) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center)
                     ) {
-                    //if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty() && uploadProgressState.intValue in 0..100) {
-                    if (chatMessage.content.localImageFilePath.isNotEmpty() && chatMessage.content.url.isEmpty()) {
                         // 创建一个 [InfiniteTransition] 实列用来管理子动画
                         val infiniteTransition = rememberInfiniteTransition(label = "")
                         // 创建一个float类型的子动画
@@ -272,21 +237,43 @@ fun KtChatClickableMessage(
                                 animation = tween(1500, easing = LinearEasing),
                             ), label = ""
                         )
+                        LaunchedEffect(angle) {
+                            if (IMClient.getService<UploadService>()
+                                    .getUploadingFileProgress(uploadFilePath) > 0
+                            ) {
+                                val uploadProgress = IMClient.getService<UploadService>()
+                                    .getUploadingFileProgress(uploadFilePath)
+                                Log.i(
+                                    "VideoMessage",
+                                    "uploadProgress: $uploadFilePath $uploadProgress"
+                                )
+                                if (uploadProgressState.intValue != uploadProgress) {
+                                    uploadProgressState.intValue = uploadProgress
+                                }
+                            }
+                        }
                         Image(
                             modifier = Modifier
-                                .alpha(if (uploadProgressState.intValue > 0) 1f else 0f)
+                                .alpha(1f)
                                 .graphicsLayer { rotationZ = angle }
                                 .size(60.dp)
                                 .align(Alignment.CenterHorizontally),
                             painter = painterResource(id = R.drawable.ic_loading3),
                             contentDescription = ""
                         )
+                        val uploadingText = if (uploadProgressState.intValue <= 0) {
+                            ""
+                        } else if (uploadProgressState.intValue == 100) {
+                            "发送中"
+                        } else {
+                            "${uploadProgressState.intValue}%"
+                        }
                         Text(
                             modifier = Modifier
-                                .alpha(if (uploadProgressState.intValue > 0) 1f else 0f)
+                                .alpha(1f)
                                 .padding(4.dp)
                                 .align(Alignment.CenterHorizontally),
-                            text = "发送中${uploadProgressState.intValue}%",
+                            text = uploadingText,
                             fontSize = 14.sp
                         )
                     }
@@ -298,8 +285,8 @@ fun KtChatClickableMessage(
 
         is VideoMessage -> {
             val uploadProgressState = remember { mutableIntStateOf(-1) }
-            val showLoadingUI =
-                chatMessage.content.localVideoFilePath.isNotEmpty() && chatMessage.content.url.isEmpty()
+            val uploadFilePath = message.uploadFilePath
+            val showLoadingUI = chatMessage.content.url.isEmpty()
             Box(
                 modifier = Modifier
                     .background(Color.Black)
@@ -310,20 +297,20 @@ fun KtChatClickableMessage(
                     tag = "VideoMessage",
                     msg = "$chatMessage"
                 )
-                val localVideoFilePath = chatMessage.content.localVideoFilePath
-                if (localVideoFilePath.isNotEmpty()) {
+
+                if (!showLoadingUI) {
                     KtChatImageMessage(
-                        localVideoFilePath,
+                        uploadFilePath,
                         true
                     )
                 }
                 //视频封面缩略图
-                if (chatMessage.content.thumbnail.isNotEmpty()) {
+                if (chatMessage.content.thumbnailUrl.isNotEmpty()) {
                     AsyncImage(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .fillMaxSize(),
-                        model = chatMessage.content.thumbnail,
+                        model = chatMessage.content.thumbnailUrl,
                         contentDescription = null
                     )
                     Image(
@@ -334,8 +321,6 @@ fun KtChatClickableMessage(
                         painter = painterResource(id = R.drawable.ic_play_video_white),
                         contentDescription = ""
                     )
-
-
                     Text(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -345,14 +330,13 @@ fun KtChatClickableMessage(
                         fontSize = 14.sp
                     )
                 }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .align(Alignment.Center)
-                    //.background(Color.Black.copy(alpha = 0.2f))
-                ) {
-                    if (showLoadingUI) {
+                if (showLoadingUI) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .align(Alignment.Center)
+                    ) {
                         // 创建一个 [InfiniteTransition] 实列用来管理子动画
                         val infiniteTransition = rememberInfiniteTransition(label = "")
                         // 创建一个float类型的子动画
@@ -366,13 +350,13 @@ fun KtChatClickableMessage(
                         )
                         LaunchedEffect(angle) {
                             if (IMClient.getService<UploadService>()
-                                    .getUploadingFileProgress(chatMessage.content.localVideoFilePath) > 0
+                                    .getUploadingFileProgress(uploadFilePath) > 0
                             ) {
                                 val uploadProgress = IMClient.getService<UploadService>()
-                                    .getUploadingFileProgress(chatMessage.content.localVideoFilePath)
+                                    .getUploadingFileProgress(uploadFilePath)
                                 Log.i(
                                     "VideoMessage",
-                                    "uploadProgress: ${chatMessage.content.localVideoFilePath} $uploadProgress"
+                                    "uploadProgress: $uploadFilePath $uploadProgress"
                                 )
                                 if (uploadProgressState.intValue != uploadProgress) {
                                     uploadProgressState.intValue = uploadProgress
@@ -482,7 +466,8 @@ fun KtChatClickableMessagePreview() {
                 "applies) $EMOJI_POINTS https://goo.gle/jetnews",
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
-    KtChatClickableMessage(textMessage, true)//@Preview
+    val message = Message(0, 0, 0, 1, 0, textMessage.toJson())
+    KtChatClickableMessage(message, textMessage, true)//@Preview
 }
 
 private val KtChatBubbleShape = RoundedCornerShape(0.dp, 10.dp, 10.dp, 10.dp)
@@ -491,6 +476,7 @@ private val KtChatBubbleShapeUserMe = RoundedCornerShape(10.dp, 0.dp, 10.dp, 10.
 
 @Composable
 fun KtChatItemBubble(
+    message: Message,
     chatMessage: ChatMessage,
     sent: IMSendStatus,
     isUserMe: Boolean,
@@ -550,6 +536,7 @@ fun KtChatItemBubble(
             shape = if (isUserMe) KtChatBubbleShapeUserMe else KtChatBubbleShape
         ) {
             KtChatClickableMessage(
+                message = message,
                 chatMessage = chatMessage,
                 isUserMe = isUserMe,
                 authorClicked = authorClicked
@@ -597,11 +584,13 @@ fun KtChatItemBubblePreview() {
                 "applies) $EMOJI_POINTS https://goo.gle/jetnews",
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
-    KtChatItemBubble(textMessage, 1, true)
+    val message = Message(0, 0, 0, 1, 0, "")
+    KtChatItemBubble(message, textMessage, 1, true)
 }
 
 @Composable
 fun KtChatAuthorAndTextMessage(
+    message: Message,
     chatMessage: ChatMessage,
     sent: IMSendStatus,
     name: String,
@@ -617,6 +606,7 @@ fun KtChatAuthorAndTextMessage(
     ) {
         KtChatAuthorNameTimestamp(name, timestamp, isUserMe)
         KtChatItemBubble(
+            message,
             chatMessage,
             sent,
             isUserMe,
@@ -639,19 +629,27 @@ fun KtChatAuthorAndTextMessagePreview() {
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
 
-
     val imageMsgContent = ImageMsgContent(
-        "https://img2.woyaogexing.com/2023/06/06/c1ad220f395db3f53f82ef5b502e7390.jpg", 400, 400
+        400, 400, "https://img2.woyaogexing.com/2023/06/06/c1ad220f395db3f53f82ef5b502e7390.jpg"
     )
     val imageMessage = ImageMessage(0, 0, 0, imageMsgContent, System.currentTimeMillis())
+    val message = Message(0, 0, 0, 1, 0, "")
     Column {
-        KtChatAuthorAndTextMessage(textMessage, 0, "AnonXG", "2023年06月06日23:31:19", true)
-        KtChatAuthorAndTextMessage(imageMessage, 0, "nxg", "2023年06月06日23:31:20", false)
+        KtChatAuthorAndTextMessage(
+            message,
+            textMessage,
+            0,
+            "AnonXG",
+            "2023年06月06日23:31:19",
+            true
+        )
+        KtChatAuthorAndTextMessage(message, imageMessage, 0, "nxg", "2023年06月06日23:31:20", false)
     }
 }
 
 @Composable
-fun KtChatIMMessage(
+fun KtChatMessage(
+    message: Message,
     chatMessage: ChatMessage,
     sent: IMSendStatus,
     avatar: String,
@@ -672,6 +670,7 @@ fun KtChatIMMessage(
         Row(modifier = spaceBetweenAuthors, horizontalArrangement = Arrangement.End) {
             //消息
             KtChatAuthorAndTextMessage(
+                message = message,
                 chatMessage = chatMessage,
                 sent = sent,
                 isUserMe = isUserMe,
@@ -723,6 +722,7 @@ fun KtChatIMMessage(
             )
             //消息
             KtChatAuthorAndTextMessage(
+                message = message,
                 chatMessage = chatMessage,
                 sent = sent,
                 isUserMe = isUserMe,
@@ -744,7 +744,7 @@ fun KtChatIMMessage(
 
 @Preview
 @Composable
-fun KtChatIMMessagePreview() {
+fun KtChatMessagePreview() {
     val textMsgContent = TextMsgContent(
         "Compose newbie as well ${EMOJIS.EMOJI_FLAMINGO}, have you looked at the JetNews sample? " +
                 "Most blog posts end up out of date pretty fast but this sample is always up to " +
@@ -753,9 +753,10 @@ fun KtChatIMMessagePreview() {
     )
     val textMessage = TextMessage(0, 0, 0, textMsgContent, System.currentTimeMillis())
     val imageMsgContent = ImageMsgContent(
-        "https://img2.woyaogexing.com/2023/06/06/c1ad220f395db3f53f82ef5b502e7390.jpg", 400, 400
+        400, 400, "https://img2.woyaogexing.com/2023/06/06/c1ad220f395db3f53f82ef5b502e7390.jpg"
     )
     val imageMessage = ImageMessage(0, 0, 0, imageMsgContent, System.currentTimeMillis())
+    val message = Message(0, 0, 0, 1, 0, "")
     Box {
         LazyColumn(
             reverseLayout = true,//反转方向，这样才符合IM聊天列表的设计，最新的在底部，最老的在顶部
@@ -764,7 +765,8 @@ fun KtChatIMMessagePreview() {
                 .fillMaxSize()
         ) {
             item {
-                KtChatIMMessage(
+                KtChatMessage(
+                    message,
                     textMessage, 0,
                     "https://randomuser.me/api/portraits/men/1.jpg",
                     "AnonXG",
@@ -774,7 +776,8 @@ fun KtChatIMMessagePreview() {
 
             }
             item {
-                KtChatIMMessage(
+                KtChatMessage(
+                    message,
                     imageMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
@@ -783,7 +786,8 @@ fun KtChatIMMessagePreview() {
                 )
             }
             item {
-                KtChatIMMessage(
+                KtChatMessage(
+                    message,
                     textMessage, 0,
                     "https://randomuser.me/api/portraits/men/1.jpg",
                     "AnonXG",
@@ -792,7 +796,8 @@ fun KtChatIMMessagePreview() {
                 )
             }
             item {
-                KtChatIMMessage(
+                KtChatMessage(
+                    message,
                     textMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
@@ -801,7 +806,8 @@ fun KtChatIMMessagePreview() {
                 )
             }
             item {
-                KtChatIMMessage(
+                KtChatMessage(
+                    message,
                     imageMessage, 0,
                     "https://randomuser.me/api/portraits/men/2.jpg",
                     "nxg",
@@ -818,7 +824,7 @@ private val KtChatJumpToBottomThreshold = 56.dp
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun KtChatIMMessages(
+fun KtChatMessages(
     pager: Pager<Int, Message>? = null,
     me: User,
     friend: Friend,
@@ -849,7 +855,8 @@ fun KtChatIMMessages(
                 ) { _, message ->
                     if (message != null) {
                         val chatMessage = message.toChatMessage()
-                        KtChatIMMessage(
+                        KtChatMessage(
+                            message = message,
                             chatMessage = chatMessage,
                             message.sent,
                             avatar = if (chatMessage.fromId == me.uuid) {
@@ -889,7 +896,7 @@ fun KtChatIMMessages(
 
 @Preview
 @Composable
-fun KtChatIMMessagesPreview() {
+fun KtChatMessagesPreview() {
 
 }
 
@@ -967,7 +974,7 @@ fun KtChatConversationContent(
                 .padding(paddingValues)
         ) {
             conversationChatUiState.value.conversationChat?.let {
-                KtChatIMMessages(
+                KtChatMessages(
                     pager = conversationChatViewModel.messagePager,
                     me = it.me,
                     friend = it.friend,

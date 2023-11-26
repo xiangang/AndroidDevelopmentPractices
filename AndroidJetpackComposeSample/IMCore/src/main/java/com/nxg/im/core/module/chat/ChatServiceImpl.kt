@@ -1,7 +1,6 @@
 package com.nxg.im.core.module.chat
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.ArrayMap
 import androidx.core.content.FileProvider
@@ -37,7 +36,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
     /**
      *  发送消息队列
      */
-    private val sendMessageChannel = Channel<ChatMessage> { }
+    private val sendMessageChannel = Channel<Message> { }
 
     /**
      *  接收消息队列
@@ -61,10 +60,11 @@ object ChatServiceImpl : ChatService, SimpleLogger {
         handleReceiveMessage()
     }
 
-    override fun sendMessage(chatMessage: ChatMessage) {
-        logger.debug { "sendMessage: ${chatMessage.toJson()}" }
+
+    override fun sendMessage(message: Message) {
+        logger.debug { "sendMessage: $message" }
         IMCoroutineScope.launch {
-            sendMessageChannel.send(chatMessage)
+            sendMessageChannel.send(message)
         }
     }
 
@@ -80,12 +80,13 @@ object ChatServiceImpl : ChatService, SimpleLogger {
             is ImageMessage -> {
                 val messageContent = chatMessage.content
                 if (messageContent.url.isEmpty()) {
+                    val uploadFilePath = message.uploadFilePath
                     //先上传图片，同时回调上传进度
                     var uploadFileUrl: String? = ""
                     try {
                         uploadFileUrl =
                             IMClient.getService<UploadService>()
-                                .syncUpload(messageContent.localImageFilePath)
+                                .syncUpload(uploadFilePath)
                         logger.debug { "doSendMessage: uploadFileUrl $uploadFileUrl" }
                     } catch (e: Exception) {
                         logger.error {
@@ -101,7 +102,6 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                         return
                     }
                     chatMessage.content.url = uploadFileUrl
-                    chatMessage.content.localImageFilePath = ""
                     message.msgContent = chatMessage.toJson()
                     KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                         .updateMessage(message)
@@ -111,10 +111,11 @@ object ChatServiceImpl : ChatService, SimpleLogger {
             is VideoMessage -> {
                 val messageContent = chatMessage.content
                 if (messageContent.url.isEmpty()) {
-                    logger.debug { "doSendMessage: localVideoFilePath ${messageContent.localVideoFilePath}" }
+                    val uploadFilePath = message.uploadFilePath
+                    logger.debug { "doSendMessage: uploadFilePath $uploadFilePath" }
                     //先上传视频封面
                     var uploadVideoThumbnailFileUrl: String? = ""
-                    val file = File(messageContent.localVideoFilePath)
+                    val file = File(uploadFilePath)
                     logger.debug { "doSendMessage: file ${file.absolutePath}" }
                     val videoUri: Uri = FileProvider.getUriForFile(
                         Utils.getApp(),
@@ -123,7 +124,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                     )
                     logger.debug { "doSendMessage: videoUri $videoUri" }
                     try {
-                        VideoUtils.videoFrameDecoder.decode(messageContent.localVideoFilePath).drawable.toBitmap()
+                        VideoUtils.videoFrameDecoder.decode(uploadFilePath).drawable.toBitmap()
                             .let { videoThumbnail ->
                                 logger.debug { "doSendMessage: videoThumbnail ${videoThumbnail.width} x ${videoThumbnail.height}" }
                                 val stream = ByteArrayOutputStream()
@@ -148,7 +149,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                     try {
                         uploadFileUrl =
                             IMClient.getService<UploadService>()
-                                .syncUpload(messageContent.localVideoFilePath)
+                                .syncUpload(uploadFilePath)
                         logger.debug { "doSendMessage: uploadFileUrl $uploadFileUrl" }
                     } catch (e: Exception) {
                         logger.error {
@@ -164,8 +165,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
                         return
                     }
                     chatMessage.content.url = uploadFileUrl
-                    chatMessage.content.thumbnail = uploadVideoThumbnailFileUrl ?: ""
-                    chatMessage.content.localVideoFilePath = ""
+                    chatMessage.content.thumbnailUrl = uploadVideoThumbnailFileUrl ?: ""
                     message.msgContent = chatMessage.toJson()
                     KtChatDatabase.getInstance(Utils.getApp()).messageDao()
                         .updateMessage(message)
@@ -304,32 +304,7 @@ object ChatServiceImpl : ChatService, SimpleLogger {
 
     private fun handleSendMessageQueue() {
         IMCoroutineScope.launch {
-            for (chatMessage in sendMessageChannel) {
-                //处理不同的消息
-                when (chatMessage) {
-                    is AudioMessage -> {}
-                    is FileMessage -> {}
-                    is ImageMessage -> {}
-                    is LocationMessage -> {}
-                    is TextMessage -> {}
-                    is VideoMessage -> {}
-                }
-                //保存到本地数据库
-                val currentTime = System.currentTimeMillis()
-                val message = Message(
-                    0,
-                    0,//uuid后面从发号服务器获取
-                    fromId = chatMessage.fromId,
-                    toId = chatMessage.toId,
-                    chatType = 0,
-                    msgContent = chatMessage.toJson(),
-                    msgTime = currentTime,
-                    createTime = currentTime,
-                    updateTime = currentTime,
-                )
-                message.id =
-                    KtChatDatabase.getInstance(Utils.getApp()).messageDao()
-                        .insertMessage(message)
+            for (message in sendMessageChannel) {
                 doSendMessage(message)//处理队列消息
             }
         }

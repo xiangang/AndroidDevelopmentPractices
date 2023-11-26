@@ -22,9 +22,8 @@ data class Conversation(
     @ColumnInfo(name = "remind") val remind: Boolean,//提醒
 ) {
     @Ignore
-    var lastChatMessage: ChatMessage? = null//最后一个消息IMMessage
+    var lastChatMessage: ChatMessage? = null//最后一个消息ChatMessage
 
-    fun updateLastIMMessage() {
-        //lastIMMessage = lastMsgContent.parseIMMessage()
+    fun updateLastChatMessage() {
     }
 }
