@@ -19,9 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.nxg.im.chat.R
 import com.nxg.im.core.utils.VideoUtils
 
@@ -35,6 +37,7 @@ import com.nxg.im.core.utils.VideoUtils
 fun FullScreenVideo(
     modifier: Modifier = Modifier,
     url: String,
+    thumbnailUrl: String,
     onClick: () -> Unit = {}
 ) {
     val alpha by remember { mutableFloatStateOf(1f) }
@@ -43,6 +46,14 @@ fun FullScreenVideo(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = alpha))
     ) {
+        AsyncImage(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxSize(),
+            model = thumbnailUrl,
+            contentDescription = thumbnailUrl,
+        )
+
         VideoPlayer(
             modifier = Modifier.align(Alignment.Center), url
         )

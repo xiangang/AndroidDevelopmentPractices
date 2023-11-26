@@ -89,6 +89,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
         val navController = rememberNavController()
         // 全屏显示URL
         var fullScreenUrl by remember { mutableStateOf("") }
+        var fullScreenThumbnailUrl by remember { mutableStateOf("") }
 
         NavHost(navController = navController, startDestination = "chat") {
             composable("chat") {
@@ -200,6 +201,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
 
                             is VideoMessage -> {
                                 fullScreenUrl = it.content.url
+                                fullScreenThumbnailUrl = it.content.thumbnailUrl
                                 navController.navigate("video")
                             }
 
@@ -238,7 +240,7 @@ class ConversationChatFragment : BaseBusinessFragment(), SimpleLogger {
             composable(
                 "video"
             ) {
-                FullScreenVideo(url = fullScreenUrl) {
+                FullScreenVideo(url = fullScreenUrl, thumbnailUrl = fullScreenThumbnailUrl) {
                     // 关闭按钮
                     navController.navigateUp()
                 }
