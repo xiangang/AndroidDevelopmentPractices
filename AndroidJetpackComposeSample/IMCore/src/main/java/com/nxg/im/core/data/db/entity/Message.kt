@@ -44,7 +44,8 @@ data class Message constructor(
 
     @get:Ignore
     val uploadFilePath: String
-        get() = (effectContent.parseEffectContent() as? FileEffectContent)?.filePath ?: ""
+        get() = if (effectContent.isNotEmpty()) (effectContent.parseEffectContent() as? FileEffectContent)?.filePath
+            ?: "" else ""
 
 
 }
