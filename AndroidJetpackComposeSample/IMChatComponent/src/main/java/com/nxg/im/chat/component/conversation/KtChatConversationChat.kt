@@ -75,6 +75,7 @@ import com.nxg.im.core.data.db.entity.*
 import com.nxg.im.core.dispatcher.IMDispatcher
 import com.nxg.im.core.module.upload.UploadService
 import com.nxg.im.core.module.user.User
+import com.nxg.im.core.utils.VideoUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -332,6 +333,16 @@ fun KtChatClickableMessage(
                             .align(Alignment.Center),
                         painter = painterResource(id = R.drawable.ic_play_video_white),
                         contentDescription = ""
+                    )
+
+
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(4.dp),
+                        color = Color.White,
+                        text = VideoUtils.formatDuration(chatMessage.content.duration / 1000),
+                        fontSize = 14.sp
                     )
                 }
                 Column(

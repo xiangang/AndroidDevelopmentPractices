@@ -30,4 +30,17 @@ object VideoUtils {
         return media.frameAtTime
     }
 
+    /**
+     * 将视频的时长duration转换成时分秒的格式显示：
+     */
+    @JvmStatic
+    fun formatDuration(duration: Int): String {
+        val hours = duration / 3600
+        val minutes = (duration % 3600) / 60
+        val seconds = duration % 60
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        }
+        return String.format("%02d:%02d", minutes, seconds)
+    }
 }
