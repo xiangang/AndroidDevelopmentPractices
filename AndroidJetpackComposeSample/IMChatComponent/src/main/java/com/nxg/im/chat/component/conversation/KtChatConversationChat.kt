@@ -287,18 +287,20 @@ fun KtChatClickableMessage(
             val uploadProgressState = remember { mutableIntStateOf(-1) }
             val uploadFilePath = message.uploadFilePath
             val showLoadingUI = chatMessage.content.url.isEmpty()
+            val minHeight =
+                if (chatMessage.content.width == 0) 100.dp else (chatMessage.content.height * 100 / chatMessage.content.width).dp
             Box(
                 modifier = Modifier
                     .background(Color.Black)
                     .requiredWidth(100.dp)
-                    .requiredHeightIn(min = if (chatMessage.content.width == 0) 100.dp else (chatMessage.content.height * 100 / chatMessage.content.width).dp)
+                    .requiredHeightIn(min = minHeight, max = minHeight)
             ) {
                 LogCompositions(
                     tag = "VideoMessage",
                     msg = "$chatMessage"
                 )
 
-                if (!showLoadingUI) {
+                if (uploadFilePath.isNotEmpty()) {
                     KtChatImageMessage(
                         uploadFilePath,
                         true
@@ -333,8 +335,7 @@ fun KtChatClickableMessage(
                 if (showLoadingUI) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
+                            .wrapContentSize()
                             .align(Alignment.Center)
                     ) {
                         // 创建一个 [InfiniteTransition] 实列用来管理子动画
@@ -367,7 +368,7 @@ fun KtChatClickableMessage(
                             modifier = Modifier
                                 .alpha(1f)
                                 .graphicsLayer { rotationZ = angle }
-                                .size(60.dp)
+                                .size(40.dp)
                                 .align(Alignment.CenterHorizontally),
                             painter = painterResource(id = R.drawable.ic_loading3),
                             contentDescription = ""
@@ -382,10 +383,10 @@ fun KtChatClickableMessage(
                         Text(
                             modifier = Modifier
                                 .alpha(1f)
-                                .padding(4.dp)
+                                .padding(1.dp)
                                 .align(Alignment.CenterHorizontally),
                             text = uploadingText,
-                            fontSize = 14.sp
+                            fontSize = 10.sp
                         )
                     }
                 }
